@@ -18,19 +18,34 @@ Complete authentication system with JWT, token blacklisting, and user management
 ### 1. Install Dependencies
 
 ```bash
+# From the backend directory
 npm install
 ```
 
 ### 2. Setup Environment
 
 ```bash
-cp .env.example .env
-# Edit .env with your database credentials
+# Copy and edit environment variables
+cp env.example .env
+
+# Required values
+# PORT=3000
+# NODE_ENV=development
+# APP_NAME=ExpressGo Application
+# APP_URL=http://localhost:3000
+# JWT_SECRET=change-me
+# JWT_EXPIRES_IN=7d
+# DB_HOST=localhost
+# DB_PORT=5432
+# DB_NAME=expressgo_db
+# DB_USER=postgres
+# DB_PASSWORD=postgres
 ```
 
 ### 3. Create Database
 
 ```bash
+# Example (Postgres)
 createdb expressgo_db
 ```
 
@@ -47,6 +62,36 @@ npm run dev
 ```
 
 The API will be available at `http://localhost:3000`
+
+## Running Tests
+
+We use Jest with ts-jest and Supertest.
+
+```bash
+# Run once
+npm test
+
+# Watch mode
+npm run test:watch
+```
+
+Test layout lives under `src/tests`:
+
+```
+src/tests/
+├── setupTests.ts           # Global test setup (env, logging)
+├── unit/                   # Unit tests
+│   ├── responseUtils.test.ts
+│   ├── authService.test.ts
+│   └── middleware.auth.test.ts
+└── integration/            # Integration tests (HTTP via Supertest)
+    ├── health.test.ts
+    └── authRoutes.test.ts
+```
+
+Notes:
+- Tests run with `NODE_ENV=test` automatically via scripts.
+- Integration tests mock DB models where appropriate to avoid real I/O.
 
 ## API Endpoints
 
@@ -110,6 +155,8 @@ curl -X POST http://localhost:3000/api/auth/logout \
 npm run dev          # Start development server
 npm run build        # Build for production
 npm start            # Start production server
+npm test             # Run tests once
+npm run test:watch   # Run tests in watch mode
 npm run db:migrate   # Run database migrations
 npm run db:seed      # Run database seeders
 ```
@@ -137,6 +184,7 @@ expressgo_project/
 │   ├── services/         # Business logic
 │   ├── types/            # TypeScript types
 │   ├── utils/            # Utility functions
+│   ├── tests/            # Unit & integration tests
 │   ├── app.ts            # Express app setup
 │   └── server.ts         # Server entry point
 ├── .env.example          # Environment template
