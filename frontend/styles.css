@@ -1,0 +1,399 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  color: #222;
+  background: #fff;
+}
+
+/* Containers */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Navbar */
+.navbar {
+  background: #002e9b;
+  color: #fff;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-content ul {
+  display: flex;
+  list-style: none;
+  gap: 1.5rem;
+}
+
+.nav-content a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-content a:hover,
+.nav-content a.active {
+  border-bottom: 2px solid #ff8c00;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(to right, #002e9b, #0055ff);
+  color: #fff;
+  text-align: center;
+  padding: 5rem 0;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+}
+
+.hero-content p {
+  margin: 1rem 0;
+}
+
+.booking-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  background: #fff;
+  color: #000;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Trip Type Buttons */
+.trip-type {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.trip-type label {
+  background: #f0f4ff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #002e9b;
+  font-weight: 500;
+}
+
+.trip-type input {
+  margin-right: 0.4rem;
+}
+
+.trip-type label:hover {
+  background: #dce4ff;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Multi-city extra fields */
+.multi-city {
+  width: 100%;
+}
+
+.multi-city .city-segment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: #f9f9ff;
+}
+
+.multi-city .city-segment input {
+  flex: 1;
+}
+
+
+/* Buttons */
+.btn-primary {
+  background: #ff8c00;
+  border: none;
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #002e9b;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/*About Section */
+.about {
+  background: #f9fbff;
+  padding: 5rem 0;
+  overflow: hidden;
+}
+
+.about .container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  align-items: center;
+  gap: 3rem;
+}
+
+.about h2 {
+  color: #002e9b;
+  font-size: 2.2rem;
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+
+.about h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: #ff8c00;
+  margin-top: 0.6rem;
+  border-radius: 2px;
+}
+
+.about p {
+  font-size: 1.05rem;
+  color: #444;
+  line-height: 1.8;
+  margin-bottom: 1.8rem;
+  max-width: 500px;
+}
+
+.about .btn-primary {
+  background: #ff8c00;
+  color: #fff;
+  border: none;
+  padding: 0.9rem 1.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.about .btn-primary:hover {
+  background: #ff9900;
+  transform: translateY(-3px);
+}
+
+/* Image styling */
+.about-image {
+  text-align: center;
+  position: relative;
+}
+
+.about-image img {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 46, 155, 0.15);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.about-image img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 32px rgba(0, 46, 155, 0.25);
+}
+
+/* Decorative circle behind image */
+.about-image::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  background: rgba(255, 140, 0, 0.15);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .about {
+    padding: 3rem 1rem;
+  }
+
+  .about h2 {
+    font-size: 1.8rem;
+  }
+
+  .about p {
+    font-size: 1rem;
+  }
+
+  .about .btn-primary {
+    width: 100%;
+  }
+
+  .about-image::before {
+    display: none;
+  }
+}
+
+
+/* Advantages Section */
+.advantages {
+  background: linear-gradient(135deg, #f6f9ff 0%, #eef3ff 100%);
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.advantages h2 {
+  font-size: 2rem;
+  color: #002e9b;
+  margin-bottom: 2rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.adv-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 6px 18px rgba(0, 46, 155, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.adv-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 0;
+  background: #ff8c00;
+  transition: width 0.3s ease;
+}
+
+.adv-card:hover::before {
+  width: 100%;
+}
+
+.adv-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 46, 155, 0.2);
+}
+
+.adv-card h3 {
+  color: #002e9b;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.adv-card p {
+  color: #555555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Optional: icons above titles */
+.adv-card::after {
+  content: "🚌";
+  font-size: 2rem;
+  display: block;
+  margin: 0 auto 1rem auto;
+  opacity: 0.15;
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+}
+
+/* You can assign different icons manually in HTML */
+.adv-card:nth-child(1)::after { content: "🛋️"; }
+.adv-card:nth-child(2)::after { content: "💳"; }
+.adv-card:nth-child(3)::after { content: "⏰"; }
+
+/* Destinations */
+.destinations {
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.destination-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background: #fff;
+}
+
+.destination-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.destination-card .info {
+  padding: 1rem;
+}
+
+/* Footer */
+.footer {
+  background: #001a66;
+  color: #fff;
+  padding: 2rem 0;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 1rem;
+  border-top: 1px solid #334;
+  padding-top: 1rem;
+}

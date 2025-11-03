@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExpressGo</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="./js/main.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="logo">ExpressGo</div>
+      <nav>
+        <ul>
+          <li><a href="#home" class="active">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#destinations">Destinations</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="container hero-content">
+      <h1>Safe & Reliable Bus Trips Across Rwanda</h1>
+      <p>Book your ticket online from Kigali to all major provinces</p>
+
+      <form class="booking-form" id="bookingForm">
+        <div class="trip-type">
+          <label><input type="radio" name="tripType" value="oneway" checked> One Way</label>
+          <label><input type="radio" name="tripType" value="round"> Round Trip</label>
+          <label><input type="radio" name="tripType" value="multi"> Multi-Cities</label>
+        </div>
+
+        <div class="form-group">
+          <label>From</label>
+          <input type="text" placeholder="Kigali" name="from" />
+        </div>
+
+        <div class="form-group">
+          <label>To</label>
+          <input type="text" placeholder="Musanze" name="to" />
+        </div>
+
+        <div class="form-group">
+          <label>Departure Date</label>
+          <input type="date" name="departDate" />
+        </div>
+
+        <div class="form-group return-date hidden">
+          <label>Return Date</label>
+          <input type="date" name="returnDate" />
+        </div>
+
+        <div id="multiCityContainer" class="multi-city hidden"></div>
+
+        <div class="form-group">
+          <label>Passengers</label>
+          <input type="number" min="1" value="1" name="passengers" />
+        </div>
+
+        <button type="button" id="addCityBtn" class="btn-secondary hidden">+ Add City</button>
+        <button type="submit" class="btn-primary">Search</button>
+      </form>
+
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="about">
+    <div class="container grid-2">
+      <div>
+        <h2>About Us</h2>
+        <p> ExpressGo is a modern transport company offering reliable and affordable bus travel between Kigali and all Rwandan provinces.
+            Our mission is to make intercity travel safer, simpler, and more comfortable for everyone.</p>
+        <button class="btn-primary">Learn More</button>
+      </div>
+      <div class="about-image">
+        <img src="images/nyabugogo.jpg" alt="About Global Express" />
+      </div>
+    </div>
+  </section>  
+
+  <!-- Advantages -->
+  <section class="advantages">
+    <div class="container grid-3">
+      <div class="adv-card">
+        <h3>Comfortable Travel</h3>
+        <p>Modern buses with Wi-Fi, AC, and reclining seats.</p>
+      </div>
+      <div class="adv-card">
+        <h3>Affordable Prices</h3>
+        <p>Competitive rates for both passengers and parcels.</p>
+      </div>
+      <div class="adv-card">
+        <h3>Reliable Service</h3>
+        <p>Thousands of satisfied travelers every month.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Destinations -->
+  <section id="destinations" class="destinations">
+    <div class="container">
+      <h2>Popular Destinations</h2>
+      <div class="grid-4">
+        <div class="destination-card">
+          <img src="images/rusizi.jpg" alt="Rusizi" />
+          <div class="info">
+            <h4>Kigali → Rusizi</h4>
+            <p>7,500 Rwf</p>
+          </div>
+        </div>
+        <div class="destination-card">
+          <img src="images/rubavu.jpg" alt="Rubavu" />
+          <div class="info">
+            <h4>Kigali → Rubavu</h4>
+            <p>4,200 Rwf</p>
+          </div>
+        </div>
+        <div class="destination-card">
+          <img src="images/musanze.jpg" alt="Musanze" />
+          <div class="info">
+            <h4>Kigali → Musanze</h4>
+            <p>2,200 Rwf</p>
+          </div>
+        </div>
+        <div class="destination-card">
+          <img src="images/nyagatare.jpg" alt="Nyagatare" />
+          <div class="info">
+            <h4>Kigali → Nyagatare</h4>
+            <p>5,000 Rwf</p>
+          </div>
+        </div>
+        <div class="destination-card">
+          <img src="images/huye.jpg" alt="Huye" />
+          <div class="info">
+            <h4>Kigali → Huye</h4>
+            <p>3,000 Rwf</p>
+          </div>
+        </div>
+        <div class="destination-card">
+          <img src="images/karongi.jpg" alt="Karongi" />
+          <div class="info">
+            <h4>Kigali → Karongi</h4>
+            <p>5,000 Rwf</p>
+          </div>
+        </div>
+        <div class="destination-card">
+          <img src="images/rwamagana.jpg" alt="Rwamagana" />
+          <div class="info">
+            <h4>Kigali → Rwamagana</h4>
+            <p>2,000 Rwf</p>
+          </div>
+        </div>
+        <div class="destination-card">
+          <img src="images/muhanga.jpg" alt="Muhanga" />
+          <div class="info">
+            <h4>Kigali → Muhanga</h4>
+            <p>5,000 Rwf</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact" class="footer">
+    <div class="container footer-content">
+      <div>
+        <h3>ExpressGo</h3>
+        <p>Reliable transport across Rwanda.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>Email: info@expressgo.com</p>
+        <p>Phone: +250 7813 489</p>
+      </div>
+      <div>
+        <h4>Follow Us</h4>
+        <p>🌐 Facebook | Twitter | Instagram</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ExpressGo. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
