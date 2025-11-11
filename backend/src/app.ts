@@ -1,8 +1,12 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import swaggerUi from 'swagger-ui-express';
 import authRoutes from './routes/authRoutes';
+import routeRoutes from './routes/routeRoutes';
+import scheduleRoutes from './routes/scheduleRoutes';
 import { errorHandler } from './middleware/errorHandler';
+import { swaggerDocument } from './swagger';
 
 const app: Application = express();
 
@@ -14,17 +18,25 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Swagger API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Bus Booking API Documentation',
+}));
+
 // Health check
 app.get('/health', (_req, res) => {
   res.json({ 
     status: 'OK', 
-    message: 'ExpressGo API is running',
+    message: 'Bus Booking System API is running',
     timestamp: new Date().toISOString()
   });
 });
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/routes', routeRoutes);
+app.use('/api/schedules', scheduleRoutes);
 
 // Error handling
 app.use(errorHandler);
