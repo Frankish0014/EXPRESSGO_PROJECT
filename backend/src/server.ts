@@ -1,7 +1,6 @@
 import app from './app';
 import { config } from './config/app';
-import { testConnection } from './config/database';
-import { logInfo, logSuccess, logError } from './utils/loggerUtils';
+import sequelize, { testConnection } from './config/database';
 
 const PORT = config.port;
 
@@ -13,27 +12,30 @@ const startServer = async () => {
 
     // Start server
     app.listen(PORT, () => {
-      console.log('\n' + '='.repeat(60));
-      logSuccess(`🚀 Server started successfully`);
-      logInfo(`📍 Port: ${PORT}`);
-      logInfo(`🌍 Environment: ${config.nodeEnv}`);
-      logInfo(`💡 Health check: ${config.app.url}/health`);
-      console.log('='.repeat(60) + '\n');
+      console.log(`🚀 Server is running on port ${PORT}`);
+      console.log(`📍 Environment: ${config.nodeEnv}`);
+      console.log(`🌐 API URL: ${config.app.url}`);
+      console.log(`💡 Health check: ${config.app.url}/health`);
+      console.log(`📚 API Docs: ${config.app.url}/api-docs`);
     });
   } catch (error) {
-    logError('❌ Failed to start server', error);
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 };
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  logInfo('👋 SIGTERM signal received: closing HTTP server');
+  console.log('👋 SIGTERM signal received: closing HTTP server');
+  await sequelize.close();
+  console.log('✅ Database connection closed');
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
-  logInfo('👋 SIGINT signal received: closing HTTP server');
+  console.log('👋 SIGINT signal received: closing HTTP server');
+  await sequelize.close();
+  console.log('✅ Database connection closed');
   process.exit(0);
 });
 

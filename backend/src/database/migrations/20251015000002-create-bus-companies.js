@@ -16,11 +16,9 @@ module.exports = {
       },
       contact_phone: {
         type: Sequelize.STRING(20),
-        allowNull: true,
       },
       contact_email: {
         type: Sequelize.STRING(255),
-        allowNull: true,
       },
       created_at: {
         allowNull: false,

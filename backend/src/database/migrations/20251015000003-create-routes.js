@@ -20,11 +20,9 @@ module.exports = {
       },
       distance_km: {
         type: Sequelize.DECIMAL(6, 2),
-        allowNull: true,
       },
       estimated_duration_minutes: {
         type: Sequelize.INTEGER,
-        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -38,7 +36,6 @@ module.exports = {
       },
     });
 
-    // Add unique constraint for route combination
     await queryInterface.addConstraint("routes", {
       fields: ["departure_city", "arrival_city"],
       type: "unique",

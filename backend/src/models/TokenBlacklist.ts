@@ -42,7 +42,7 @@ class TokenBlacklist
     });
   }
 
-  // Clean up expired tokens
+  // Clean up expired tokens (call this periodically)
   static async cleanupExpired(): Promise<number> {
     const result = await TokenBlacklist.destroy({
       where: {

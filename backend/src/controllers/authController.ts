@@ -19,7 +19,7 @@ export class AuthController {
 
       sendCreated(res, result, 'Registration successful. Please login to continue.');
     } catch (error: any) {
-      logError('Registration error', error);
+      logError('Registration error', error, { context: 'AuthController.register' });
       
       const statusCode = error.message.includes('already') ? 400 : 500;
       sendError(res, error.message || 'Registration failed', statusCode);
@@ -36,7 +36,7 @@ export class AuthController {
 
       sendSuccess(res, result, 'Login successful');
     } catch (error: any) {
-      logError('Login error', error);
+      logError('Login error', error, { context: 'AuthController.login' });
       
       const statusCode = error.message.includes('Invalid') ? 401 : 500;
       sendError(res, error.message || 'Login failed', statusCode);
@@ -59,7 +59,10 @@ export class AuthController {
 
       sendSuccess(res, result, 'Logged out successfully');
     } catch (error: any) {
-      logError('Logout error', error);
+      logError('Logout error', error, { 
+        context: 'AuthController.logout',
+        userId: (req as any).user?.id 
+      });
       
       sendError(res, error.message || 'Logout failed', 500);
     }
@@ -73,7 +76,10 @@ export class AuthController {
 
       sendSuccess(res, { user });
     } catch (error: any) {
-      logError('Get profile error', error);
+      logError('Get profile error', error, { 
+        context: 'AuthController.getProfile',
+        userId: (req as any).user?.id 
+      });
       
       const statusCode = error.message === 'User not found' ? 404 : 500;
       sendError(res, error.message || 'Failed to fetch profile', statusCode);
@@ -95,7 +101,10 @@ export class AuthController {
 
       sendSuccess(res, { user }, 'Profile updated successfully');
     } catch (error: any) {
-      logError('Update profile error', error);
+      logError('Update profile error', error, { 
+        context: 'AuthController.updateProfile',
+        userId: (req as any).user?.id 
+      });
       
       const statusCode = error.message === 'User not found' ? 404 : 500;
       sendError(res, error.message || 'Failed to update profile', statusCode);
