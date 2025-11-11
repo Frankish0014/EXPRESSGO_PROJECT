@@ -8,7 +8,7 @@ interface UserAttributes {
   email: string;
   phone_number: string;
   password_hash: string;
-  role: 'user' | 'admin';
+  role: 'passenger' | 'admin';
   created_at?: Date;
   updated_at?: Date;
 }
@@ -21,7 +21,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public email!: string;
   public phone_number!: string;
   public password_hash!: string;
-  public role!: 'user' | 'admin';
+  public role!: 'passenger' | 'admin';
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
 
@@ -60,15 +60,18 @@ User.init(
       type: DataTypes.STRING(20),
       allowNull: false,
       unique: true,
+      validate: {
+        is: /^\+2507[0-9]{8}$/,
+      },
     },
     password_hash: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM('user', 'admin'),
+      type: DataTypes.ENUM('passenger', 'admin'),
       allowNull: false,
-      defaultValue: 'user',
+      defaultValue: 'passenger',
     },
     created_at: {
       type: DataTypes.DATE,

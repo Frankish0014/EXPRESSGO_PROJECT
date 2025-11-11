@@ -1,5 +1,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
+import BusSchedule from './BusSchedule'; // Import the related model
+import User from './User'; // Import the related model
 
 interface BookingAttributes {
   id: number;
@@ -26,12 +28,9 @@ class Booking extends Model<BookingAttributes, BookingCreationAttributes> implem
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
 
-  // Helper method to generate booking code
-  static generateBookingCode(): string {
-    const timestamp = Date.now().toString(36).toUpperCase();
-    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-    return `BK${timestamp}${random}`;
-  }
+  // Associated data (optional, populated when using include)
+  public readonly user?: User;
+  public readonly schedule?: BusSchedule;
 }
 
 Booking.init(
@@ -42,7 +41,7 @@ Booking.init(
       primaryKey: true,
     },
     booking_code: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(25),
       allowNull: false,
       unique: true,
     },
@@ -89,13 +88,6 @@ Booking.init(
     tableName: 'bookings',
     underscored: true,
     timestamps: true,
-    hooks: {
-      beforeCreate: async (booking: Booking) => {
-        if (!booking.booking_code) {
-          booking.booking_code = Booking.generateBookingCode();
-        }
-      },
-    },
   }
 );
 
