@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/User';
-import TokenBlacklist from '../models/TokenBlacklist';
+import { User, TokenBlacklist } from '../models';
 import { config } from '../config/app';
 
 export class AuthService {
@@ -29,9 +28,8 @@ export class AuthService {
       email,
       phone_number,
       password_hash: password,
-      role: 'user',
+      role: 'passenger',
     });
-
     return { user: user.toJSON() };
   }
 
@@ -96,10 +94,10 @@ export class AuthService {
   }
 
   private static generateToken(user: User): string {
-  return jwt.sign(
-    { id: user.id, email: user.email, role: user.role },
-    config.jwt.secret,
-    { expiresIn: config.jwt.expiresIn } as jwt.SignOptions
-  );
-}
+    return jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      config.jwt.secret,
+      { expiresIn: config.jwt.expiresIn } as jwt.SignOptions
+    );
+  }
 }
