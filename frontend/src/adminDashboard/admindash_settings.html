@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExpressGo | Settings</title>
+  <link rel="stylesheet" href="admindash.css" />
+  <link rel="stylesheet" href="admindash_settings.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">ExpressGo</div>
+      <nav>
+        <ul>
+          <li><a href="admindash_overview.html">Dashboard</a></li>
+          <li><a href="admindash.html">Bookings</a></li>
+          <li><a href="#statistics">Statistics</a></li>
+          <li><a href="#offers">Offers</a></li>
+        </ul>
+      </nav>
+      <div class="bottom-nav">
+        <ul>
+          <li><a href="admindash_help.html">Get Help</a></li>
+          <li><a href="admindash_settings.html" class="active">Settings</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <header class="header">
+        <h2>Settings</h2>
+      </header>
+
+      <div class="settings-container">
+        <!-- Profile Settings -->
+        <section class="card">
+          <h3>Profile Settings</h3>
+          <form>
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input type="text" id="fullName" value="Admin User">
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" value="admin@expressgo.com" disabled>
+            </div>
+            <button type="submit" class="btn-primary">Save Changes</button>
+          </form>
+        </section>
+
+        <!-- Display & Theme -->
+        <section class="card">
+          <h3>Display & Theme</h3>
+          <div class="setting-item">
+            <span>Dark Mode</span>
+            <label class="switch">
+              <input type="checkbox" id="themeToggle">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Security Settings -->
+        <section class="card">
+          <h3>Security</h3>
+          <form>
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <input type="password" id="currentPassword">
+            </div>
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <input type="password" id="newPassword">
+            </div>
+            <button type="submit" class="btn-primary">Change Password</button>
+          </form>
+        </section>
+
+        <!-- Account Management -->
+        <section class="card danger-zone">
+          <h3>Account Management</h3>
+          <p>Deactivating your account will suspend your access. This action can be undone by contacting support.</p>
+          <button class="btn-danger">Deactivate Account</button>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="./js/admindash_settings.js"></script>
+</body>
+</html>

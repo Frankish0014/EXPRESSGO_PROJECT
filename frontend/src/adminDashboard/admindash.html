@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExpressGo | Booking Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admindash.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">ExpressGo</span></div>
+      <nav>
+        <ul>
+          <li><a href="admindash_overview.html">Dashboard</a></li>
+          <li><a href="admindash.html">Bookings</a></li>
+          <li><a href="statistics">Statistics</a></li>
+          <li><a href="offers">Offers</a></li>
+        </ul>
+      </nav>
+      <div class="bottom-nav">
+        <ul>
+          <li><a href="admindash_help.html">Get Help</a></li>
+          <li><a href="admindash_settings.html">Settings</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <header class="header">
+        <h2>Booking details</h2>
+        <div class="header-right">
+          <div class="filters">
+            <div class="tabs">
+              <a href="#" class="active">All Bookings</a>
+              <a href="#">Pending</a>
+              <a href="#">Completed</a>
+            </div>
+            <div class="date-filter">
+              <input type="date" value="2025-01-19">
+              <span>to</span>
+              <input type="date" value="2025-11-11">
+            </div>
+          </div>
+          <div class="profile-container">
+            <div class="profile" id="profileMenuBtn">
+              <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">
+            </div>
+            <div id="profileDropdown" class="profile-dropdown hidden">
+              <div class="profile-info">
+                <p><strong>ExpressGo</strong></p>
+                <p class="email">admin@expressgo.com</p>
+              </div>
+              <a href="#" class="dropdown-item" id="logoutBtn">Logout</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Booking Table -->
+      <section class="table-section">
+        <table>
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Date</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#1</td>
+              <td>Frank I.</td>
+              <td>KK 435 st</td>
+              <td>31 Jul 2024</td>
+              <td>4,500 frw</td>
+              <td><span class="status pending">Pending</span></td>
+              <td>⚙️</td>
+            </tr>
+            <tr>
+              <td>#2</td>
+              <td>Attorney V.</td>
+              <td>KK 535 st</td>
+              <td>02 Aug 2024</td>
+              <td>3,000 frw</td>
+              <td><span class="status completed">Completed</span></td>
+              <td>⚙️</td>
+            </tr>
+            <tr>
+              <td>#3</td>
+              <td>Mugabo A.</td>
+              <td>KK 565 st</td>
+              <td>04 Aug 2024</td>
+              <td>3,000 frw</td>
+              <td><span class="status canceled">Canceled</span></td>
+              <td>⚙️</td>
+            </tr>
+            <tr>
+              <td>#4</td>
+              <td>Saad B.</td>
+              <td>Kg 453 st</td>
+              <td>06 Aug 2024</td>
+              <td>5,500 frw</td>
+              <td><span class="status completed">Completed</span></td>
+              <td>⚙️</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="table-footer">Showing 18 of 600</p>
+      </section>
+    </main>
+  <script src="./js/auth.js"></script>
+  <script src="./js/admindash.js"></script>
+</body>
+</html>
