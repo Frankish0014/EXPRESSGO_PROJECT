@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="user-login-styles.css">
+  <link rel="stylesheet" href="css/user-login-styles.css">
   <title>Login - ExpressGo</title>
 </head>
 <body>
@@ -92,20 +92,6 @@
     </div>
   </footer>
 
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      
-      // Simple validation
-      if (email && password) {
-        alert('Login functionality would be connected to your backend here.\n\nEmail: ' + email);
-        // Here you would typically send the data to your server
-        // Example: fetch('/api/login', { method: 'POST', body: JSON.stringify({email, password}) })
-      }
-    });
-  </script>
+  <script src="js/user-log-in.js"></script>
 </body>
 </html>

@@ -15,7 +15,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
-    background-color: #667eea; /*I will delete this, I just want to make sure my changes are applying */
+    /* background-color: #667eea; I will delete this, I just want to make sure my changes are applying */
 }
 
 /* Header */
@@ -60,7 +60,7 @@ nav a.active {
 
 /* User Profile Section */
 .profile-header {
-    background: linear-gradient(135deg, #002E9B 1%, #0055FF 100%);
+    background: linear-gradient(-200deg, #002E9B 30%, #0055FF 100%);
     color: white;
     padding: 3rem 0;
     margin-bottom: 2rem;
@@ -380,7 +380,7 @@ nav a.active {
 
 /* Footer */
 .footer {
-    background: #2c3e50;
+    background: #002E9B;
     color: white;
     padding: 2rem 0 1rem;
     margin-top: 3rem;
