@@ -29,44 +29,166 @@ const routeData = {
     'Rutsiro': { distance: '140 km', duration: '3 hours' }
 };
 
-// Generate seats
+// Get HTML elements
+const agentSelect = document.getElementById('agentInfo');
 const seatSelection = document.getElementById('seatSelection');
-const totalSeats = 40;
-const occupiedSeats = [5, 12, 18, 23, 29, 35]; // Example occupied seats
-let selectedSeats = [];
 
-for (let i = 1; i <= totalSeats; i++) {
+let selectedSeats = [];
+let occupiedSeats = [5, 12, 18, 23]; // Example occupied seats
+
+// Define number of seats for each agent
+const agentSeatConfig = {
+  RITCO: 70,
+  VOLCANO: 28,
+  EXPRESS: 28,
+  EXCELL: 28,
+  MATUNDA: 28,
+  OMEGA: 28,
+  OTHERS: 28
+};
+
+// Function to generate seats
+function generateSeats(totalSeats) {
+  seatSelection.innerHTML = ''; // Clear previous seats
+  for (let i = 1; i <= totalSeats; i++) {
     const seat = document.createElement('div');
-    seat.className = 'seat';
-    seat.textContent = i;
-    seat.dataset.seat = i;
+    seat.classList.add('seat');
 
     if (occupiedSeats.includes(i)) {
-    seat.classList.add('occupied');
-    } else {
-    seat.addEventListener('click', function() {
-        const maxPassengers = parseInt(document.getElementById('passengers').value);
-        
-        if (this.classList.contains('selected')) {
-        this.classList.remove('selected');
-        selectedSeats = selectedSeats.filter(s => s !== i);
-        } else if (selectedSeats.length < maxPassengers) {
-        this.classList.add('selected');
-        selectedSeats.push(i);
-        } else {
-        alert(`You can only select ${maxPassengers} seat(s)`);
-        }
-        
-        updateSummary();
-    });
+      seat.classList.add('occupied');
     }
 
+    seat.textContent = i;
+
+    // Seat selection logic
+    seat.addEventListener('click', () => {
+      if (!seat.classList.contains('occupied')) {
+        seat.classList.toggle('selected');
+        if (seat.classList.contains('selected')) {
+          selectedSeats.push(i);
+        } else {
+          selectedSeats = selectedSeats.filter(s => s !== i);
+        }
+        updateSummary();
+      }
+    });
+
     seatSelection.appendChild(seat);
+  }
 }
+
+// When user selects an agent
+agentSelect.addEventListener('change', (e) => {
+  const agent = e.target.value;
+  const totalSeats = agentSeatConfig[agent] || 28; // Default to 28 if not found
+  generateSeats(totalSeats);
+});
+
+// Optional: generate default seats on page load
+generateSeats(28);
+
+
+const agentCars = {
+  ritco: {
+    "RAB 001 D": 70,
+    "RAC 002 F" : 70,
+    "RAF 444 G" : 70,
+    "RAB 244 D": 70,
+    "RAC 522 F" : 70,
+    "RAF 545 G" : 70
+  },
+  "volcano": {
+    "RAC 101 F": 28,
+    "RAE 102 G": 28,
+    "RAC 445 F": 28,
+    "RAE 552 G": 28,
+    "RAC 111 F": 28,
+    "RAE 133 G": 28,
+  },
+  "alpha express": {
+    "RAH 453 H": 28,
+    "RAH 245 F": 28,
+    "RAH 443 H": 28,
+    "RAH 244 F": 28,
+    "RAH 422 H": 28,
+    "RAH 244 F": 28
+  },
+  "matunda express ltd": {
+    "RAH 542 G": 28,
+    "RAF 928 H": 28,
+    "RAH 541 G": 28,
+    "RAF 923 H": 28,
+    "RAH 541 G": 28,
+    "RAF 924 H": 28
+  },
+  "city express": {
+    "RAG 501 H": 28,
+    "RAC 402 F": 28,
+    "RAG 503 H": 28,
+    "RAC 404 F": 28,
+    "RAG 506 H": 28,
+    "RAC 408 F": 28
+  },
+  "select express ltd": {
+    "RAB 458 G": 28,
+    "RAH 998 N":28,
+    "RAB 453 G": 28,
+    "RAH 992 N":28,
+    "RAB 451 G": 28,
+    "RAH 997 N":28,
+  },
+  "yahoo express": {
+    "RAF 984 C": 28,
+    "RAF 398 H": 28,
+    "RAF 761 C": 28,
+    "RAF 233 H": 28,
+    "RAF 123 C": 28,
+    "RAF 311 H": 28
+  }
+};
+
+// Slecting plate numbers 
+const plateSelect = document.getElementById("plateNumber");
+
+agentSelect.addEventListener("change", () => {
+  const agent = agentSelect.value.toLowerCase();
+
+  // clear previous plates
+  plateSelect.innerHTML = '<option value="">Select plate number</option>';
+
+  if (agentCars[agent]) {
+    Object.keys(agentCars[agent]).forEach((plate) => {
+      const option = document.createElement("option");
+      option.value = plate;
+      option.textContent = plate;
+      plateSelect.appendChild(option);
+    });
+  }
+
+  // reset seats when agent changes
+  selectedSeats = [];
+  seatSelection.innerHTML = "";
+  updateSummary();
+});
+
+
+plateSelect.addEventListener("change", () => {
+  const agent = agentSelect.value.toLowerCase();
+  const plate = plateSelect.value;
+
+  if (agent && plate && agentCars[agent][plate]) {
+    const totalSeats = agentCars[agent][plate];
+    generateSeats(totalSeats);
+    updateSummary();
+  }
+});
+
+
 
 // Form elements
 const toSelect = document.getElementById('to');
 const routeInfo = document.getElementById('routeInfo');
+const agentInfo =  document.getElementById('agentInfo');
 const departDate = document.getElementById('departDate');
 const departTime = document.getElementById('departTime');
 const passengersInput = document.getElementById('passengers');
@@ -107,19 +229,25 @@ passengersInput.addEventListener('change', function() {
 function updateSummary() {
     const from = document.getElementById('from').value;
     const to = toSelect.value;
+    const agents = agentInfo.value;
     const date = departDate.value;
     const time = departTime.value;
     const passengers = passengersInput.value;
     const price = toSelect.options[toSelect.selectedIndex].dataset.price || 0;
+    const plate = plateSelect.value;
+
 
     document.getElementById('summaryRoute').textContent = 
     (from && to) ? `${from} → ${to}` : '-';
+    document.getElementById('summaryAgents').textContent = agents;
     document.getElementById('summaryDate').textContent = date || '-';
     document.getElementById('summaryTime').textContent = time || '-';
     document.getElementById('summaryPassengers').textContent = passengers;
     document.getElementById('summarySeats').textContent = 
     selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None';
     document.getElementById('summaryPricePerSeat').textContent = `${price} Rwf`;
+    document.getElementById('summaryAgents').textContent = agents + (plate ? ` (${plate})` : '');
+
     
     const total = price * selectedSeats.length;
     document.getElementById('summaryTotal').textContent = `${total.toLocaleString()} Rwf`;
@@ -136,6 +264,7 @@ confirmBtn.addEventListener('click', function() {
     const bookingData = {
     from: document.getElementById('from').value,
     to: toSelect.value,
+    agents: agentInfo.value,
     date: departDate.value,
     time: departTime.value,
     passengers: passengersInput.value,

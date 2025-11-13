@@ -46,6 +46,30 @@
             </div>
 
             <div class="form-group">
+              <label for="agentInfo">Select Agents</label>
+              <select id="agentInfo" name="agentInfo" required>
+                <option value="">Select Agents</option>
+                <optgroup label="Nyabugogo Agents">
+                  <option value="RITCO" data-price="">RITCO</option>
+                  <option value="Volcano" data-price="">Volcano</option>
+                  <option value="Alpha Express" data-price="">Alpha Express</option>
+                  <option value="City Express" data-price="">City Express</option>
+                  <option value="Matunda Express Ltd" data-price="">Matunda Express Ltd</option>
+                  <option value="Select Express Ltd" data-price="">Select Express Ltd </option>
+                  <option value="Yahoo Express" data-price="">Yahoo Express</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="plateNumber">Select Car / Plate Number</label>
+              <select id="plateNumber" name="plateNumber" required>
+                <option value="">Select plate number</option>
+                <!-- Options will be generated dynamically -->
+              </select>
+            </div>
+
+            <div class="form-group">
               <label for="to">To (Destination)</label>
               <select id="to" name="to" required>
                 <option value="">Select destination</option>
@@ -104,13 +128,15 @@
                 <label for="departTime">Departure Time</label>
                 <select id="departTime" name="departTime" required>
                   <option value="">Select time</option>
-                  <option value="06:00">06:00 AM</option>
-                  <option value="08:00">08:00 AM</option>
-                  <option value="10:00">10:00 AM</option>
-                  <option value="12:00">12:00 PM</option>
-                  <option value="14:00">02:00 PM</option>
-                  <option value="16:00">04:00 PM</option>
-                  <option value="18:00">06:00 PM</option>
+                  <optgroup id="agentname" label=""> 
+                    <option value="06:00">06:00 AM</option>
+                    <option value="08:00">08:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="14:00">02:00 PM</option>
+                    <option value="16:00">04:00 PM</option>
+                    <option value="18:00">06:00 PM</option>
+                  </optgroup>
                 </select>
               </div>
             </div>
@@ -175,6 +201,11 @@
           </div>
 
           <div class="summary-item">
+            <span class="summary-label">Agents</span>
+            <span class="summary-value" id="summaryAgents">-</span>
+          </div>
+
+          <div class="summary-item">
             <span class="summary-label">Date:</span>
             <span class="summary-value" id="summaryDate">-</span>
           </div>
@@ -204,12 +235,11 @@
             <span class="price" id="summaryTotal">0 Rwf</span>
           </div>
 
-          <button type="button" class="btn-primary" id="confirmBooking" disabled>Confirm Booking</button>
+          <button type="button" class="btn-primary" id="confirmBooking" disabled><a href="payment-page.html">Confirm Booking</a>  </button>
         </div>
       </div>
     </div>
   </section>
-
   <!-- Footer -->
   <footer id="contact" class="footer">
     <div class="container footer-content">
