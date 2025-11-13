@@ -5,6 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 import authRoutes from './routes/authRoutes';
 import routeRoutes from './routes/routeRoutes';
 import scheduleRoutes from './routes/scheduleRoutes';
+import bookingRoutes from './routes/bookingRoutes';
 import { errorHandler } from './middleware/errorHandler';
 import { swaggerDocument } from './swagger';
 
@@ -37,6 +38,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/routes', routeRoutes);
 app.use('/api/schedules', scheduleRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // Error handling
 app.use(errorHandler);
