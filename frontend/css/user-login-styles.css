@@ -20,6 +20,11 @@ body {
 
 }
 
+.nav-content a:hover,
+.nav-content a.active {
+  border-bottom: 2px solid #ff8c00;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;

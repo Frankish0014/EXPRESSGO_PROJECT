@@ -70,40 +70,15 @@ body {
 .user-log-in {
   display: flex;
   justify-content: center;
-  gap: 2rem;
   background: #fff;
   color: #000;
   padding: 1rem;
   border-radius: 12px;
   margin-top: 2rem;
-  max-width: 400px;
+  max-width: 200px;
   margin-left: auto;
   margin-right: auto;
 }
-
-.login a {
-color: #0055ff;
-text-decoration: none;
-font-weight: 600;
-}
-
-.register {
-  background-color: #0055ff;
-  padding: 5px;
-  border-radius: 4px;
-  margin-left: 10px;
-}
-
-.login {
-  margin-right: 50px;
-}
-
-.register a{
-color: white;
-text-decoration: none;
-font-weight: 600;
-}
-
 .booking-form {
   display: flex;
   flex-wrap: wrap;

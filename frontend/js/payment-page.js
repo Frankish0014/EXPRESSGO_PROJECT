@@ -1,24 +1,59 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/payment-page.js"></script>
+
+// GET BOOKING DATA FROM LOCALSTORAGE
+const bookingData = JSON.parse(localStorage.getItem('currentBooking'));
+
+// Check if booking data exists
+if (!bookingData) {
+    alert('No booking found! Please complete your booking first.');
+    window.location.href = 'booking-page.html';
+}
+
+// DISPLAY BOOKING SUMMARY ON PAGE LOAD
+if (bookingData) {
+    // Display in summary section (if you have these elements on your page)
+    if (document.getElementById('summaryRoute')) {
+        document.getElementById('summaryRoute').textContent = `${bookingData.from} → ${bookingData.to}`;
+    }
+    if (document.getElementById('summaryAgent')) {
+        document.getElementById('summaryAgent').textContent = bookingData.agent;
+    }
+    if (document.getElementById('summaryPlate')) {
+        document.getElementById('summaryPlate').textContent = bookingData.plate;
+    }
+    if (document.getElementById('summaryDate')) {
+        document.getElementById('summaryDate').textContent = bookingData.date;
+    }
+    if (document.getElementById('summaryTime')) {
+        document.getElementById('summaryTime').textContent = bookingData.time;
+    }
+    if (document.getElementById('summaryPassengers')) {
+        document.getElementById('summaryPassengers').textContent = bookingData.passengers;
+    }
+    if (document.getElementById('summarySeats')) {
+        document.getElementById('summarySeats').textContent = bookingData.seats.join(', ');
+    }
+    if (document.getElementById('summaryTotal')) {
+        document.getElementById('summaryTotal').textContent = `${bookingData.total.toLocaleString()} Rwf`;
+    }
+}
+
 let selectedPaymentMethod = null;
 let uploadedFile = null;
 
 // Sample booking data (would come from your booking form)
-const bookingData = {
-    reference: 'BK' + Math.random().toString(36).substr(2, 6).toUpperCase(),
-    from: 'Kigali - Nyabugogo',
-    to: 'Bugesera',
-    agent: 'RITCO',
-    plate: 'RAD 001 A',
-    date: '2025-11-13',
-    time: '06:00',
-    passengers: 3,
-    seats: [1, 2, 7],
-    pricePerSeat: 750,
-    total: 2250
-};
+
+// reading and displaying user booking info!
 
 function openPaymentModal() {
+    // if (!selectedPaymentMethod){
+    //     alert('Please select a payment method first!');
+    //     return;
+    // }
     document.getElementById('paymentModal').classList.add('show');
 }
+
 
 function closePaymentModal() {
     document.getElementById('paymentModal').classList.remove('show');
@@ -45,8 +80,6 @@ function selectPaymentMethod(method) {
     document.getElementById('momoDetails').classList.add('show');
     } else if (method === 'bank') {
     document.getElementById('bankDetails').classList.add('show');
-    } else if (method === 'card') {
-    document.getElementById('cardDetails').classList.add('show');
     }
 }
 

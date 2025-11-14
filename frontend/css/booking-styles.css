@@ -54,10 +54,12 @@ nav a {
   transition: color 0.3s;
 }
 
-nav a:hover,
-nav a.active {
+.nav-content a:hover,
+.nav-content a.active {
   color: #3498db;
+  border-bottom: 2px solid #ff8c00;
 }
+
 
 /* Booking Section */
 .booking-section {
@@ -211,6 +213,10 @@ nav a.active {
   margin-top: 1rem;
 }
 
+.btn-primary a {
+  text-decoration: none;
+  color: #002E9B;
+}
 .btn-primary:hover {
   background: #2980b9;
 }

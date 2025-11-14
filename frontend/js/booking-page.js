@@ -47,6 +47,7 @@ const agentSeatConfig = {
   OTHERS: 28
 };
 
+
 // Function to generate seats
 function generateSeats(totalSeats) {
   seatSelection.innerHTML = ''; // Clear previous seats
@@ -183,8 +184,6 @@ plateSelect.addEventListener("change", () => {
   }
 });
 
-
-
 // Form elements
 const toSelect = document.getElementById('to');
 const routeInfo = document.getElementById('routeInfo');
@@ -243,8 +242,7 @@ function updateSummary() {
     document.getElementById('summaryDate').textContent = date || '-';
     document.getElementById('summaryTime').textContent = time || '-';
     document.getElementById('summaryPassengers').textContent = passengers;
-    document.getElementById('summarySeats').textContent = 
-    selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None';
+    document.getElementById('summarySeats').textContent = selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None';
     document.getElementById('summaryPricePerSeat').textContent = `${price} Rwf`;
     document.getElementById('summaryAgents').textContent = agents + (plate ? ` (${plate})` : '');
 
@@ -262,26 +260,35 @@ departTime.addEventListener('change', updateSummary);
 // Confirm booking
 confirmBtn.addEventListener('click', function() {
     const bookingData = {
-    from: document.getElementById('from').value,
-    to: toSelect.value,
-    agents: agentInfo.value,
-    date: departDate.value,
-    time: departTime.value,
-    passengers: passengersInput.value,
-    seats: selectedSeats,
-    fullName: document.getElementById('fullName').value,
-    email: document.getElementById('email').value,
-    phone: document.getElementById('phone').value,
-    idNumber: document.getElementById('idNumber').value,
-    total: document.getElementById('summaryTotal').textContent
+        from: document.getElementById('from').value,
+        to: toSelect.value,
+        agent: agentInfo.value,
+        plate: plateSelect.value,
+        date: departDate.value,
+        time: departTime.value,
+        passengers: passengersInput.value,
+        seats: selectedSeats,
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        idNumber: document.getElementById('idNumber').value,
+        total: parseInt(document.getElementById('summaryTotal').textContent.replace(/[^\d]/g, '')),
+        reference: 'EXG' + Date.now().toString().slice(-8)
     };
 
     if (!bookingData.fullName || !bookingData.email || !bookingData.phone || !bookingData.idNumber) {
-    alert('Please fill in all passenger information');
-    return;
+        alert('Please fill in all passenger information');
+        return;
     }
 
-    alert(`Booking Confirmed!\n\nRoute: ${bookingData.from} → ${bookingData.to}\nDate: ${bookingData.date} at ${bookingData.time}\nSeats: ${bookingData.seats.join(', ')}\nTotal: ${bookingData.total}\n\nA confirmation email will be sent to ${bookingData.email}`);
+    // SAVE TO LOCALSTORAGE
+    localStorage.setItem('currentBooking', JSON.stringify(bookingData));
+
+    alert(`Booking Confirmed!\n\nRoute: ${bookingData.from} → ${bookingData.to}\nDate: ${bookingData.date} at ${bookingData.time}\nSeats: ${bookingData.seats.join(', ')}\nTotal: ${bookingData.total.toLocaleString()} Rwf\n\nA confirmation email will be sent to ${bookingData.email}`);
+    
+    // Redirect to payment page
+    window.location.href = 'payment-page.html';
+
     
     // Here you would send the booking data to your server
     // Example: fetch('/api/bookings', { method: 'POST', body: JSON.stringify(bookingData) })
