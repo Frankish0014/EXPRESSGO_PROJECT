@@ -1,6 +1,3 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="js/payment-page.js"></script>
-
 // GET BOOKING DATA FROM LOCALSTORAGE
 const bookingData = JSON.parse(localStorage.getItem('currentBooking'));
 

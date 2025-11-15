@@ -29,6 +29,17 @@ const routeData = {
     'Rutsiro': { distance: '140 km', duration: '3 hours' }
 };
 
+// Agent-specific data
+const agentData = {
+  'RITCO': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '750' },
+  'Volcano': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '7500' },
+  'Alpha Express': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '4000' },
+  'City Express': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '3500' },
+  'Matunda Express Ltd': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '4500' },
+  'Select Express Ltd': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '4500' },
+  'Yahoo Express': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '1500' }
+};
+
 // Get HTML elements
 const agentSelect = document.getElementById('agentInfo');
 const seatSelection = document.getElementById('seatSelection');
@@ -91,12 +102,12 @@ generateSeats(28);
 
 const agentCars = {
   ritco: {
-    "RAB 001 D": 70,
-    "RAC 002 F" : 70,
-    "RAF 444 G" : 70,
-    "RAB 244 D": 70,
-    "RAC 522 F" : 70,
-    "RAF 545 G" : 70
+    "RAB 001 D": 64,
+    "RAC 002 F" : 64,
+    "RAF 444 G" : 64,
+    "RAB 244 D": 64,
+    "RAC 522 F" : 64,
+    "RAF 545 G" : 64
   },
   "volcano": {
     "RAC 101 F": 28,
@@ -112,14 +123,14 @@ const agentCars = {
     "RAH 443 H": 28,
     "RAH 244 F": 28,
     "RAH 422 H": 28,
-    "RAH 244 F": 28
+    "RAH 255 F": 28
   },
   "matunda express ltd": {
     "RAH 542 G": 28,
     "RAF 928 H": 28,
     "RAH 541 G": 28,
     "RAF 923 H": 28,
-    "RAH 541 G": 28,
+    "RAH 544 G": 28,
     "RAF 924 H": 28
   },
   "city express": {
@@ -154,6 +165,16 @@ const plateSelect = document.getElementById("plateNumber");
 agentSelect.addEventListener("change", () => {
   const agent = agentSelect.value.toLowerCase();
 
+  // Show route info when agent is selected
+  if (agent && agentData[agentSelect.value]) {
+    document.getElementById('distance').textContent = agentData[agentSelect.value].distance;
+    document.getElementById('duration').textContent = agentData[agentSelect.value].duration;
+    document.getElementById('pricePerSeat').textContent = agentData[agentSelect.value].pricePerSeat + ' Rwf';
+    routeInfo.classList.add('show');
+  } else {
+    routeInfo.classList.remove('show');
+  }
+
   // clear previous plates
   plateSelect.innerHTML = '<option value="">Select plate number</option>';
 
@@ -187,7 +208,7 @@ plateSelect.addEventListener("change", () => {
 // Form elements
 const toSelect = document.getElementById('to');
 const routeInfo = document.getElementById('routeInfo');
-const agentInfo =  document.getElementById('agentInfo');
+const agentInfo = document.getElementById('agentInfo');
 const departDate = document.getElementById('departDate');
 const departTime = document.getElementById('departTime');
 const passengersInput = document.getElementById('passengers');
@@ -197,20 +218,8 @@ const confirmBtn = document.getElementById('confirmBooking');
 const today = new Date().toISOString().split('T')[0];
 departDate.setAttribute('min', today);
 
-// Update route info when destination changes
+// Update summary when destination changes (no route info display)
 toSelect.addEventListener('change', function() {
-    const destination = this.value;
-    const price = this.options[this.selectedIndex].dataset.price;
-    
-    if (destination && routeData[destination]) {
-    document.getElementById('distance').textContent = routeData[destination].distance;
-    document.getElementById('duration').textContent = routeData[destination].duration;
-    document.getElementById('pricePerSeat').textContent = price;
-    routeInfo.classList.add('show');
-    } else {
-    routeInfo.classList.remove('show');
-    }
-    
     updateSummary();
 });
 
@@ -288,8 +297,4 @@ confirmBtn.addEventListener('click', function() {
     
     // Redirect to payment page
     window.location.href = 'payment-page.html';
-
-    
-    // Here you would send the booking data to your server
-    // Example: fetch('/api/bookings', { method: 'POST', body: JSON.stringify(bookingData) })
 });

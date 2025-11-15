@@ -45,31 +45,7 @@
               </select>
             </div>
 
-            <div class="form-group">
-              <label for="agentInfo">Select Agents</label>
-              <select id="agentInfo" name="agentInfo" required>
-                <option value="">Select Agents</option>
-                <optgroup label="Nyabugogo Agents">
-                  <option value="RITCO" data-price="">RITCO</option>
-                  <option value="Volcano" data-price="">Volcano</option>
-                  <option value="Alpha Express" data-price="">Alpha Express</option>
-                  <option value="City Express" data-price="">City Express</option>
-                  <option value="Matunda Express Ltd" data-price="">Matunda Express Ltd</option>
-                  <option value="Select Express Ltd" data-price="">Select Express Ltd </option>
-                  <option value="Yahoo Express" data-price="">Yahoo Express</option>
-                </optgroup>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="plateNumber">Select Car / Plate Number</label>
-              <select id="plateNumber" name="plateNumber" required>
-                <option value="">Select plate number</option>
-                <!-- Options will be generated dynamically -->
-              </select>
-            </div>
-
-            <div class="form-group">
+                        <div class="form-group">
               <label for="to">To (Destination)</label>
               <select id="to" name="to" required>
                 <option value="">Select destination</option>
@@ -111,13 +87,7 @@
                 </optgroup>
               </select>
             </div>
-
-            <div id="routeInfo" class="route-info">
-              <p><strong>Distance:</strong> <span id="distance">-</span></p>
-              <p><strong>Duration:</strong> <span id="duration">-</span></p>
-              <p><strong>Price per seat:</strong> <span id="pricePerSeat">-</span> Rwf</p>
-            </div>
-
+            
             <div class="form-row">
               <div class="form-group">
                 <label for="departDate">Departure Date</label>
@@ -140,6 +110,38 @@
                 </select>
               </div>
             </div>
+
+            <div class="form-group">
+              <label for="agentInfo">Select Agents</label>
+              <select id="agentInfo" name="agentInfo" required>
+                <option value="">Select Agents</option>
+                <optgroup label="Nyabugogo Agents">
+                  <option value="RITCO" data-price="">RITCO</option>
+                  <option value="Volcano" data-price="">Volcano</option>
+                  <option value="Alpha Express" data-price="">Alpha Express</option>
+                  <option value="City Express" data-price="">City Express</option>
+                  <option value="Matunda Express Ltd" data-price="">Matunda Express Ltd</option>
+                  <option value="Select Express Ltd" data-price="">Select Express Ltd </option>
+                  <option value="Yahoo Express" data-price="">Yahoo Express</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div id="routeInfo" class="route-info">
+              <p><strong>Distance:</strong> <span id="distance">-</span></p>
+              <p><strong>Duration:</strong> <span id="duration">-</span></p>
+              <p><strong>Price per seat:</strong> <span id="pricePerSeat">-</span></p>
+            </div>
+
+
+            <div class="form-group">
+              <label for="plateNumber">Select Car / Plate Number</label>
+              <select id="plateNumber" name="plateNumber" required>
+                <option value="">Select plate number</option>
+                <!-- Options will be generated dynamically -->
+              </select>
+            </div>
+
 
             <div class="form-group">
               <label for="passengers">Number of Passengers</label>
