@@ -29,6 +29,7 @@ const routeData = {
     'Rutsiro': { distance: '140 km', duration: '3 hours' }
 };
 
+
 // Agent-specific data
 const agentData = {
   'RITCO': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '750' },
