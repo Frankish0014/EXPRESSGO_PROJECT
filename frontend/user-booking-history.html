@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/user-booking-history.css">
+  <title>My Bookings - ExpressGo</title>
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="logo">ExpressGo</div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="booking.html">Book Now</a></li>
+          <li><a href="#" class="active">My Bookings</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="index.html">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Profile Header -->
+  <section class="profile-header">
+    <div class="container">
+      <div class="profile-info">
+        <div class="profile-avatar">FI</div>
+        <div class="profile-details">
+          <h1>Frank Ishimwe</h1>
+          <p>ishimwefrank0014@gmail.com +250 788 265 8368</p>
+          <p>Member since November 2025</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="container">
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-icon blue">🎫</div>
+        <div class="stat-content">
+          <h3>12</h3>
+          <p>Total Bookings</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✓</div>
+        <div class="stat-content">
+          <h3>8</h3>
+          <p>Completed Trips</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">📅</div>
+        <div class="stat-content">
+          <h3>3</h3>
+          <p>Upcoming Trips</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">💰</div>
+        <div class="stat-content">
+          <h3>45,000</h3>
+          <p>Total Spent (Rwf)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <div class="filter-controls">
+        <label>Filter by Status:</label>
+        <select id="statusFilter">
+          <option value="all">All Bookings</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="pending">Pending</option>
+        </select>
+
+        <label style="margin-left: 1rem;">Search:</label>
+        <input type="text" id="searchInput" placeholder="Search by destination..." />
+      </div>
+    </div>
+
+    <!-- Bookings List -->
+    <div class="bookings-section">
+      <h2 class="section-title">My Bookings</h2>
+      <div id="bookingsList">
+        <!-- Booking cards will be inserted here by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact" class="footer">
+    <div class="container footer-content">
+      <div>
+        <h3>ExpressGo</h3>
+        <p>Reliable transport across Rwanda.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>Email: info@expressgo.com</p>
+        <p>Phone: +250 7813 489</p>
+      </div>
+      <div>
+        <h4>Follow Us</h4>
+        <p>🌐 Facebook | Twitter | Instagram</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ExpressGo. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/user-booking-history.js"></script>
+  </body>
+</html>

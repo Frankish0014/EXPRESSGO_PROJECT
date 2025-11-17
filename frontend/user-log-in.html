@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/user-login-styles.css">
+  <title>Login - ExpressGo</title>
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="logo">ExpressGo</div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#destinations">Destinations</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#" class="active">Login</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Login Section -->
+  <section class="login-section">
+    <div class="login-container">
+      <div class="login-header">
+        <h1>Welcome Back!</h1>
+        <p>Log in to book your next journey</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required />
+        </div>
+
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" name="remember" />
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="forgot-password">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary"><a href="user-booking-history.html">Log In</a></button>
+      </form>
+
+      <div class="divider">OR</div>
+
+      <div class="social-login">
+        <button class="social-btn" type="button">
+          <span>🌐</span> Google
+        </button>
+        <button class="social-btn" type="button">
+          <span>📘</span> Facebook
+        </button>
+      </div>
+
+      <div class="signup-link">
+        Don't have an account? <a href="register-page.html">Sign Up</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact" class="footer">
+    <div class="container footer-content">
+      <div>
+        <h3>ExpressGo</h3>
+        <p>Reliable transport across Rwanda.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>Email: info@expressgo.com</p>
+        <p>Phone: +250 7813 489</p>
+      </div>
+      <div>
+        <h4>Follow Us</h4>
+        <p>🌐 Facebook | Twitter | Instagram</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ExpressGo. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/user-log-in.js"></script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/payment-page.css ">
+  <title>ExpressGo - Ticket & Payment</title>
+</head>
+<body>
+      <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="logo"><a href="">ExpressGo</a></div>
+      <nav>
+        <ul>
+          <li><a href="#home" class="active">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#destinations">Destinations</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <a href="register-page.html">Register</a>
+          <a href="booking-page.html">Book Now</a>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Demo Button -->
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <button class="btn btn-primary1" onclick="openPaymentModal()" style="max-width: 300px;">
+      Click to See Payment & Ticket Flow
+    </button>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal" id="paymentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Complete Your Payment</h2>
+        <p>Secure payment for your bus ticket</p>
+      </div>
+      <div class="modal-body">
+        <h3 style="margin-bottom: 1rem; color: #2c3e50;">Select Payment Method</h3>
+        
+        <div class="payment-methods">
+          <div class="payment-method" onclick="selectPaymentMethod('momo')">
+            <div class="payment-method-icon">📱</div>
+            <div class="payment-method-info">
+              <h3>Mobile Money (MoMo)</h3>
+              <p>MTN & Airtel Money</p>
+            </div>
+          </div>
+
+          <div class="payment-method" onclick="selectPaymentMethod('bank')">
+            <div class="payment-method-icon">🏦</div>
+            <div class="payment-method-info">
+              <h3>Bank Transfer</h3>
+              <p>Direct bank deposit</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Money Details -->
+        <div class="payment-details" id="momoDetails">
+          <h3>Mobile Money Payment</h3>
+          <div class="payment-info">
+            <div class="payment-info-item">
+              <span class="payment-info-label">MTN Mobile Money <strong>(ExpressGo Ltd)</strong></span>
+              <span class="payment-info-value">*182*8*1*1446523#</span>
+            </div>
+            <div class="payment-info-item">
+              <span class="payment-info-label">Merchant Code</span>
+              <span class="payment-info-value">1446523</span>
+            </div>
+            <div class="payment-info-item">
+              <span class="payment-info-label">Amount to Pay</span>
+              <span class="payment-info-value" id="payment-info-value"></span>
+            </div>
+          </div>
+          <p style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 1rem;">
+            Or send to: <strong>0782658368</strong> (ExpressGo Ltd)
+          </p>
+
+          <div class="upload-section">
+            <label class="upload-label">Upload Payment Screenshot</label>
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+              <div class="upload-icon">📤</div>
+              <p style="color: #7f8c8d;">Click to upload payment proof</p>
+              <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 0.5rem;">PNG, JPG up to 5MB</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+            <img id="previewImage" class="preview-image" style="display: none;">
+          </div>
+        </div>
+
+        <!-- Bank Transfer Details -->
+        <div class="payment-details" id="bankDetails">
+          <h3>Bank Transfer Details</h3>
+          <div class="payment-info">
+            <div class="payment-info-item">
+              <span class="payment-info-label">Bank Name</span>
+              <span class="payment-info-value">Equity Bank</span>
+            </div>
+            <div class="payment-info-item">
+              <span class="payment-info-label">Account Number</span>
+              <span class="payment-info-value">4012112588530</span>
+            </div>
+            <div class="payment-info-item">
+              <span class="payment-info-label">Account Name</span>
+              <span class="payment-info-value">ExpressGo Ltd</span>
+            </div>
+            <div class="payment-info-item">
+              <span class="payment-info-label">Amount to Pay</span>
+              <span class="payment-info-value" id="payment-info-value"></span>
+            </div>
+          </div>
+
+          <div class="upload-section">
+            <label class="upload-label">Upload Payment Screenshot</label>
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+              <div class="upload-icon">📤</div>
+              <p style="color: #7f8c8d;">Click to upload payment proof</p>
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn btn-primary" id="confirmPaymentBtn" disabled onclick="processPayment()">
+          Confirm Payment & Generate Ticket
+        </button>
+        <button class="btn btn-secondary" onclick="closePaymentModal()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Ticket Display -->
+  <div class="ticket-container" id="ticketContainer">
+    <div class="ticket">
+      <div class="ticket-header">
+        <div class="ticket-logo">ExpressGo</div>
+        <div class="ticket-title">Bus Travel Ticket</div>
+      </div>
+
+      <div class="ticket-body">
+        <div class="booking-reference">
+          <div class="booking-reference-label">BOOKING REFERENCE</div>
+          <div class="booking-reference-code" id="bookingRef">NY-KGL001234</div>
+        </div>
+
+        <div class="route-section">
+          <div class="route-point">
+            <div class="route-label">FROM</div>
+            <div class="route-city" id="ticketFrom">Kigali</div>
+          </div>
+          <div class="route-arrow">✈</div>
+          <div class="route-point">
+            <div class="route-label">TO</div>
+            <div class="route-city" id="ticketTo">Bugesera</div>
+          </div>
+        </div>
+
+        <div class="ticket-details">
+          <div class="detail-box">
+            <div class="detail-label">AGENT</div>
+            <div class="detail-value" id="ticketAgent">RITCO</div>
+          </div>
+
+          <div class="detail-box">
+            <div class="detail-label">VEHICLE PLATE</div>
+            <div class="detail-value" id="ticketPlate">RAD 001 A</div>
+          </div>
+
+          <div class="detail-box">
+            <div class="detail-label">DATE</div>
+            <div class="detail-value" id="ticketDate">2025-11-13</div>
+          </div>
+
+          <div class="detail-box">
+            <div class="detail-label">TIME</div>
+            <div class="detail-value" id="ticketTime">06:00 AM</div>
+          </div>
+
+          <div class="detail-box">
+            <div class="detail-label">PASSENGERS</div>
+            <div class="detail-value" id="ticketPassengers">3</div>
+          </div>
+
+          <div class="detail-box">
+            <div class="detail-label">SEAT NUMBERS</div>
+            <div class="detail-value" id="ticketSeats">1, 2, 7</div>
+          </div>
+        </div>
+
+        <div class="important-note">
+          <h4>⚠️ Important Information</h4>
+          <p>• Please arrive at the bus station 15 minutes before departure</p>
+          <p>• Present this ticket and your ID at the boarding gate</p>
+          <p>• QR code will be scanned to verify your payment</p>
+          <p>• No refunds within 2 hours of departure time</p>
+        </div>
+      </div>
+
+      <div class="ticket-footer">
+        <div class="qr-section">
+          <div class="qr-code">
+            <div class="qr-placeholder">📱</div>
+          </div>
+          <div class="qr-label">Scan to verify payment</div>
+        </div>
+
+        <div class="total-section">
+          <div class="total-label">TOTAL AMOUNT PAID</div>
+          <div class="total-amount" id="ticketTotal">2,250 Rwf</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ticket-actions">
+      <button class="btn btn-primary" onclick="downloadTicket()">
+        📥 Download Ticket (PDF)
+      </button>
+      <button class="btn btn-secondary" onclick="window.print()">
+        🖨️ Print Ticket
+      </button>
+    </div>
+  </div>
+
+  
+  <!-- Footer -->
+  <footer id="contact" class="footer">
+    <div class="container footer-content">
+      <div>
+        <h3>ExpressGo</h3>
+        <p>Reliable transport across Rwanda.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>Email: info@expressgo.com</p>
+        <p>Phone: +250 7813 489</p>
+      </div>
+      <div>
+        <h4>Follow Us</h4>
+        <p>🌐 Facebook | Twitter | Instagram</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ExpressGo. All rights reserved.</p>
+    </div>
+  </footer>
+
+
+  <script src="js/payment-page.js"></script>
+</body>
+</html>
