@@ -38,6 +38,112 @@ if (bookingData) {
 
 let selectedPaymentMethod = null;
 let uploadedFile = null;
+let qrCodeInstance = null;
+
+const pdfLibrarySources = {
+    html2canvas: [
+        'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
+    ],
+    jspdf: [
+        'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+    ]
+};
+
+let pdfLibrariesLoaded = false;
+let pdfLibraryLoadingPromise = null;
+
+function isLibraryReady(key) {
+    if (key === 'html2canvas') {
+        return typeof window.html2canvas === 'function';
+    }
+    if (key === 'jspdf') {
+        return Boolean(window.jspdf && typeof window.jspdf.jsPDF === 'function');
+    }
+    return false;
+}
+
+function loadScript(src, dataLib) {
+    return new Promise((resolve, reject) => {
+        let script = document.querySelector(`script[data-lib="${dataLib}"][src="${src}"]`);
+
+        if (script && (script.dataset.loaded === 'true' || isLibraryReady(dataLib))) {
+            script.dataset.loaded = 'true';
+            resolve();
+            return;
+        }
+
+        if (!script) {
+            script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.dataset.lib = dataLib;
+            document.head.appendChild(script);
+        }
+
+        const handleLoad = () => {
+            script.dataset.loaded = 'true';
+            resolve();
+        };
+
+        if (isLibraryReady(dataLib)) {
+            handleLoad();
+            return;
+        }
+
+        script.addEventListener('load', handleLoad, { once: true });
+        script.onerror = () => {
+            script.remove();
+            reject(new Error(`Failed to load ${src}`));
+        };
+    });
+}
+
+async function ensurePdfLibraries() {
+    if (pdfLibrariesLoaded && typeof window.html2canvas === 'function' && window.jspdf?.jsPDF) {
+        return true;
+    }
+
+    if (pdfLibraryLoadingPromise) {
+        return pdfLibraryLoadingPromise;
+    }
+
+    pdfLibraryLoadingPromise = (async () => {
+        const loadWithFallback = async (key) => {
+            for (const url of pdfLibrarySources[key]) {
+                try {
+                    await loadScript(url, key);
+                    if (key === 'html2canvas' && typeof window.html2canvas === 'function') return;
+                    if (key === 'jspdf' && window.jspdf?.jsPDF) return;
+                } catch (error) {
+                    console.warn(error.message);
+                }
+            }
+            throw new Error(`Unable to load ${key} library`);
+        };
+
+        await loadWithFallback('html2canvas');
+        await loadWithFallback('jspdf');
+
+        if (typeof window.html2canvas === 'function' && window.jspdf?.jsPDF) {
+            pdfLibrariesLoaded = true;
+            return true;
+        }
+
+        throw new Error('PDF libraries unavailable');
+    })().finally(() => {
+        pdfLibraryLoadingPromise = null;
+    });
+
+    return pdfLibraryLoadingPromise;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    ensurePdfLibraries().catch(error => {
+        console.warn('PDF libraries did not preload:', error.message);
+    });
+});
 
 // Sample booking data (would come from your booking form)
 
@@ -139,20 +245,107 @@ function processPayment() {
 }
 
 function generateQRCode(reference) {
-    // In real application, use a QR code library like qrcode.js
-    // QR code would contain: booking reference + link to payment screenshot
-    const qrData = `EXPRESSGO:${reference}:VERIFIED`;
-    
-    // For demo, just show the reference
-    document.querySelector('.qr-code').innerHTML = `
-    <div style="font-size: 0.8rem; padding: 1rem; text-align: center;">
-        <div style="font-weight: bold; margin-bottom: 0.5rem;">${reference}</div>
-        <div style="font-size: 0.7rem; color: #7f8c8d;">Scan to verify</div>
-    </div>
-    `;
+    const qrContainer = document.querySelector('.qr-code');
+    if (!qrContainer) {
+        console.warn('QR container not found');
+        return;
+    }
+
+    const payload = `EXPRESSGO|REF:${reference}|AGENT:${bookingData?.agent || 'UNKNOWN'}|DATE:${bookingData?.date || ''}|TIME:${bookingData?.time || ''}`;
+
+    if (typeof QRious !== 'function') {
+        qrContainer.innerHTML = `
+            <div style="font-size: 0.75rem; padding: 0.75rem; text-align: center;">
+                <div style="font-weight: bold; margin-bottom: 0.4rem;">${reference}</div>
+                <div style="color: #c0392b;">QR unavailable</div>
+            </div>
+        `;
+        return;
+    }
+
+    if (!qrCodeInstance) {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'ticketQrCanvas';
+        qrContainer.innerHTML = '';
+        qrContainer.appendChild(canvas);
+
+        qrCodeInstance = new QRious({
+            element: canvas,
+            value: payload,
+            size: 140,
+            background: '#ffffff',
+            foreground: '#2c3e50',
+            level: 'H',
+            padding: 10
+        });
+    } else {
+        qrCodeInstance.set({ value: payload });
+    }
 }
 
-function downloadTicket() {
-    alert('In a real application, this would generate and download a PDF ticket with all the details and QR code.');
-    // You would use a library like jsPDF to generate the PDF
+async function downloadTicket() {
+    const ticketElement = document.querySelector('.ticket');
+    if (!ticketElement) {
+        alert('Generate your ticket first before downloading.');
+        return;
+    }
+
+    const downloadBtn = document.querySelector('.ticket-actions .btn.btn-primary');
+    const originalText = downloadBtn ? downloadBtn.textContent : '';
+    
+    try {
+        if (downloadBtn) {
+            downloadBtn.textContent = 'Loading PDF tools...';
+            downloadBtn.disabled = true;
+        }
+
+        await ensurePdfLibraries();
+
+        if (downloadBtn) {
+            downloadBtn.textContent = 'Rendering ticket...';
+        }
+
+        const canvas = await html2canvas(ticketElement, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff'
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf || {};
+        if (typeof jsPDF !== 'function') {
+            throw new Error('PDF generator unavailable');
+        }
+
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 36;
+
+        let imgWidth = pageWidth - margin * 2;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        if (imgHeight > pageHeight - margin * 2) {
+            imgHeight = pageHeight - margin * 2;
+            imgWidth = (canvas.width * imgHeight) / canvas.height;
+        }
+
+        pdf.text('ExpressGo Ticket', margin, margin - 10);
+        pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+
+        const fileName = `ExpressGo-Ticket-${bookingData?.reference || 'booking'}.pdf`;
+        pdf.save(fileName);
+        
+        alert('Your ticket PDF has been downloaded. Check your downloads folder.');
+    } catch (error) {
+        console.error('Failed to generate PDF ticket', error);
+        alert(error.message.includes('PDF libraries') 
+            ? 'Unable to load PDF tools. Please check your internet connection and try again.'
+            : 'Something went wrong while generating the PDF. Please try again.');
+    } finally {
+        if (downloadBtn) {
+            downloadBtn.textContent = originalText || '📥 Download Ticket (PDF)';
+            downloadBtn.disabled = false;
+        }
+    }
 }
