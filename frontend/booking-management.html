@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking Management - ExpressGo</title>
+  <link rel="stylesheet" href="css/booking-management.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="logo"><a href="index.html">ExpressGo</a></div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="header-content">
+          <h1>Booking Management</h1>
+          <p>Manage and monitor all bus bookings</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="refreshBtn">Refresh</button>
+          <button class="btn btn-secondary" id="exportBtn">Export</button>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-section">
+        <div class="stat-card confirmed">
+          <div class="stat-content">
+            <div class="stat-number" id="confirmedCount">0</div>
+            <div class="stat-label">Confirmed</div>
+          </div>
+        </div>
+        <div class="stat-card pending">
+          <div class="stat-content">
+            <div class="stat-number" id="pendingCount">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
+        </div>
+        <div class="stat-card checked-in">
+          <div class="stat-content">
+            <div class="stat-number" id="checkedInCount">0</div>
+            <div class="stat-label">Checked In</div>
+          </div>
+        </div>
+        <div class="stat-card canceled">
+          <div class="stat-content">
+            <div class="stat-number" id="canceledCount">0</div>
+            <div class="stat-label">Canceled</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <div class="filter-group">
+          <label>Status</label>
+          <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="pending">Pending</option>
+            <option value="checked-in">Checked In</option>
+            <option value="canceled">Canceled</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Route</label>
+          <select id="routeFilter">
+            <option value="">All Routes</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Travel Date</label>
+          <input type="date" id="dateFilter" />
+        </div>
+
+        <div class="filter-group">
+          <label>Search</label>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by code or passenger"
+          />
+        </div>
+
+        <div class="filter-actions">
+          <button class="btn btn-secondary" id="clearFiltersBtn">Clear</button>
+          <button class="btn btn-primary" id="applyFiltersBtn">Apply</button>
+        </div>
+      </div>
+
+      <!-- Bookings Table -->
+      <div class="table-container">
+        <div class="table-header">
+          <h2>All Bookings</h2>
+          <div class="table-actions">
+            <select id="bulkActionSelect">
+              <option value="">Bulk Actions</option>
+              <option value="confirm">Confirm Selected</option>
+              <option value="check-in">Check In Selected</option>
+              <option value="cancel">Cancel Selected</option>
+            </select>
+            <button class="btn btn-secondary" id="applyBulkBtn">Apply</button>
+          </div>
+        </div>
+
+        <div class="loading-overlay" id="loadingOverlay">
+          <p>Loading bookings...</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="bookings-table" id="bookingsTable">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="selectAll" /></th>
+                <th>Booking Code</th>
+                <th>Passenger</th>
+                <th>Contact</th>
+                <th>Route</th>
+                <th>Travel Date</th>
+                <th>Departure</th>
+                <th>Seats</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Booking Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+          <h3>No Bookings Found</h3>
+          <p>No bookings match your current filters.</p>
+          <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" id="paginationContainer">
+        <div class="pagination-info">
+          <span id="paginationInfo">Showing 1-10 of 0 bookings</span>
+        </div>
+        <div class="pagination-controls">
+          <button class="btn btn-secondary" id="prevPageBtn" disabled>Previous</button>
+          <div class="page-numbers" id="pageNumbers"></div>
+          <button class="btn btn-secondary" id="nextPageBtn">Next</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Status Update Modal -->
+  <div id="statusModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Update Booking Status</h2>
+        <button type="button" class="modal-close" id="closeStatusModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="statusBookingDetails" class="booking-details"></div>
+        
+        <div class="form-group">
+          <label for="newStatus">New Status:</label>
+          <select id="newStatus" required>
+            <option value="">Select Status</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="statusReason">Reason (Optional):</label>
+          <textarea id="statusReason" placeholder="Enter reason for status change"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="notifyPassenger" checked>
+            <span class="checkmark"></span>
+            Notify passenger via email/SMS
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="cancelStatusBtn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmStatusBtn">Update Status</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Details Modal -->
+  <div id="detailsModal" class="modal">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2>Booking Details</h2>
+        <button type="button" class="modal-close" id="closeDetailsModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="bookingDetailsContent"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeDetailsBtn">Close</button>
+        <button type="button" class="btn btn-primary" id="updateStatusFromDetailsBtn">Update Status</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Notification -->
+  <div id="successNotification" class="notification success">
+    <div class="notification-content">
+      <span class="notification-icon">✓</span>
+      <div class="notification-message">
+        <strong>Success!</strong>
+        <p id="successMessage"></p>
+      </div>
+      <button class="notification-close" onclick="closeNotification('successNotification')">&times;</button>
+    </div>
+  </div>
+
+  <!-- Error Notification -->
+  <div id="errorNotification" class="notification error">
+    <div class="notification-content">
+      <span class="notification-icon">✗</span>
+      <div class="notification-message">
+        <strong>Error!</strong>
+        <p id="errorMessage"></p>
+      </div>
+      <button class="notification-close" onclick="closeNotification('errorNotification')">&times;</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div>
+        <h3>ExpressGo</h3>
+        <p>Your reliable bus booking partner</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="booking-page.html">Book Now</a></li>
+          <li><a href="schedule-management.html">Schedules</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>Email: info@expressgo.rw</p>
+        <p>Phone: +250 788 123 456</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 ExpressGo. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/booking-management.js"></script>
+</body>
+</html>
