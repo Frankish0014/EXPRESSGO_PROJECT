@@ -166,6 +166,11 @@ nav a.active {
   background: #2980b9;
 }
 
+.btn-primary a{
+  text-decoration: none;
+  color: #fff;
+}
+
 .divider {
   text-align: center;
   margin: 1.5rem 0;
