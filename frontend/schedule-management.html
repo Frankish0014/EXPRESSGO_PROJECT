@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule Management - ExpressGo</title>
+  <link rel="stylesheet" href="css/schedule-management.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="logo"><a href="index.html">ExpressGo</a></div>
+      <nav>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1>Schedule Management</h1>
+        <p>Manage bus schedules, routes, and timing</p>
+        <button class="btn-primary" id="addScheduleBtn">
+          <span class="icon">+</span>
+          Add New Schedule
+        </button>
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <div class="filter-group">
+          <label for="routeFilter">Filter by Route:</label>
+          <select id="routeFilter">
+            <option value="">All Routes</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="statusFilter">Filter by Status:</label>
+          <select id="statusFilter">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="searchInput">Search:</label>
+          <input type="text" id="searchInput" placeholder="Search schedules...">
+        </div>
+
+        <button class="btn-secondary" id="refreshBtn">
+          <span class="icon">🔄</span>
+          Refresh
+        </button>
+      </div>
+
+      <!-- Schedules Table -->
+      <div class="table-container">
+        <table class="schedules-table" id="schedulesTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Route</th>
+              <th>Bus/Agent</th>
+              <th>Departure</th>
+              <th>Arrival</th>
+              <th>Price (Rwf)</th>
+              <th>Available Days</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="schedulesTableBody">
+            <!-- Table rows will be populated by JavaScript -->
+          </tbody>
+        </table>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">
+          <div class="spinner"></div>
+          <p>Loading schedules...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+          <div class="empty-state-icon">📅</div>
+          <h3>No schedules found</h3>
+          <p>Create your first bus schedule to get started.</p>
+          <button class="btn-primary" onclick="openScheduleModal()">Add Schedule</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Schedule Modal -->
+  <div class="modal" id="scheduleModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add New Schedule</h2>
+        <button class="modal-close" id="closeModalBtn">&times;</button>
+      </div>
+
+      <form class="schedule-form" id="scheduleForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="busSelect">Bus/Agent *</label>
+            <select id="busSelect" name="bus_id" required>
+              <option value="">Select Bus/Agent</option>
+              <option value="1">RITCO - RAD 001 A</option>
+              <option value="2">Volcano - RAD 002 B</option>
+              <option value="3">Alpha Express - RAD 003 C</option>
+              <option value="4">City Express - RAD 004 D</option>
+              <option value="5">Matunda Express - RAD 005 E</option>
+              <option value="6">Select Express - RAD 006 F</option>
+              <option value="7">Yahoo Express - RAD 007 G</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="routeSelect">Route *</label>
+            <select id="routeSelect" name="route_id" required>
+              <option value="">Select Route</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="departureTime">Departure Time *</label>
+            <input type="time" id="departureTime" name="departure_time" required>
+          </div>
+
+          <div class="form-group">
+            <label for="arrivalTime">Arrival Time *</label>
+            <input type="time" id="arrivalTime" name="arrival_time" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="priceInput">Price (Rwf) *</label>
+            <input type="number" id="priceInput" name="price" min="0" step="500" required>
+          </div>
+
+          <div class="form-group">
+            <label for="statusSelect">Status *</label>
+            <select id="statusSelect" name="is_active" required>
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Available Days *</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="days" value="Monday" checked>
+              <span>Monday</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="days" value="Tuesday" checked>
+              <span>Tuesday</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="days" value="Wednesday" checked>
+              <span>Wednesday</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="days" value="Thursday" checked>
+              <span>Thursday</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="days" value="Friday" checked>
+              <span>Friday</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="days" value="Saturday" checked>
+              <span>Saturday</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="days" value="Sunday" checked>
+              <span>Sunday</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn-primary" id="saveBtn">
+            <span class="btn-text">Save Schedule</span>
+            <span class="spinner" style="display: none;"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-content modal-small">
+      <div class="modal-header">
+        <h2>Confirm Delete</h2>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this schedule?</p>
+        <p><strong>This action cannot be undone.</strong></p>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div>
+        <h3>ExpressGo</h3>
+        <p>Reliable transport across Rwanda.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>Email: info@expressgo.com</p>
+        <p>Phone: +250 7813 489</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ExpressGo. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/schedule-management.js"></script>
+</body>
+</html>

@@ -1,300 +1,565 @@
-// Route data with distances and durations
-const routeData = {
-    'Bugesera': { distance: '50 km', duration: '1 hour' },
-    'Gatsibo': { distance: '130 km', duration: '2.5 hours' },
-    'Kayonza': { distance: '75 km', duration: '1.5 hours' },
-    'Kirehe': { distance: '110 km', duration: '2 hours' },
-    'Ngoma': { distance: '95 km', duration: '2 hours' },
-    'Nyagatare': { distance: '170 km', duration: '3 hours' },
-    'Rwamagana': { distance: '45 km', duration: '1 hour' },
-    'Burera': { distance: '110 km', duration: '2.5 hours' },
-    'Gakenke': { distance: '95 km', duration: '2 hours' },
-    'Gicumbi': { distance: '100 km', duration: '2 hours' },
-    'Musanze': { distance: '85 km', duration: '2 hours' },
-    'Rulindo': { distance: '65 km', duration: '1.5 hours' },
-    'Gisagara': { distance: '110 km', duration: '2.5 hours' },
-    'Huye': { distance: '135 km', duration: '2.5 hours' },
-    'Kamonyi': { distance: '40 km', duration: '1 hour' },
-    'Muhanga': { distance: '50 km', duration: '1 hour' },
-    'Nyamagabe': { distance: '160 km', duration: '3 hours' },
-    'Nyanza': { distance: '85 km', duration: '2 hours' },
-    'Nyaruguru': { distance: '180 km', duration: '3.5 hours' },
-    'Ruhango': { distance: '60 km', duration: '1.5 hours' },
-    'Karongi': { distance: '150 km', duration: '3 hours' },
-    'Ngororero': { distance: '120 km', duration: '2.5 hours' },
-    'Nyabihu': { distance: '110 km', duration: '2.5 hours' },
-    'Nyamasheke': { distance: '210 km', duration: '4 hours' },
-    'Rubavu': { distance: '155 km', duration: '3 hours' },
-    'Rusizi': { distance: '240 km', duration: '5 hours' },
-    'Rutsiro': { distance: '140 km', duration: '3 hours' }
-};
+// Enhanced Booking Page JavaScript with Schedule Integration
+class BookingManager {
+  constructor() {
+    this.availableSchedules = [];
+    this.selectedSchedule = null;
+    this.passengerCount = 1;
+    this.selectedSeats = [];
+    this.occupiedSeats = [5, 12, 18, 23]; // Mock occupied seats
+    
+    this.init();
+  }
 
-// Agent-specific data
-const agentData = {
-  'RITCO': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '750' },
-  'Volcano': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '7500' },
-  'Alpha Express': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '4000' },
-  'City Express': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '3500' },
-  'Matunda Express Ltd': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '4500' },
-  'Select Express Ltd': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '4500' },
-  'Yahoo Express': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '1500' }
-};
+  init() {
+    this.bindEvents();
+    this.loadAvailableSchedules();
+    this.setupDateRestrictions();
+  }
 
-// Get HTML elements
-const agentSelect = document.getElementById('agentInfo');
-const seatSelection = document.getElementById('seatSelection');
+  setupDateRestrictions() {
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    dateInputs.forEach(input => {
+      input.min = today;
+    });
+  }
 
-let selectedSeats = [];
-let occupiedSeats = [5, 12, 18, 23]; // Example occupied seats
+  bindEvents() {
+    // Trip type change events (if exists)
+    const tripTypeRadios = document.querySelectorAll('input[name="tripType"]');
+    tripTypeRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => this.handleTripTypeChange(e));
+    });
 
-// Define number of seats for each agent
-const agentSeatConfig = {
-  RITCO: 70,
-  VOLCANO: 28,
-  EXPRESS: 28,
-  EXCELL: 28,
-  MATUNDA: 28,
-  OMEGA: 28,
-  OTHERS: 28
-};
+    // Form elements
+    const agentSelect = document.getElementById('agentInfo');
+    const toSelect = document.getElementById('to');
+    const departDate = document.getElementById('departDate');
+    const departTime = document.getElementById('departTime');
+    const passengersInput = document.getElementById('passengers');
+    const confirmBtn = document.getElementById('confirmBooking');
 
-
-// Function to generate seats
-function generateSeats(totalSeats) {
-  seatSelection.innerHTML = ''; // Clear previous seats
-  for (let i = 1; i <= totalSeats; i++) {
-    const seat = document.createElement('div');
-    seat.classList.add('seat');
-
-    if (occupiedSeats.includes(i)) {
-      seat.classList.add('occupied');
+    // Event listeners
+    if (agentSelect) {
+      agentSelect.addEventListener('change', () => this.handleAgentChange());
     }
 
-    seat.textContent = i;
+    if (toSelect) {
+      toSelect.addEventListener('change', () => this.updateSummary());
+    }
 
-    // Seat selection logic
-    seat.addEventListener('click', () => {
-      if (!seat.classList.contains('occupied')) {
-        seat.classList.toggle('selected');
-        if (seat.classList.contains('selected')) {
-          selectedSeats.push(i);
-        } else {
-          selectedSeats = selectedSeats.filter(s => s !== i);
-        }
-        updateSummary();
+    if (departDate) {
+      departDate.addEventListener('change', () => this.updateSummary());
+    }
+
+    if (departTime) {
+      departTime.addEventListener('change', () => this.updateSummary());
+    }
+
+    if (passengersInput) {
+      passengersInput.addEventListener('change', () => this.handlePassengerChange());
+    }
+
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', () => this.confirmBooking());
+    }
+
+    // Plate number selection
+    const plateSelect = document.getElementById('plateNumber');
+    if (plateSelect) {
+      plateSelect.addEventListener('change', () => this.handlePlateChange());
+    }
+  }
+
+  async loadAvailableSchedules() {
+    try {
+      // Load schedules from the API or use fallback data
+      const response = await fetch('/api/schedules');
+      
+      if (response.ok) {
+        this.availableSchedules = await response.json();
+      } else {
+        // Fallback schedules data from our schedule management
+        this.availableSchedules = [
+          {
+            id: 1,
+            bus_id: 1,
+            route_id: 1,
+            departure_time: '06:00:00',
+            arrival_time: '09:30:00',
+            price: 2200,
+            available_days: 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            is_active: true,
+            bus: { 
+              id: 1,
+              plate_number: 'RAD 001 A', 
+              company_name: 'RITCO',
+              total_seats: 50
+            },
+            route: { 
+              id: 1,
+              departure_city: 'Kigali - Nyabugogo', 
+              arrival_city: 'Musanze' 
+            }
+          },
+          {
+            id: 2,
+            bus_id: 2,
+            route_id: 2,
+            departure_time: '08:00:00',
+            arrival_time: '13:00:00',
+            price: 4200,
+            available_days: 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            is_active: true,
+            bus: { 
+              id: 2,
+              plate_number: 'RAD 002 B', 
+              company_name: 'Volcano',
+              total_seats: 45
+            },
+            route: { 
+              id: 2,
+              departure_city: 'Kigali - Nyabugogo', 
+              arrival_city: 'Rubavu' 
+            }
+          },
+          {
+            id: 3,
+            bus_id: 3,
+            route_id: 3,
+            departure_time: '10:00:00',
+            arrival_time: '14:30:00',
+            price: 3000,
+            available_days: 'Monday,Tuesday,Wednesday,Thursday,Friday',
+            is_active: true,
+            bus: { 
+              id: 3,
+              plate_number: 'RAD 003 C', 
+              company_name: 'Alpha Express',
+              total_seats: 40
+            },
+            route: { 
+              id: 3,
+              departure_city: 'Kigali - Nyabugogo', 
+              arrival_city: 'Huye' 
+            }
+          }
+        ];
       }
-    });
 
-    seatSelection.appendChild(seat);
-  }
-}
-
-// When user selects an agent
-agentSelect.addEventListener('change', (e) => {
-  const agent = e.target.value;
-  const totalSeats = agentSeatConfig[agent] || 28; // Default to 28 if not found
-  generateSeats(totalSeats);
-});
-
-// Optional: generate default seats on page load
-generateSeats(28);
-
-
-const agentCars = {
-  ritco: {
-    "RAB 001 D": 64,
-    "RAC 002 F" : 64,
-    "RAF 444 G" : 64,
-    "RAB 244 D": 64,
-    "RAC 522 F" : 64,
-    "RAF 545 G" : 64
-  },
-  "volcano": {
-    "RAC 101 F": 28,
-    "RAE 102 G": 28,
-    "RAC 445 F": 28,
-    "RAE 552 G": 28,
-    "RAC 111 F": 28,
-    "RAE 133 G": 28,
-  },
-  "alpha express": {
-    "RAH 453 H": 28,
-    "RAH 245 F": 28,
-    "RAH 443 H": 28,
-    "RAH 244 F": 28,
-    "RAH 422 H": 28,
-    "RAH 255 F": 28
-  },
-  "matunda express ltd": {
-    "RAH 542 G": 28,
-    "RAF 928 H": 28,
-    "RAH 541 G": 28,
-    "RAF 923 H": 28,
-    "RAH 544 G": 28,
-    "RAF 924 H": 28
-  },
-  "city express": {
-    "RAG 501 H": 28,
-    "RAC 402 F": 28,
-    "RAG 503 H": 28,
-    "RAC 404 F": 28,
-    "RAG 506 H": 28,
-    "RAC 408 F": 28
-  },
-  "select express ltd": {
-    "RAB 458 G": 28,
-    "RAH 998 N":28,
-    "RAB 453 G": 28,
-    "RAH 992 N":28,
-    "RAB 451 G": 28,
-    "RAH 997 N":28,
-  },
-  "yahoo express": {
-    "RAF 984 C": 28,
-    "RAF 398 H": 28,
-    "RAF 761 C": 28,
-    "RAF 233 H": 28,
-    "RAF 123 C": 28,
-    "RAF 311 H": 28
-  }
-};
-
-// Slecting plate numbers 
-const plateSelect = document.getElementById("plateNumber");
-
-agentSelect.addEventListener("change", () => {
-  const agent = agentSelect.value.toLowerCase();
-
-  // Show route info when agent is selected
-  if (agent && agentData[agentSelect.value]) {
-    document.getElementById('distance').textContent = agentData[agentSelect.value].distance;
-    document.getElementById('duration').textContent = agentData[agentSelect.value].duration;
-    document.getElementById('pricePerSeat').textContent = agentData[agentSelect.value].pricePerSeat + ' Rwf';
-    routeInfo.classList.add('show');
-  } else {
-    routeInfo.classList.remove('show');
+      this.populateAgentOptions();
+    } catch (error) {
+      console.error('Error loading schedules:', error);
+      // Use fallback data
+      this.availableSchedules = [
+        {
+          id: 1,
+          bus_id: 1,
+          route_id: 1,
+          departure_time: '06:00:00',
+          arrival_time: '09:30:00',
+          price: 2200,
+          available_days: 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+          is_active: true,
+          bus: { 
+            id: 1,
+            plate_number: 'RAD 001 A', 
+            company_name: 'RITCO',
+            total_seats: 50
+          },
+          route: { 
+            id: 1,
+            departure_city: 'Kigali - Nyabugogo', 
+            arrival_city: 'Musanze' 
+          }
+        }
+      ];
+      this.populateAgentOptions();
+    }
   }
 
-  // clear previous plates
-  plateSelect.innerHTML = '<option value="">Select plate number</option>';
+  populateAgentOptions() {
+    const agentSelect = document.getElementById('agentInfo');
+    const toSelect = document.getElementById('to');
 
-  if (agentCars[agent]) {
-    Object.keys(agentCars[agent]).forEach((plate) => {
-      const option = document.createElement("option");
-      option.value = plate;
-      option.textContent = plate;
-      plateSelect.appendChild(option);
-    });
+    if (agentSelect) {
+      // Get unique companies
+      const companies = [...new Set(this.availableSchedules.map(s => s.bus.company_name))];
+      
+      agentSelect.innerHTML = '<option value="">Select Agent/Company</option>';
+      companies.forEach(company => {
+        const option = document.createElement('option');
+        option.value = company;
+        option.textContent = company;
+        agentSelect.appendChild(option);
+      });
+    }
+
+    if (toSelect) {
+      // Get unique destinations
+      const destinations = [...new Set(this.availableSchedules.map(s => s.route.arrival_city))];
+      
+      toSelect.innerHTML = '<option value="">Select Destination</option>';
+      destinations.forEach(destination => {
+        const option = document.createElement('option');
+        option.value = destination;
+        option.textContent = destination;
+        // Add price data attribute from the first schedule to this destination
+        const schedule = this.availableSchedules.find(s => s.route.arrival_city === destination);
+        if (schedule) {
+          option.dataset.price = schedule.price;
+        }
+        toSelect.appendChild(option);
+      });
+    }
   }
 
-  // reset seats when agent changes
-  selectedSeats = [];
-  seatSelection.innerHTML = "";
-  updateSummary();
-});
+  handleAgentChange() {
+    const agentSelect = document.getElementById('agentInfo');
+    const plateSelect = document.getElementById('plateNumber');
+    const routeInfo = document.getElementById('routeInfo');
+    
+    const selectedAgent = agentSelect.value;
 
+    // Clear plate selection
+    if (plateSelect) {
+      plateSelect.innerHTML = '<option value="">Select plate number</option>';
+    }
 
-plateSelect.addEventListener("change", () => {
-  const agent = agentSelect.value.toLowerCase();
-  const plate = plateSelect.value;
+    if (selectedAgent) {
+      // Filter schedules by selected agent
+      const agentSchedules = this.availableSchedules.filter(s => s.bus.company_name === selectedAgent);
+      
+      // Populate plate numbers
+      if (plateSelect) {
+        agentSchedules.forEach(schedule => {
+          const option = document.createElement('option');
+          option.value = schedule.bus.plate_number;
+          option.textContent = schedule.bus.plate_number;
+          option.dataset.scheduleId = schedule.id;
+          plateSelect.appendChild(option);
+        });
+      }
 
-  if (agent && plate && agentCars[agent][plate]) {
-    const totalSeats = agentCars[agent][plate];
-    generateSeats(totalSeats);
-    updateSummary();
+      // Show route info for the agent
+      if (routeInfo && agentSchedules.length > 0) {
+        const firstSchedule = agentSchedules[0];
+        document.getElementById('distance').textContent = this.calculateDistance(firstSchedule);
+        document.getElementById('duration').textContent = this.calculateDuration(firstSchedule);
+        document.getElementById('pricePerSeat').textContent = firstSchedule.price + ' Rwf';
+        routeInfo.classList.add('show');
+      }
+    } else if (routeInfo) {
+      routeInfo.classList.remove('show');
+    }
+
+    // Reset seats and summary
+    this.selectedSeats = [];
+    this.clearSeatSelection();
+    this.updateSummary();
   }
-});
 
-// Form elements
-const toSelect = document.getElementById('to');
-const routeInfo = document.getElementById('routeInfo');
-const agentInfo = document.getElementById('agentInfo');
-const departDate = document.getElementById('departDate');
-const departTime = document.getElementById('departTime');
-const passengersInput = document.getElementById('passengers');
-const confirmBtn = document.getElementById('confirmBooking');
+  calculateDistance(schedule) {
+    // Mock calculation - in real app, this would come from route data
+    return '85-240 km';
+  }
 
-// Set minimum date to today
-const today = new Date().toISOString().split('T')[0];
-departDate.setAttribute('min', today);
+  calculateDuration(schedule) {
+    // Calculate duration from departure and arrival times
+    const [depHour, depMin] = schedule.departure_time.split(':').map(Number);
+    const [arrHour, arrMin] = schedule.arrival_time.split(':').map(Number);
+    
+    const depMinutes = depHour * 60 + depMin;
+    const arrMinutes = arrHour * 60 + arrMin;
+    const durationMinutes = arrMinutes - depMinutes;
+    
+    const hours = Math.floor(durationMinutes / 60);
+    const minutes = durationMinutes % 60;
+    
+    return `${hours}h ${minutes}m`;
+  }
 
-// Update summary when destination changes (no route info display)
-toSelect.addEventListener('change', function() {
-    updateSummary();
-});
+  handlePlateChange() {
+    const plateSelect = document.getElementById('plateNumber');
+    const selectedPlate = plateSelect.value;
+    
+    if (selectedPlate) {
+      const option = plateSelect.options[plateSelect.selectedIndex];
+      const scheduleId = option.dataset.scheduleId;
+      
+      this.selectedSchedule = this.availableSchedules.find(s => s.id == scheduleId);
+      
+      if (this.selectedSchedule) {
+        this.generateSeats(this.selectedSchedule.bus.total_seats);
+      }
+    } else {
+      this.selectedSchedule = null;
+      this.clearSeatSelection();
+    }
+    
+    this.updateSummary();
+  }
 
-// Update summary when passengers change
-passengersInput.addEventListener('change', function() {
+  handlePassengerChange() {
+    const passengersInput = document.getElementById('passengers');
+    this.passengerCount = parseInt(passengersInput.value) || 1;
+    
     // Reset selected seats
     document.querySelectorAll('.seat.selected').forEach(seat => {
-    seat.classList.remove('selected');
+      seat.classList.remove('selected');
     });
-    selectedSeats = [];
-    updateSummary();
-});
+    this.selectedSeats = [];
+    this.updateSummary();
+  }
 
-// Update summary
-function updateSummary() {
-    const from = document.getElementById('from').value;
-    const to = toSelect.value;
-    const agents = agentInfo.value;
-    const date = departDate.value;
-    const time = departTime.value;
-    const passengers = passengersInput.value;
-    const price = toSelect.options[toSelect.selectedIndex].dataset.price || 0;
-    const plate = plateSelect.value;
-
-
-    document.getElementById('summaryRoute').textContent = 
-    (from && to) ? `${from} → ${to}` : '-';
-    document.getElementById('summaryAgents').textContent = agents;
-    document.getElementById('summaryDate').textContent = date || '-';
-    document.getElementById('summaryTime').textContent = time || '-';
-    document.getElementById('summaryPassengers').textContent = passengers;
-    document.getElementById('summarySeats').textContent = selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None';
-    document.getElementById('summaryPricePerSeat').textContent = `${price} Rwf`;
-    document.getElementById('summaryAgents').textContent = agents + (plate ? ` (${plate})` : '');
-
+  generateSeats(totalSeats) {
+    const seatSelection = document.getElementById('seatSelection');
+    if (!seatSelection) return;
     
-    const total = price * selectedSeats.length;
-    document.getElementById('summaryTotal').textContent = `${total.toLocaleString()} Rwf`;
+    seatSelection.innerHTML = ''; // Clear previous seats
+    
+    for (let i = 1; i <= totalSeats; i++) {
+      const seat = document.createElement('div');
+      seat.classList.add('seat');
+      seat.textContent = i;
 
-    // Enable/disable confirm button
-    confirmBtn.disabled = !(from && to && date && time && selectedSeats.length === parseInt(passengers));
-}
+      if (this.occupiedSeats.includes(i)) {
+        seat.classList.add('occupied');
+      }
 
-departDate.addEventListener('change', updateSummary);
-departTime.addEventListener('change', updateSummary);
+      // Seat selection logic
+      seat.addEventListener('click', () => {
+        if (!seat.classList.contains('occupied')) {
+          if (seat.classList.contains('selected')) {
+            // Deselect seat
+            seat.classList.remove('selected');
+            this.selectedSeats = this.selectedSeats.filter(s => s !== i);
+          } else if (this.selectedSeats.length < this.passengerCount) {
+            // Select seat if under passenger limit
+            seat.classList.add('selected');
+            this.selectedSeats.push(i);
+          } else {
+            alert(`You can only select ${this.passengerCount} seat(s)`);
+          }
+          this.updateSummary();
+        }
+      });
 
-// Confirm booking
-confirmBtn.addEventListener('click', function() {
-    const bookingData = {
-        from: document.getElementById('from').value,
-        to: toSelect.value,
-        agent: agentInfo.value,
-        plate: plateSelect.value,
-        date: departDate.value,
-        time: departTime.value,
-        passengers: passengersInput.value,
-        seats: selectedSeats,
-        fullName: document.getElementById('fullName').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        idNumber: document.getElementById('idNumber').value,
-        total: parseInt(document.getElementById('summaryTotal').textContent.replace(/[^\d]/g, '')),
-        reference: 'EXG' + Date.now().toString().slice(-8)
+      seatSelection.appendChild(seat);
+    }
+  }
+
+  clearSeatSelection() {
+    const seatSelection = document.getElementById('seatSelection');
+    if (seatSelection) {
+      seatSelection.innerHTML = '';
+    }
+  }
+
+  updateSummary() {
+    const from = document.getElementById('from')?.value || 'Kigali - Nyabugogo';
+    const to = document.getElementById('to')?.value;
+    const agent = document.getElementById('agentInfo')?.value;
+    const plate = document.getElementById('plateNumber')?.value;
+    const date = document.getElementById('departDate')?.value;
+    const time = document.getElementById('departTime')?.value;
+    const passengers = this.passengerCount;
+
+    // Update summary display
+    const summaryElements = {
+      route: document.getElementById('summaryRoute'),
+      agents: document.getElementById('summaryAgents'),
+      date: document.getElementById('summaryDate'),
+      time: document.getElementById('summaryTime'),
+      passengers: document.getElementById('summaryPassengers'),
+      seats: document.getElementById('summarySeats'),
+      pricePerSeat: document.getElementById('summaryPricePerSeat'),
+      total: document.getElementById('summaryTotal')
     };
 
-    if (!bookingData.fullName || !bookingData.email || !bookingData.phone || !bookingData.idNumber) {
-        alert('Please fill in all passenger information');
-        return;
+    if (summaryElements.route) {
+      summaryElements.route.textContent = (from && to) ? `${from} → ${to}` : '-';
+    }
+    
+    if (summaryElements.agents) {
+      summaryElements.agents.textContent = agent + (plate ? ` (${plate})` : '');
+    }
+    
+    if (summaryElements.date) {
+      summaryElements.date.textContent = date || '-';
+    }
+    
+    if (summaryElements.time) {
+      summaryElements.time.textContent = time || '-';
+    }
+    
+    if (summaryElements.passengers) {
+      summaryElements.passengers.textContent = passengers;
+    }
+    
+    if (summaryElements.seats) {
+      summaryElements.seats.textContent = this.selectedSeats.length > 0 ? this.selectedSeats.join(', ') : 'None';
     }
 
-    // SAVE TO LOCALSTORAGE
+    // Price calculation
+    let pricePerSeat = 0;
+    if (this.selectedSchedule) {
+      pricePerSeat = this.selectedSchedule.price;
+    } else if (to) {
+      const toOption = document.querySelector(`#to option[value="${to}"]`);
+      pricePerSeat = toOption?.dataset.price || 0;
+    }
+
+    if (summaryElements.pricePerSeat) {
+      summaryElements.pricePerSeat.textContent = `${pricePerSeat} Rwf`;
+    }
+
+    const total = pricePerSeat * this.selectedSeats.length;
+    if (summaryElements.total) {
+      summaryElements.total.textContent = `${total.toLocaleString()} Rwf`;
+    }
+
+    // Enable/disable confirm button
+    const confirmBtn = document.getElementById('confirmBooking');
+    if (confirmBtn) {
+      confirmBtn.disabled = !(from && to && date && time && this.selectedSeats.length === passengers);
+    }
+  }
+
+  confirmBooking() {
+    const bookingData = {
+      from: document.getElementById('from')?.value || 'Kigali - Nyabugogo',
+      to: document.getElementById('to')?.value,
+      agent: document.getElementById('agentInfo')?.value,
+      plate: document.getElementById('plateNumber')?.value,
+      date: document.getElementById('departDate')?.value,
+      time: document.getElementById('departTime')?.value,
+      passengers: this.passengerCount,
+      seats: this.selectedSeats,
+      fullName: document.getElementById('fullName')?.value,
+      email: document.getElementById('email')?.value,
+      phone: document.getElementById('phone')?.value,
+      idNumber: document.getElementById('idNumber')?.value,
+      schedule: this.selectedSchedule,
+      total: this.selectedSchedule ? (this.selectedSchedule.price * this.selectedSeats.length) : 0,
+      reference: 'EXG' + Date.now().toString().slice(-8)
+    };
+
+    // Validate passenger information
+    if (!bookingData.fullName || !bookingData.email || !bookingData.phone || !bookingData.idNumber) {
+      alert('Please fill in all passenger information');
+      return;
+    }
+
+    // Validate booking details
+    if (!bookingData.to || !bookingData.date || !bookingData.time || this.selectedSeats.length === 0) {
+      alert('Please complete all booking details and select seats');
+      return;
+    }
+
+    // Save to localStorage
     localStorage.setItem('currentBooking', JSON.stringify(bookingData));
 
-    alert(`Booking Confirmed!\n\nRoute: ${bookingData.from} → ${bookingData.to}\nDate: ${bookingData.date} at ${bookingData.time}\nSeats: ${bookingData.seats.join(', ')}\nTotal: ${bookingData.total.toLocaleString()} Rwf\n\nA confirmation email will be sent to ${bookingData.email}`);
+    const confirmationMessage = `
+      Booking Confirmed!
+      
+      Route: ${bookingData.from} → ${bookingData.to}
+      Agent: ${bookingData.agent} (${bookingData.plate})
+      Date: ${bookingData.date} at ${bookingData.time}
+      Seats: ${bookingData.seats.join(', ')}
+      Total: ${bookingData.total.toLocaleString()} Rwf
+      
+      A confirmation email will be sent to ${bookingData.email}
+    `;
+
+    alert(confirmationMessage);
     
     // Redirect to payment page
     window.location.href = 'payment-page.html';
+  }
+
+  handleTripTypeChange(e) {
+    const type = e.target.value;
+    const returnDateField = document.querySelector('.return-date');
+    const multiCityContainer = document.getElementById('multiCityContainer');
+    const addCityBtn = document.getElementById('addCityBtn');
+
+    // Hide/Show sections based on trip type
+    if (returnDateField) {
+      returnDateField.classList.toggle('hidden', type !== 'round');
+    }
+    
+    if (multiCityContainer) {
+      multiCityContainer.classList.toggle('hidden', type !== 'multi');
+    }
+    
+    if (addCityBtn) {
+      addCityBtn.classList.toggle('hidden', type !== 'multi');
+    }
+
+    // Reset multi-city fields if not selected
+    if (type !== 'multi' && multiCityContainer) {
+      multiCityContainer.innerHTML = '';
+      this.cityCount = 0;
+    }
+  }
+}
+
+// Legacy data for backward compatibility
+const routeData = {
+    'Musanze': { distance: '85 km', duration: '2 hours' },
+    'Rubavu': { distance: '155 km', duration: '3 hours' },
+    'Huye': { distance: '135 km', duration: '2.5 hours' },
+    'Rusizi': { distance: '240 km', duration: '5 hours' },
+    'Rwamagana': { distance: '45 km', duration: '1 hour' },
+    'Nyagatare': { distance: '170 km', duration: '3 hours' },
+    'Karongi': { distance: '150 km', duration: '3 hours' },
+    'Muhanga': { distance: '50 km', duration: '1 hour' }
+};
+
+// Multi-city functionality
+let cityCount = 0;
+
+function addCity() {
+  if (cityCount >= 3) {
+    alert('Maximum 3 cities allowed.');
+    return;
+  }
+  
+  cityCount++;
+  const multiCityContainer = document.getElementById('multiCityContainer');
+  
+  if (!multiCityContainer) return;
+
+  const div = document.createElement('div');
+  div.className = 'city-segment';
+  div.innerHTML = `
+    <div class="form-group">
+      <label>From</label>
+      <input type="text" placeholder="City ${cityCount} Start" name="multiFrom${cityCount}" />
+    </div>
+    <div class="form-group">
+      <label>To</label>
+      <input type="text" placeholder="City ${cityCount} Destination" name="multiTo${cityCount}" />
+    </div>
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date" name="multiDate${cityCount}" />
+    </div>
+  `;
+  multiCityContainer.appendChild(div);
+}
+
+// Initialize the Booking Manager when the page loads
+let bookingManager;
+
+document.addEventListener('DOMContentLoaded', () => {
+  bookingManager = new BookingManager();
+
+  // Bind add city button if it exists
+  const addCityBtn = document.getElementById('addCityBtn');
+  if (addCityBtn) {
+    addCityBtn.addEventListener('click', addCity);
+  }
 });
