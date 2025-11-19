@@ -483,24 +483,47 @@ class ScheduleManager {
   }
 
   deleteSchedule(id) {
-    this.currentScheduleId = id;
-    document.getElementById('deleteModal').classList.add('show');
+    console.log('Delete schedule called with ID:', id);
+    const schedule = this.schedules.find(s => s.id === id);
+    console.log('Found schedule:', schedule);
+    if (schedule) {
+      this.showDeleteConfirmation(schedule);
+    } else {
+      this.showError('Schedule not found!');
+    }
   }
 
   closeDeleteModal() {
-    document.getElementById('deleteModal').classList.remove('show');
-    this.currentScheduleId = null;
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.style.display = 'none';
+    deleteModal.classList.remove('show');
   }
 
   async confirmDelete() {
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    const scheduleId = confirmBtn.getAttribute('data-schedule-id');
+    
+    if (!scheduleId) {
+      this.showError('No schedule selected for deletion');
+      return;
+    }
+
+    // Show loading state
+    confirmBtn.classList.add('loading');
+    confirmBtn.disabled = true;
+
     try {
-      await this.performDelete(this.currentScheduleId);
+      await this.performDelete(parseInt(scheduleId));
       this.closeDeleteModal();
       await this.loadSchedules();
       this.showSuccess('Schedule deleted successfully');
     } catch (error) {
       console.error('Error deleting schedule:', error);
       this.showError('Failed to delete schedule');
+    } finally {
+      // Reset loading state
+      confirmBtn.classList.remove('loading');
+      confirmBtn.disabled = false;
     }
   }
 
@@ -575,13 +598,88 @@ class ScheduleManager {
   }
 
   showSuccess(message) {
-    // Simple alert - replace with a more sophisticated notification system
-    alert('✅ ' + message);
+    this.showNotification('success', 'Success!', message);
   }
 
   showError(message) {
-    // Simple alert - replace with a more sophisticated notification system
-    alert('❌ ' + message);
+    this.showNotification('error', 'Error!', message);
+  }
+
+  // Show info message
+  showInfo(message) {
+    this.showNotification('info', 'Information', message);
+  }
+
+  // Enhanced notification system
+  showNotification(type, title, message) {
+    const notificationId = `${type}Notification`;
+    const notification = document.getElementById(notificationId);
+    const messageElement = document.getElementById(`${type}Message`);
+    
+    if (notification && messageElement) {
+      // Update message
+      messageElement.textContent = message;
+      
+      // Show notification
+      notification.classList.add('show');
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        this.closeNotification(notificationId);
+      }, 5000);
+    }
+  }
+
+  // Close notification
+  closeNotification(notificationId) {
+    const notification = document.getElementById(notificationId);
+    if (notification) {
+      notification.classList.remove('show');
+      notification.classList.add('hide');
+      
+      setTimeout(() => {
+        notification.classList.remove('hide');
+      }, 500);
+    }
+  }
+
+  // Enhanced delete confirmation
+  showDeleteConfirmation(schedule) {
+    console.log('showDeleteConfirmation called with:', schedule);
+    const deleteModal = document.getElementById('deleteModal');
+    const detailsContainer = document.getElementById('deleteScheduleDetails');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    
+    console.log('Modal elements:', {
+      deleteModal: deleteModal,
+      detailsContainer: detailsContainer,
+      confirmBtn: confirmBtn
+    });
+    
+    if (!deleteModal || !detailsContainer || !confirmBtn) {
+      console.error('Modal elements not found!');
+      this.showError('Modal elements not found. Please refresh the page.');
+      return;
+    }
+    
+    // Populate schedule details
+    detailsContainer.innerHTML = `
+      <h4>Schedule Details</h4>
+      <p><strong>Route:</strong> ${schedule.route.departure_city} → ${schedule.route.arrival_city}</p>
+      <p><strong>Time:</strong> ${this.formatTime(schedule.departure_time)} - ${this.formatTime(schedule.arrival_time)}</p>
+      <p><strong>Bus:</strong> ${schedule.bus.plate_number} (${schedule.bus.company_name})</p>
+      <p><strong>Price:</strong> ${schedule.price} RWF</p>
+      <p><strong>Available Days:</strong> ${this.formatDays(schedule.available_days)}</p>
+      <p><strong>Status:</strong> ${schedule.is_active ? 'Active' : 'Inactive'}</p>
+    `;
+    
+    // Store schedule ID for deletion
+    confirmBtn.setAttribute('data-schedule-id', schedule.id);
+    
+    // Show modal
+    deleteModal.style.display = 'block';
+    deleteModal.classList.add('show');
+    console.log('Modal should be visible now');
   }
 }
 
@@ -591,6 +689,13 @@ let scheduleManager;
 document.addEventListener('DOMContentLoaded', () => {
   scheduleManager = new ScheduleManager();
 });
+
+// Global function to close notifications
+function closeNotification(notificationId) {
+  if (scheduleManager) {
+    scheduleManager.closeNotification(notificationId);
+  }
+}
 
 // Global function to open modal (for the empty state button)
 function openScheduleModal() {
