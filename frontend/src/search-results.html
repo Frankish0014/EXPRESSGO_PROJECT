@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExpressGo | Available Trips</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/search-results.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="logo"><a href="../index.html" style="color: inherit; text-decoration: none;">ExpressGo</a></div>
+      <nav>
+        <ul>
+          <li><a href="../index.html#home">Home</a></li>
+          <li><a href="../index.html#about">About</a></li>
+          <li><a href="../index.html#destinations">Destinations</a></li>
+          <li><a href="../index.html#contact">Contact</a></li>
+          <li><a href="user-log-in.html">My Trips</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="results-page">
+    <div class="results-container">
+      <section class="search-summary" id="searchSummary">
+        <div class="route">
+          <p class="pill" id="tripTypeLabel">Searching trips</p>
+          <h1 id="routeLabel">Kigali → Destination</h1>
+          <p id="dateLabel">Select a date to view schedules</p>
+        </div>
+        <div class="trip-meta">
+          <p><strong>Passengers:</strong> <span id="passengerCount">1</span></p>
+          <button class="btn-outline" id="newSearchBtn">Modify Search</button>
+        </div>
+      </section>
+
+      <section class="results-section" id="outboundSection">
+        <div class="section-header">
+          <h2 id="outboundTitle">Available departures</h2>
+          <span id="outboundDate" class="pill"></span>
+        </div>
+        <div id="outboundResults" class="schedule-list"></div>
+      </section>
+
+      <section class="results-section" id="inboundSection" style="display: none;">
+        <div class="section-header">
+          <h2 id="inboundTitle">Return trips</h2>
+          <span id="inboundDate" class="pill"></span>
+        </div>
+        <div id="inboundResults" class="schedule-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div>
+        <h3>ExpressGo</h3>
+        <p>Reliable transport across Rwanda.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>Email: info@expressgo.com</p>
+        <p>Phone: +250 7813 489</p>
+      </div>
+      <div>
+        <h4>Follow Us</h4>
+        <p>🌐 Facebook | Twitter | Instagram</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ExpressGo. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script defer src="../js/api-client.js"></script>
+  <script defer src="../js/search-results.js"></script>
+</body>
+</html>
+

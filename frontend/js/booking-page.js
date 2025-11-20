@@ -1,301 +1,306 @@
-// Route data with distances and durations
-const routeData = {
-    'Bugesera': { distance: '50 km', duration: '1 hour' },
-    'Gatsibo': { distance: '130 km', duration: '2.5 hours' },
-    'Kayonza': { distance: '75 km', duration: '1.5 hours' },
-    'Kirehe': { distance: '110 km', duration: '2 hours' },
-    'Ngoma': { distance: '95 km', duration: '2 hours' },
-    'Nyagatare': { distance: '170 km', duration: '3 hours' },
-    'Rwamagana': { distance: '45 km', duration: '1 hour' },
-    'Burera': { distance: '110 km', duration: '2.5 hours' },
-    'Gakenke': { distance: '95 km', duration: '2 hours' },
-    'Gicumbi': { distance: '100 km', duration: '2 hours' },
-    'Musanze': { distance: '85 km', duration: '2 hours' },
-    'Rulindo': { distance: '65 km', duration: '1.5 hours' },
-    'Gisagara': { distance: '110 km', duration: '2.5 hours' },
-    'Huye': { distance: '135 km', duration: '2.5 hours' },
-    'Kamonyi': { distance: '40 km', duration: '1 hour' },
-    'Muhanga': { distance: '50 km', duration: '1 hour' },
-    'Nyamagabe': { distance: '160 km', duration: '3 hours' },
-    'Nyanza': { distance: '85 km', duration: '2 hours' },
-    'Nyaruguru': { distance: '180 km', duration: '3.5 hours' },
-    'Ruhango': { distance: '60 km', duration: '1.5 hours' },
-    'Karongi': { distance: '150 km', duration: '3 hours' },
-    'Ngororero': { distance: '120 km', duration: '2.5 hours' },
-    'Nyabihu': { distance: '110 km', duration: '2.5 hours' },
-    'Nyamasheke': { distance: '210 km', duration: '4 hours' },
-    'Rubavu': { distance: '155 km', duration: '3 hours' },
-    'Rusizi': { distance: '240 km', duration: '5 hours' },
-    'Rutsiro': { distance: '140 km', duration: '3 hours' }
-};
-
-
-// Agent-specific data
-const agentData = {
-  'RITCO': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '750' },
-  'Volcano': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '7500' },
-  'Alpha Express': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '4000' },
-  'City Express': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '3500' },
-  'Matunda Express Ltd': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '4500' },
-  'Select Express Ltd': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '4500' },
-  'Yahoo Express': { distance: '40-240 km', duration: '1-5 hours', pricePerSeat: '1500' }
-};
-
-// Get HTML elements
-const agentSelect = document.getElementById('agentInfo');
+const scheduleBanner = document.getElementById('scheduleBanner');
+const scheduleBannerContent = document.getElementById('scheduleBannerContent');
+const bookingFormError = document.getElementById('bookingFormError');
 const seatSelection = document.getElementById('seatSelection');
+const confirmBtn = document.getElementById('confirmBooking');
+const routeInfo = document.getElementById('routeInfo');
 
-let selectedSeats = [];
-let occupiedSeats = [5, 12, 18, 23]; // Example occupied seats
-
-// Define number of seats for each agent
-const agentSeatConfig = {
-  RITCO: 70,
-  VOLCANO: 28,
-  EXPRESS: 28,
-  EXCELL: 28,
-  MATUNDA: 28,
-  OMEGA: 28,
-  OTHERS: 28
+const formFields = {
+  from: document.getElementById('from'),
+  to: document.getElementById('to'),
+  agentInfo: document.getElementById('agentInfo'),
+  plateNumber: document.getElementById('plateNumber'),
+  departDate: document.getElementById('departDate'),
+  departTime: document.getElementById('departTime'),
+  passengers: document.getElementById('passengers'),
+  fullName: document.getElementById('fullName'),
+  email: document.getElementById('email'),
+  phone: document.getElementById('phone'),
+  idNumber: document.getElementById('idNumber'),
 };
 
+const summaryFields = {
+  route: document.getElementById('summaryRoute'),
+  agents: document.getElementById('summaryAgents'),
+  date: document.getElementById('summaryDate'),
+  time: document.getElementById('summaryTime'),
+  passengers: document.getElementById('summaryPassengers'),
+  seats: document.getElementById('summarySeats'),
+  pricePerSeat: document.getElementById('summaryPricePerSeat'),
+  total: document.getElementById('summaryTotal'),
+};
 
-// Function to generate seats
-function generateSeats(totalSeats) {
-  seatSelection.innerHTML = ''; // Clear previous seats
-  for (let i = 1; i <= totalSeats; i++) {
+const routeInfoFields = {
+  distance: document.getElementById('distance'),
+  duration: document.getElementById('duration'),
+  price: document.getElementById('pricePerSeat'),
+};
+
+const selectedSchedule = AppState.getSelectedSchedule();
+const searchQuery = AppState.getSearchQuery();
+const userProfile = ApiClient.getUser();
+
+let availableSeats = [];
+let totalSeats = 0;
+let selectedSeats = [];
+
+const formatCurrency = (value) => {
+  const amount = Number(value) || 0;
+  return `${amount.toLocaleString()} Rwf`;
+};
+
+const showAlert = (message, variant = 'error') => {
+  if (!bookingFormError) return;
+  bookingFormError.textContent = message;
+  bookingFormError.classList.add('show');
+  bookingFormError.classList.toggle('success', variant === 'success');
+};
+
+const clearAlert = () => {
+  bookingFormError.textContent = '';
+  bookingFormError.classList.remove('show', 'success');
+};
+
+const disableForm = (isDisabled) => {
+  Object.values(formFields).forEach((field) => {
+    field.disabled = isDisabled;
+  });
+  confirmBtn.disabled = isDisabled;
+};
+
+const ensureOptionExists = (select, value, label) => {
+  const existing = Array.from(select.options).find((opt) => opt.value === value);
+  if (!existing) {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = label || value;
+    select.appendChild(option);
+  }
+  select.value = value;
+};
+
+const populateFormFromSelection = () => {
+  if (!selectedSchedule || !selectedSchedule.schedule) {
+    showAlert('Please search for a trip on the homepage and select a schedule to continue.');
+    disableForm(true);
+    return false;
+  }
+
+  const scheduleData = selectedSchedule.schedule;
+  const route = scheduleData.route || {};
+
+  scheduleBannerContent.textContent = `${route.departure_city || 'Departure'} → ${route.arrival_city || 'Arrival'} • ${scheduleData.departure_time} (${selectedSchedule.travelDate})`;
+
+  ensureOptionExists(formFields.from, route.departure_city || 'Kigali', route.departure_city || 'Kigali');
+  ensureOptionExists(formFields.to, route.arrival_city || 'Destination', route.arrival_city || 'Destination');
+  formFields.to.dispatchEvent(new Event('change'));
+
+  formFields.departDate.value = selectedSchedule.travelDate;
+  ensureOptionExists(formFields.departTime, scheduleData.departure_time, `${scheduleData.departure_time}`);
+  formFields.departTime.value = scheduleData.departure_time;
+
+  formFields.passengers.value = searchQuery?.passengers || 1;
+  formFields.passengers.disabled = true;
+
+  const companyName = scheduleData?.bus?.company?.name || 'ExpressGo Partner';
+  formFields.agentInfo.innerHTML = `<option value="${companyName}">${companyName}</option>`;
+  formFields.agentInfo.value = companyName;
+  formFields.agentInfo.disabled = true;
+
+  const plate = scheduleData?.bus?.plate_number || 'N/A';
+  formFields.plateNumber.innerHTML = `<option value="${plate}">${plate}</option>`;
+  formFields.plateNumber.value = plate;
+  formFields.plateNumber.disabled = true;
+
+  if (userProfile) {
+    formFields.fullName.value = userProfile.full_name || '';
+    formFields.email.value = userProfile.email || '';
+    formFields.phone.value = userProfile.phone_number || '';
+  }
+
+  if (route.distance_km) {
+    routeInfoFields.distance.textContent = `${route.distance_km} km`;
+  }
+  if (route.estimated_duration_minutes) {
+    routeInfoFields.duration.textContent = `${route.estimated_duration_minutes} mins`;
+  }
+  routeInfoFields.price.textContent = formatCurrency(scheduleData.price);
+  routeInfo.classList.add('show');
+
+  return true;
+};
+
+const updateSummary = () => {
+  const scheduleData = selectedSchedule?.schedule;
+  const passengersTarget = parseInt(formFields.passengers.value, 10) || 1;
+  summaryFields.route.textContent = `${formFields.from.value} → ${formFields.to.value}`;
+  summaryFields.agents.textContent = `${formFields.agentInfo.value} (${formFields.plateNumber.value})`;
+  summaryFields.date.textContent = formFields.departDate.value || '-';
+  summaryFields.time.textContent = formFields.departTime.value || '-';
+  summaryFields.passengers.textContent = passengersTarget;
+  summaryFields.seats.textContent = selectedSeats.length ? selectedSeats.join(', ') : 'Select seats';
+  const price = scheduleData ? Number(scheduleData.price) || 0 : 0;
+  summaryFields.pricePerSeat.textContent = formatCurrency(price);
+  summaryFields.total.textContent = formatCurrency(price * selectedSeats.length);
+
+  confirmBtn.disabled = selectedSeats.length !== passengersTarget;
+};
+
+const renderSeats = () => {
+  seatSelection.innerHTML = '';
+  if (!totalSeats) return;
+
+  const availableSet = new Set(availableSeats);
+
+  for (let seatNumber = 1; seatNumber <= totalSeats; seatNumber++) {
     const seat = document.createElement('div');
-    seat.classList.add('seat');
+    seat.className = 'seat';
+    seat.textContent = seatNumber;
+    const isAvailable = availableSet.has(seatNumber);
 
-    if (occupiedSeats.includes(i)) {
+    if (!isAvailable) {
       seat.classList.add('occupied');
     }
 
-    seat.textContent = i;
+    if (selectedSeats.includes(seatNumber)) {
+      seat.classList.add('selected');
+    }
 
-    // Seat selection logic
     seat.addEventListener('click', () => {
-      if (!seat.classList.contains('occupied')) {
-        seat.classList.toggle('selected');
-        if (seat.classList.contains('selected')) {
-          selectedSeats.push(i);
+      if (!isAvailable) return;
+      const passengerTarget = parseInt(formFields.passengers.value, 10) || 1;
+
+      if (selectedSeats.includes(seatNumber)) {
+        selectedSeats = selectedSeats.filter((seat) => seat !== seatNumber);
         } else {
-          selectedSeats = selectedSeats.filter(s => s !== i);
+        if (selectedSeats.length >= passengerTarget) {
+          showAlert(`You can select up to ${passengerTarget} seat(s) for this booking.`);
+          return;
         }
-        updateSummary();
+        selectedSeats.push(seatNumber);
       }
+      clearAlert();
+      renderSeats();
+      updateSummary();
     });
 
     seatSelection.appendChild(seat);
   }
-}
+};
 
-// When user selects an agent
-agentSelect.addEventListener('change', (e) => {
-  const agent = e.target.value;
-  const totalSeats = agentSeatConfig[agent] || 28; // Default to 28 if not found
-  generateSeats(totalSeats);
-});
+const fetchAvailableSeats = async () => {
+  if (!selectedSchedule) return;
+  const params = new URLSearchParams({
+    travel_date: selectedSchedule.travelDate,
+  });
+  const response = await ApiClient.get(`/schedules/${selectedSchedule.scheduleId}/available-seats?${params.toString()}`);
+  totalSeats = selectedSchedule.schedule?.bus?.total_seats || response?.available_seats?.length || 0;
+  availableSeats = response?.available_seats || [];
+  if (!availableSeats.length) {
+    showAlert('This departure is fully booked. Please go back and select a different schedule.');
+  }
+  renderSeats();
+  updateSummary();
+};
 
-// Optional: generate default seats on page load
-generateSeats(28);
+const validatePassengerInfo = () => {
+  if (!formFields.fullName.value.trim() || !formFields.email.value.trim() ||
+      !formFields.phone.value.trim() || !formFields.idNumber.value.trim()) {
+    showAlert('Please fill in passenger contact details to continue.');
+    return false;
+  }
+  clearAlert();
+  return true;
+};
 
-
-const agentCars = {
-  ritco: {
-    "RAB 001 D": 64,
-    "RAC 002 F" : 64,
-    "RAF 444 G" : 64,
-    "RAB 244 D": 64,
-    "RAC 522 F" : 64,
-    "RAF 545 G" : 64
-  },
-  "volcano": {
-    "RAC 101 F": 28,
-    "RAE 102 G": 28,
-    "RAC 445 F": 28,
-    "RAE 552 G": 28,
-    "RAC 111 F": 28,
-    "RAE 133 G": 28,
-  },
-  "alpha express": {
-    "RAH 453 H": 28,
-    "RAH 245 F": 28,
-    "RAH 443 H": 28,
-    "RAH 244 F": 28,
-    "RAH 422 H": 28,
-    "RAH 255 F": 28
-  },
-  "matunda express ltd": {
-    "RAH 542 G": 28,
-    "RAF 928 H": 28,
-    "RAH 541 G": 28,
-    "RAF 923 H": 28,
-    "RAH 544 G": 28,
-    "RAF 924 H": 28
-  },
-  "city express": {
-    "RAG 501 H": 28,
-    "RAC 402 F": 28,
-    "RAG 503 H": 28,
-    "RAC 404 F": 28,
-    "RAG 506 H": 28,
-    "RAC 408 F": 28
-  },
-  "select express ltd": {
-    "RAB 458 G": 28,
-    "RAH 998 N":28,
-    "RAB 453 G": 28,
-    "RAH 992 N":28,
-    "RAB 451 G": 28,
-    "RAH 997 N":28,
-  },
-  "yahoo express": {
-    "RAF 984 C": 28,
-    "RAF 398 H": 28,
-    "RAF 761 C": 28,
-    "RAF 233 H": 28,
-    "RAF 123 C": 28,
-    "RAF 311 H": 28
+const setConfirmLoading = (isLoading) => {
+  if (isLoading) {
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Processing...';
+  } else {
+    confirmBtn.textContent = 'Confirm & Continue';
+    updateSummary();
   }
 };
 
-// Slecting plate numbers 
-const plateSelect = document.getElementById("plateNumber");
-
-agentSelect.addEventListener("change", () => {
-  const agent = agentSelect.value.toLowerCase();
-
-  // Show route info when agent is selected
-  if (agent && agentData[agentSelect.value]) {
-    document.getElementById('distance').textContent = agentData[agentSelect.value].distance;
-    document.getElementById('duration').textContent = agentData[agentSelect.value].duration;
-    document.getElementById('pricePerSeat').textContent = agentData[agentSelect.value].pricePerSeat + ' Rwf';
-    routeInfo.classList.add('show');
-  } else {
-    routeInfo.classList.remove('show');
+const handleBooking = async () => {
+  if (!selectedSchedule) {
+    showAlert('Select a schedule before confirming.');
+    return;
   }
 
-  // clear previous plates
-  plateSelect.innerHTML = '<option value="">Select plate number</option>';
-
-  if (agentCars[agent]) {
-    Object.keys(agentCars[agent]).forEach((plate) => {
-      const option = document.createElement("option");
-      option.value = plate;
-      option.textContent = plate;
-      plateSelect.appendChild(option);
-    });
+  if (!validatePassengerInfo()) {
+    return;
   }
 
-  // reset seats when agent changes
-  selectedSeats = [];
-  seatSelection.innerHTML = "";
-  updateSummary();
-});
-
-
-plateSelect.addEventListener("change", () => {
-  const agent = agentSelect.value.toLowerCase();
-  const plate = plateSelect.value;
-
-  if (agent && plate && agentCars[agent][plate]) {
-    const totalSeats = agentCars[agent][plate];
-    generateSeats(totalSeats);
-    updateSummary();
+  if (!AppState.requireAuth(window.location.href)) {
+    return;
   }
-});
 
-// Form elements
-const toSelect = document.getElementById('to');
-const routeInfo = document.getElementById('routeInfo');
-const agentInfo = document.getElementById('agentInfo');
-const departDate = document.getElementById('departDate');
-const departTime = document.getElementById('departTime');
-const passengersInput = document.getElementById('passengers');
-const confirmBtn = document.getElementById('confirmBooking');
+  setConfirmLoading(true);
 
-// Set minimum date to today
-const today = new Date().toISOString().split('T')[0];
-departDate.setAttribute('min', today);
+  try {
+    const passengersTarget = parseInt(formFields.passengers.value, 10) || 1;
 
-// Update summary when destination changes (no route info display)
-toSelect.addEventListener('change', function() {
-    updateSummary();
-});
-
-// Update summary when passengers change
-passengersInput.addEventListener('change', function() {
-    // Reset selected seats
-    document.querySelectorAll('.seat.selected').forEach(seat => {
-    seat.classList.remove('selected');
-    });
-    selectedSeats = [];
-    updateSummary();
-});
-
-// Update summary
-function updateSummary() {
-    const from = document.getElementById('from').value;
-    const to = toSelect.value;
-    const agents = agentInfo.value;
-    const date = departDate.value;
-    const time = departTime.value;
-    const passengers = passengersInput.value;
-    const price = toSelect.options[toSelect.selectedIndex].dataset.price || 0;
-    const plate = plateSelect.value;
-
-
-    document.getElementById('summaryRoute').textContent = 
-    (from && to) ? `${from} → ${to}` : '-';
-    document.getElementById('summaryAgents').textContent = agents;
-    document.getElementById('summaryDate').textContent = date || '-';
-    document.getElementById('summaryTime').textContent = time || '-';
-    document.getElementById('summaryPassengers').textContent = passengers;
-    document.getElementById('summarySeats').textContent = selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None';
-    document.getElementById('summaryPricePerSeat').textContent = `${price} Rwf`;
-    document.getElementById('summaryAgents').textContent = agents + (plate ? ` (${plate})` : '');
-
-    
-    const total = price * selectedSeats.length;
-    document.getElementById('summaryTotal').textContent = `${total.toLocaleString()} Rwf`;
-
-    // Enable/disable confirm button
-    confirmBtn.disabled = !(from && to && date && time && selectedSeats.length === parseInt(passengers));
-}
-
-departDate.addEventListener('change', updateSummary);
-departTime.addEventListener('change', updateSummary);
-
-// Confirm booking
-confirmBtn.addEventListener('click', function() {
-    const bookingData = {
-        from: document.getElementById('from').value,
-        to: toSelect.value,
-        agent: agentInfo.value,
-        plate: plateSelect.value,
-        date: departDate.value,
-        time: departTime.value,
-        passengers: passengersInput.value,
-        seats: selectedSeats,
-        fullName: document.getElementById('fullName').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        idNumber: document.getElementById('idNumber').value,
-        total: parseInt(document.getElementById('summaryTotal').textContent.replace(/[^\d]/g, '')),
-        reference: 'EXG' + Date.now().toString().slice(-8)
-    };
-
-    if (!bookingData.fullName || !bookingData.email || !bookingData.phone || !bookingData.idNumber) {
-        alert('Please fill in all passenger information');
-        return;
+    if (selectedSeats.length !== passengersTarget) {
+      showAlert(`Please select ${passengersTarget} seat(s) to continue.`);
+      setConfirmLoading(false);
+      return;
     }
 
-    // SAVE TO LOCALSTORAGE
-    localStorage.setItem('currentBooking', JSON.stringify(bookingData));
+    const bookings = [];
+    for (const seat of selectedSeats) {
+      const payload = {
+        schedule_id: selectedSchedule.scheduleId,
+        travel_date: selectedSchedule.travelDate,
+        seat_number: seat,
+      };
 
-    alert(`Booking Confirmed!\n\nRoute: ${bookingData.from} → ${bookingData.to}\nDate: ${bookingData.date} at ${bookingData.time}\nSeats: ${bookingData.seats.join(', ')}\nTotal: ${bookingData.total.toLocaleString()} Rwf\n\nA confirmation email will be sent to ${bookingData.email}`);
-    
-    // Redirect to payment page
+      const response = await ApiClient.post('/bookings', payload, true);
+      bookings.push(response.booking);
+    }
+
+    AppState.saveBookingCheckout({
+      bookings,
+      schedule: selectedSchedule,
+      seats: selectedSeats,
+      passenger: {
+        fullName: formFields.fullName.value.trim(),
+        email: formFields.email.value.trim(),
+        phone: formFields.phone.value.trim(),
+        idNumber: formFields.idNumber.value.trim(),
+      },
+      total: summaryFields.total.textContent,
+    });
+
+    AppState.clearSelectedSchedule();
     window.location.href = 'payment-page.html';
-});
+  } catch (error) {
+    console.error(error);
+    showAlert(error.message || 'Failed to create booking. Please try again.');
+  } finally {
+    setConfirmLoading(false);
+  }
+};
+
+const initialize = async () => {
+  if (!populateFormFromSelection()) {
+    disableForm(true);
+    return;
+  }
+
+  if (selectedSchedule?.schedule?.bus?.total_seats) {
+    totalSeats = selectedSchedule.schedule.bus.total_seats;
+  }
+
+  try {
+    await fetchAvailableSeats();
+  } catch (error) {
+    console.error(error);
+    showAlert('Unable to load seat availability. Please refresh the page.');
+  }
+  updateSummary();
+};
+    
+confirmBtn.addEventListener('click', handleBooking);
+document.addEventListener('DOMContentLoaded', initialize);

@@ -136,4 +136,28 @@ export class ScheduleController {
       res.status(500).json({ error: 'Failed to delete schedule' });
     }
   }
+
+  static async searchSchedules(req: Request, res: Response): Promise<void> {
+    try {
+      const departure = (req.query.departure as string | undefined)?.trim();
+      const arrival = (req.query.arrival as string | undefined)?.trim();
+      const travelDate = (req.query.travel_date as string | undefined)?.trim();
+
+      if (!departure && !arrival) {
+        res.status(400).json({ error: 'Provide at least departure or arrival city to search schedules' });
+        return;
+      }
+
+      const schedules = await ScheduleService.searchSchedules({
+        departure,
+        arrival,
+        travelDate,
+      });
+
+      res.json({ schedules });
+    } catch (error: any) {
+      console.error('Search schedules error:', error);
+      res.status(500).json({ error: 'Failed to search schedules' });
+    }
+  }
 }

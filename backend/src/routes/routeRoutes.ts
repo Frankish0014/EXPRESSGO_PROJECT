@@ -19,8 +19,9 @@ const routeValidation = [
 
 // Public routes
 router.get('/', RouteController.getAllRoutes);
-router.get('/:id', RouteController.getRouteById);
+router.get('/search', RouteController.searchRoutes);
 router.get('/departure/:departure', RouteController.getRoutesByDeparture);
+router.get('/:id', RouteController.getRouteById);
 
 // Admin routes
 router.post('/', authenticate, authorizeAdmin, validate(routeValidation), RouteController.createRoute);

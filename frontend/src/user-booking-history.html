@@ -17,7 +17,7 @@
           <li><a href="./booking-page.html">Book Now</a></li>
           <li><a href="#" class="active">My Bookings</a></li>
           <li><a href="#contact">Contact</a></li>
-          <li><a href="index.html">Logout</a></li>
+          <li><a href="#" id="logoutLink">Logout</a></li>
         </ul>
       </nav>
     </div>
@@ -29,9 +29,9 @@
       <div class="profile-info">
         <div class="profile-avatar">FI</div>
         <div class="profile-details">
-          <h1>Frank Ishimwe</h1>
-          <p>ishimwefrank0014@gmail.com +250 788 265 8368</p>
-          <p>Member since November 2025</p>
+          <h1 id="profileName">ExpressGo Passenger</h1>
+          <p id="profileContact">—</p>
+          <p id="profileMeta">Member since —</p>
         </div>
       </div>
     </div>
@@ -43,28 +43,28 @@
       <div class="stat-card">
         <div class="stat-icon blue">🎫</div>
         <div class="stat-content">
-          <h3>12</h3>
+          <h3 id="totalBookingsStat">0</h3>
           <p>Total Bookings</p>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon green">✓</div>
         <div class="stat-content">
-          <h3>8</h3>
+          <h3 id="completedTripsStat">0</h3>
           <p>Completed Trips</p>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon orange">📅</div>
         <div class="stat-content">
-          <h3>3</h3>
+          <h3 id="upcomingTripsStat">0</h3>
           <p>Upcoming Trips</p>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon purple">💰</div>
         <div class="stat-content">
-          <h3>45,000</h3>
+          <h3 id="totalSpentStat">0</h3>
           <p>Total Spent (Rwf)</p>
         </div>
       </div>
@@ -90,6 +90,7 @@
     <!-- Bookings List -->
     <div class="bookings-section">
       <h2 class="section-title">My Bookings</h2>
+      <div class="info-banner" id="bookingsMessage"></div>
       <div id="bookingsList">
         <!-- Booking cards will be inserted here by JavaScript -->
       </div>
@@ -118,6 +119,7 @@
     </div>
   </footer>
 
-  <script src="../js/user-booking-history.js"></script>
+  <script defer src="../js/api-client.js"></script>
+  <script defer src="../js/user-booking-history.js"></script>
   </body>
 </html>

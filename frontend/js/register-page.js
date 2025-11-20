@@ -21,55 +21,85 @@ passwordInput.addEventListener('input', function() {
     }
 });
 
-// Form validation
 const form = document.getElementById('registerForm');
 const emailInput = document.getElementById('email');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 const emailError = document.getElementById('emailError');
 const passwordError = document.getElementById('passwordError');
+const registerMessage = document.getElementById('registerMessage');
+const submitBtn = document.getElementById('submitBtn');
 
-form.addEventListener('submit', function(e) {
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const showMessage = (message, isSuccess = false) => {
+    if (!registerMessage) return;
+    registerMessage.textContent = message;
+    registerMessage.classList.add('show');
+    registerMessage.classList.toggle('success', isSuccess);
+};
+
+const clearMessage = () => {
+    registerMessage.textContent = '';
+    registerMessage.classList.remove('show', 'success');
+};
+
+const setLoading = (isLoading) => {
+    submitBtn.disabled = isLoading;
+    submitBtn.textContent = isLoading ? 'Creating account...' : 'Create Account';
+};
+
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+    clearMessage();
+
     let isValid = true;
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(emailInput.value)) {
-    emailError.classList.add('show');
-    isValid = false;
+    if (!emailRegex.test(emailInput.value.trim())) {
+        emailError.classList.add('show');
+        isValid = false;
     } else {
-    emailError.classList.remove('show');
+        emailError.classList.remove('show');
     }
 
-    // Password match validation
     if (passwordInput.value !== confirmPasswordInput.value) {
-    passwordError.classList.add('show');
-    isValid = false;
+        passwordError.classList.add('show');
+        isValid = false;
     } else {
-    passwordError.classList.remove('show');
+        passwordError.classList.remove('show');
     }
 
-    if (isValid) {
-    const formData = {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        email: emailInput.value,
-        phone: document.getElementById('phone').value,
-        password: passwordInput.value
+    if (!isValid) {
+        return;
+    }
+
+    const payload = {
+        full_name: `${document.getElementById('firstName').value.trim()} ${document.getElementById('lastName').value.trim()}`.trim(),
+        email: emailInput.value.trim(),
+        phone_number: document.getElementById('phone').value.trim(),
+        password: passwordInput.value,
     };
 
-    alert('Registration successful!\n\nWelcome to ExpressGo, ' + formData.firstName + '!');
-    // Here you would typically send the data to your server
-    // Example: fetch('/api/register', { method: 'POST', body: JSON.stringify(formData) })
+    setLoading(true);
+
+    try {
+        await ApiClient.post('/auth/register', payload);
+        showMessage('Registration successful! Redirecting you to login...', true);
+        form.reset();
+        strengthBar.className = 'password-strength-bar';
+        setTimeout(() => {
+            window.location.href = 'user-log-in.html';
+        }, 1500);
+    } catch (error) {
+        showMessage(error.message || 'Unable to create account. Please try again.');
+    } finally {
+        setLoading(false);
     }
 });
 
-// Real-time password match validation
 confirmPasswordInput.addEventListener('input', function() {
     if (this.value && passwordInput.value !== this.value) {
-    passwordError.classList.add('show');
+        passwordError.classList.add('show');
     } else {
-    passwordError.classList.remove('show');
+        passwordError.classList.remove('show');
     }
 });

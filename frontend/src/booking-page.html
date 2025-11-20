@@ -35,6 +35,10 @@
         <!-- Booking Form -->
         <div class="booking-form-card">
           <h2 class="section-title">Trip Details</h2>
+          <div class="schedule-banner" id="scheduleBanner">
+            <p id="scheduleBannerContent">Select a trip from the homepage search to autofill this form.</p>
+          </div>
+          <div class="form-error" id="bookingFormError" role="alert" aria-live="assertive"></div>
           
           <form id="bookingForm">
             <div class="form-group">
@@ -237,7 +241,7 @@
             <span class="price" id="summaryTotal">0 Rwf</span>
           </div>
 
-          <button type="button" class="btn-primary" id="confirmBooking" disabled><a href="payment-page.html">Confirm Booking</a>  </button>
+          <button type="button" class="btn-primary" id="confirmBooking" disabled>Confirm &amp; Continue</button>
         </div>
       </div>
     </div>
@@ -263,6 +267,7 @@
       <p>© 2025 ExpressGo. All rights reserved.</p>
     </div>
   </footer>
-  <script src="../js/booking-page.js"></script>
+  <script defer src="../js/api-client.js"></script>
+  <script defer src="../js/booking-page.js"></script>
 </body>
 </html>

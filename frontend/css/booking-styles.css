@@ -159,6 +159,36 @@ nav a {
   color: #3498db;
 }
 
+.schedule-banner {
+  background: #f0f7ff;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.form-error {
+  display: none;
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  border-radius: 8px;
+  color: #c0392b;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.form-error.show {
+  display: block;
+}
+
+.form-error.success {
+  background: rgba(46, 204, 113, 0.1);
+  border-color: rgba(46, 204, 113, 0.2);
+  color: #1e8449;
+}
+
 /* Booking Summary */
 .booking-summary {
   background: white;
@@ -211,11 +241,6 @@ nav a {
   cursor: pointer;
   transition: background 0.3s;
   margin-top: 1rem;
-}
-
-.btn-primary a {
-  text-decoration: none;
-  color: #002E9B;
 }
 .btn-primary:hover {
   background: #2980b9;
