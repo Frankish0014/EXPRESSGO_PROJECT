@@ -11,7 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script defer src="./js/main.js"></script>
+  <script defer src="./js/3d-interactive.js"></script>
 </head>
 <body>
   <a href="#home" class="skip-link">Skip to main content</a>
@@ -25,8 +27,8 @@
           <li><a href="#about">About</a></li>
           <li><a href="#destinations">Destinations</a></li>
           <li><a href="#contact">Contact</a></li>
-          <li><a href="./src/login/login.html" class="nav-link login-link">Login</a></li>
-          <li><a href="./src/register/register.html" class="nav-link register-link">Register</a></li>
+          <li><a href="./src/user-log-in.html" class="nav-link register-link">Book Now</a></li>
+          <li><a href="./src/adminDashboard/admin.html">admin</a></li>
         </ul>
       </nav>
     </div>
@@ -35,6 +37,9 @@
   <!-- Hero Section -->
   <section id="home" class="hero">
     <div class="container hero-content">
+      <div class="hero-3d-container">
+        <canvas id="bus3d-canvas"></canvas>
+      </div>
       <h1>Safe & Reliable Bus Trips Across Rwanda</h1>
       <p>Book your ticket online from Kigali to all major provinces</p>
 
@@ -140,92 +145,196 @@
         <p class="destinations-subtitle">Explore Rwanda's beautiful cities with our convenient bus routes</p>
       </div>
       <div class="grid-4">
-        <div class="destination-card">
-          <div class="card-image-wrapper">
-            <img src="images/rusizi.jpg" alt="Rusizi" />
-            <div class="card-overlay"></div>
-          </div>
-          <div class="info">
-            <h4>Kigali → Rusizi</h4>
-            <p class="price">7,500 Rwf</p>
-            <button class="btn-card">View Details</button>
-          </div>
-        </div>
-        <div class="destination-card">
-          <div class="card-image-wrapper">
-            <img src="images/rubavu.jpg" alt="Rubavu" />
-            <div class="card-overlay"></div>
-          </div>
-          <div class="info">
-            <h4>Kigali → Rubavu</h4>
-            <p class="price">4,200 Rwf</p>
-            <button class="btn-card">View Details</button>
-          </div>
-        </div>
-        <div class="destination-card">
-          <div class="card-image-wrapper">
-            <img src="images/musanze.jpg" alt="Musanze" />
-            <div class="card-overlay"></div>
-          </div>
-          <div class="info">
-            <h4>Kigali → Musanze</h4>
-            <p class="price">2,200 Rwf</p>
-            <button class="btn-card">View Details</button>
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/rusizi.jpg" alt="Rusizi" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>Kigali → Rusizi</h4>
+                <p class="price">7,500 Rwf</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>Kigali → Rusizi</h4>
+                <p class="price">7,500 Rwf</p>
+                <p class="route-info">Distance: ~250 km<br>Duration: ~4 hours<br>Daily Departures: 6:00 AM - 6:00 PM</p>
+                <form action="./src/booking-page.html">
+                  <button class="btn-card">Book Now</button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="destination-card">
-          <div class="card-image-wrapper">
-            <img src="images/nyagatare.jpg" alt="Nyagatare" />
-            <div class="card-overlay"></div>
-          </div>
-          <div class="info">
-            <h4>Kigali → Nyagatare</h4>
-            <p class="price">5,000 Rwf</p>
-            <button class="btn-card">View Details</button>
-          </div>
-        </div>
-        <div class="destination-card">
-          <div class="card-image-wrapper">
-            <img src="images/huye.jpg" alt="Huye" />
-            <div class="card-overlay"></div>
-          </div>
-          <div class="info">
-            <h4>Kigali → Huye</h4>
-            <p class="price">3,000 Rwf</p>
-            <button class="btn-card">View Details</button>
-          </div>
-        </div>
-        <div class="destination-card">
-          <div class="card-image-wrapper">
-            <img src="images/karongi.jpg" alt="Karongi" />
-            <div class="card-overlay"></div>
-          </div>
-          <div class="info">
-            <h4>Kigali → Karongi</h4>
-            <p class="price">5,000 Rwf</p>
-            <button class="btn-card">View Details</button>
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/rubavu.jpg" alt="Rubavu" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>Kigali → Rubavu</h4>
+                <p class="price">4,200 Rwf</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>Kigali → Rubavu</h4>
+                <p class="price">4,200 Rwf</p>
+                <p class="route-info">Distance: ~150 km<br>Duration: ~3 hours<br>Daily Departures: 5:30 AM - 7:00 PM</p>
+                <form action="./src/booking-page.html">
+                  <button class="btn-card">Book Now</button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="destination-card">
-          <div class="card-image-wrapper">
-            <img src="images/rwamagana.jpg" alt="Rwamagana" />
-            <div class="card-overlay"></div>
-          </div>
-          <div class="info">
-            <h4>Kigali → Rwamagana</h4>
-            <p class="price">2,000 Rwf</p>
-            <button class="btn-card">View Details</button>
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/musanze.jpg" alt="Musanze" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>Kigali → Musanze</h4>
+                <p class="price">2,200 Rwf</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>Kigali → Musanze</h4>
+                <p class="price">2,200 Rwf</p>
+                <p class="route-info">Distance: ~100 km<br>Duration: ~2.5 hours<br>Daily Departures: 6:00 AM - 8:00 PM</p>
+                <form action="./src/booking-page.html">
+                  <button class="btn-card">Book Now</button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="destination-card">
-          <div class="card-image-wrapper">
-            <img src="images/muhanga.jpg" alt="Muhanga" />
-            <div class="card-overlay"></div>
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/nyagatare.jpg" alt="Nyagatare" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>Kigali → Nyagatare</h4>
+                <p class="price">5,000 Rwf</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>Kigali → Nyagatare</h4>
+                <p class="price">5,000 Rwf</p>
+                <p class="route-info">Distance: ~180 km<br>Duration: ~3.5 hours<br>Daily Departures: 5:00 AM - 6:30 PM</p>
+                <form action="./src/booking-page.html">
+                  <button class="btn-card">Book Now</button>
+                </form>
+              </div>
+            </div>
           </div>
-          <div class="info">
-            <h4>Kigali → Muhanga</h4>
-            <p class="price">5,000 Rwf</p>
-            <button class="btn-card">View Details</button>
+        </div>
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/huye.jpg" alt="Huye" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>Kigali → Huye</h4>
+                <p class="price">3,000 Rwf</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>Kigali → Huye</h4>
+                <p class="price">3,000 Rwf</p>
+                <p class="route-info">Distance: ~130 km<br>Duration: ~2.5 hours<br>Daily Departures: 6:00 AM - 7:00 PM</p>
+                <form action="./src/booking-page.html">
+                  <button class="btn-card">Book Now</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/karongi.jpg" alt="Karongi" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>Kigali → Karongi</h4>
+                <p class="price">5,000 Rwf</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>Kigali → Karongi</h4>
+                <p class="price">5,000 Rwf</p>
+                <p class="route-info">Distance: ~170 km<br>Duration: ~3 hours<br>Daily Departures: 5:30 AM - 6:00 PM</p>
+                <form action="./src/booking-page.html">
+                  <button class="btn-card">Book Now</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/rwamagana.jpg" alt="Rwamagana" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>Kigali → Rwamagana</h4>
+                <p class="price">2,000 Rwf</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>Kigali → Rwamagana</h4>
+                <p class="price">2,000 Rwf</p>
+                <p class="route-info">Distance: ~60 km<br>Duration: ~1.5 hours<br>Daily Departures: 6:00 AM - 8:00 PM</p>
+                <form action="./src/booking-page.html">
+                  <button class="btn-card">Book Now</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/muhanga.jpg" alt="Muhanga" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>Kigali → Muhanga</h4>
+                <p class="price">5,000 Rwf</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>Kigali → Muhanga</h4>
+                <p class="price">5,000 Rwf</p>
+                <p class="route-info">Distance: ~80 km<br>Duration: ~2 hours<br>Daily Departures: 6:00 AM - 7:30 PM</p>
+                <form action="./src/booking-page.html">
+                  <button class="btn-card">Book Now</button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -286,19 +395,19 @@
         <form class="contact-form" id="contactForm" novalidate>
           <div class="form-group">
             <label for="contactName">Full Name</label>
-            <input type="text" id="contactName" name="name" required aria-required="true" placeholder="John Doe" />
+            <input type="text" id="contactName" name="name" required aria-required="true" placeholder="Your Name" />
             <span class="error-message" id="contactNameError"></span>
           </div>
           
           <div class="form-group">
             <label for="contactEmail">Email Address</label>
-            <input type="email" id="contactEmail" name="email" required aria-required="true" placeholder="john@example.com" />
+            <input type="email" id="contactEmail" name="email" required aria-required="true" placeholder="you@example.com" />
             <span class="error-message" id="contactEmailError"></span>
           </div>
           
           <div class="form-group">
             <label for="contactPhone">Phone Number</label>
-            <input type="tel" id="contactPhone" name="phone" placeholder="+250 788 123 456" />
+            <input type="tel" id="contactPhone" name="phone" placeholder="+250 78X XXX XXX" />
             <span class="error-message" id="contactPhoneError"></span>
           </div>
           
