@@ -239,6 +239,185 @@ document.getElementById('departDate').addEventListener('change', (e) => {
 
 setMinDate();
 
+// Load routes dynamically for destinations section
+async function loadRoutesForDestinations() {
+  try {
+    // Fetch both routes and schedules to get accurate pricing
+    const [routesResponse, schedulesResponse] = await Promise.all([
+      ApiClient.get('/routes'),
+      ApiClient.get('/schedules')
+    ]);
+    
+    const routes = routesResponse?.routes || [];
+    const schedules = schedulesResponse?.schedules || [];
+    
+    // Get unique routes (group by departure/arrival) with pricing from schedules
+    const routeMap = new Map();
+    routes.forEach(route => {
+      const key = `${route.departure_city}-${route.arrival_city}`;
+      if (!routeMap.has(key)) {
+        // Find schedules for this route to get pricing
+        const routeSchedules = schedules.filter(s => 
+          s.route && 
+          s.route.departure_city === route.departure_city && 
+          s.route.arrival_city === route.arrival_city &&
+          s.is_active
+        );
+        
+        // Get minimum price from active schedules
+        const prices = routeSchedules.map(s => parseFloat(s.price || 0)).filter(p => p > 0);
+        const minPrice = prices.length > 0 ? Math.min(...prices) : null;
+        
+        // Get time range from schedules
+        const times = routeSchedules
+          .map(s => {
+            if (s.departure_time) {
+              const time = s.departure_time.substring(0, 5); // HH:MM
+              const [hours, minutes] = time.split(':').map(Number);
+              return hours * 60 + minutes; // Convert to minutes for comparison
+            }
+            return null;
+          })
+          .filter(t => t !== null);
+        
+        const minTime = times.length > 0 ? Math.min(...times) : null;
+        const maxTime = times.length > 0 ? Math.max(...times) : null;
+        
+        const formatTime = (minutes) => {
+          if (minutes === null) return null;
+          const h = Math.floor(minutes / 60);
+          const m = minutes % 60;
+          const period = h >= 12 ? 'PM' : 'AM';
+          const displayHour = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+          return `${displayHour}:${m.toString().padStart(2, '0')} ${period}`;
+        };
+        
+        routeMap.set(key, {
+          ...route,
+          minPrice,
+          timeRange: minTime !== null && maxTime !== null 
+            ? `${formatTime(minTime)} - ${formatTime(maxTime)}`
+            : '6:00 AM - 8:00 PM'
+        });
+      }
+    });
+    
+    const uniqueRoutes = Array.from(routeMap.values()).slice(0, 8);
+    const destinationsGrid = document.querySelector('#destinations .grid-4');
+    
+    if (!destinationsGrid) return;
+    
+    // Clear existing cards and create new ones dynamically
+    destinationsGrid.innerHTML = '';
+    
+    // City images mapping (fallback to first available)
+    const cityImages = {
+      'Rusizi': 'rusizi.jpg',
+      'Rubavu': 'rubavu.jpg',
+      'Musanze': 'musanze.jpg',
+      'Nyagatare': 'nyagatare.jpg',
+      'Huye': 'huye.jpg',
+      'Karongi': 'karongi.jpg',
+      'Rwamagana': 'rwamagana.jpg',
+      'Muhanga': 'muhanga.jpg'
+    };
+    
+    uniqueRoutes.forEach((route) => {
+      const arrivalCity = route.arrival_city;
+      const imageName = cityImages[arrivalCity] || 'rusizi.jpg'; // Default fallback
+      const price = route.minPrice 
+        ? `${Math.round(route.minPrice).toLocaleString()} Rwf`
+        : '2,000 Rwf';
+      
+      const distance = route.distance_km 
+        ? `~${route.distance_km} km`
+        : 'N/A';
+      
+      const duration = route.estimated_duration_minutes
+        ? `~${Math.round(route.estimated_duration_minutes / 60 * 10) / 10} hours`
+        : 'N/A';
+      
+      const cardHTML = `
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/${imageName}" alt="${arrivalCity}" onerror="this.src='images/rusizi.jpg'" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>${route.departure_city} → ${route.arrival_city}</h4>
+                <p class="price">${price}</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>${route.departure_city} → ${route.arrival_city}</h4>
+                <p class="price">${price}</p>
+                <p class="route-info">
+                  Distance: ${distance}<br>
+                  Duration: ${duration}<br>
+                  Daily Departures: ${route.timeRange}
+                </p>
+                <button class="btn-card" data-route-from="${route.departure_city}" data-route-to="${route.arrival_city}">Book Now</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      destinationsGrid.insertAdjacentHTML('beforeend', cardHTML);
+    });
+    
+    // Attach event listeners to "Book Now" buttons
+    destinationsGrid.querySelectorAll('.btn-card').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const from = button.dataset.routeFrom;
+        const to = button.dataset.routeTo;
+        
+        if (from && to) {
+          AppState.saveSearchQuery({
+            type: 'oneway',
+            from: from,
+            to: to,
+            departDate: new Date().toISOString().split('T')[0],
+            passengers: 1
+          });
+          window.location.href = './src/search-results.html';
+        }
+      });
+    });
+    
+    // If no routes found, show a message
+    if (uniqueRoutes.length === 0) {
+      destinationsGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+          <p>No routes available at the moment. Please check back later.</p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Failed to load routes for destinations:', error);
+    // Show error message but keep static content as fallback
+    const destinationsGrid = document.querySelector('#destinations .grid-4');
+    if (destinationsGrid && destinationsGrid.children.length === 0) {
+      destinationsGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+          <p>Unable to load routes. Please refresh the page or try again later.</p>
+        </div>
+      `;
+    }
+  }
+}
+
+// Load routes when page loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadRoutesForDestinations);
+} else {
+  loadRoutesForDestinations();
+}
+
 const contactForm = document.getElementById('contactForm');
 const contactSubmitBtn = document.getElementById('contactSubmitBtn');
 const contactFormError = document.getElementById('contactFormError');
@@ -361,9 +540,12 @@ if (contactForm) {
     hideContactFormSuccess();
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      // Submit to backend (for now, we'll use a simple approach)
+      // In production, you'd have a /api/contact endpoint
       console.log('Contact form submission:', data);
+      
+      // Simulate API call - replace with actual endpoint when available
+      // await ApiClient.post('/contact', data);
       
       showContactFormSuccess('Thank you for contacting us! We will get back to you soon.');
       contactForm.reset();
