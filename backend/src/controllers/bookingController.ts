@@ -31,6 +31,69 @@ export class BookingController {
     }
   }
 
+  static async createRoundTripBooking(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user.id;
+      const { outbound, return: returnLeg } = req.body;
+
+      const booking = await BookingService.createRoundTripBooking(userId, {
+        outbound,
+        return: returnLeg,
+      });
+
+      res.status(201).json({
+        message: 'Round-trip booking created successfully',
+        booking,
+      });
+    } catch (error: any) {
+      console.error('Create round-trip booking error:', error);
+      if (error.message.includes('not available') || error.message.includes('already booked')) {
+        res.status(400).json({ error: error.message });
+        return;
+      }
+      if (error.message.includes('not found') || error.message.includes('after departure')) {
+        res.status(400).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Failed to create round-trip booking' });
+    }
+  }
+
+  static async createMultiCityBooking(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user.id;
+      const { legs } = req.body;
+
+      if (!legs || legs.length < 2) {
+        res.status(400).json({ error: 'Multi-city booking requires at least 2 legs' });
+        return;
+      }
+
+      if (legs.length > 5) {
+        res.status(400).json({ error: 'Maximum 5 legs allowed for multi-city booking' });
+        return;
+      }
+
+      const booking = await BookingService.createMultiCityBooking(userId, { legs });
+
+      res.status(201).json({
+        message: 'Multi-city booking created successfully',
+        booking,
+      });
+    } catch (error: any) {
+      console.error('Create multi-city booking error:', error);
+      if (error.message.includes('chronological')) {
+        res.status(400).json({ error: error.message });
+        return;
+      }
+      if (error.message.includes('not available') || error.message.includes('already booked')) {
+        res.status(400).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Failed to create multi-city booking' });
+    }
+  }
+
   static async getMyBookings(req: Request, res: Response): Promise<void> {
     try {
       const userId = (req as any).user.id;
@@ -49,6 +112,21 @@ export class BookingController {
       res.json({ booking });
     } catch (error: any) {
       console.error('Get booking error:', error);
+      if (error.message.includes('not found')) {
+        res.status(404).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Failed to fetch booking' });
+    }
+  }
+
+  static async getCompleteBooking(req: Request, res: Response): Promise<void> {
+    try {
+      const { code } = req.params;
+      const booking = await BookingService.getCompleteBooking(code);
+      res.json({ booking });
+    } catch (error: any) {
+      console.error('Get complete booking error:', error);
       if (error.message.includes('not found')) {
         res.status(404).json({ error: error.message });
         return;
@@ -77,6 +155,23 @@ export class BookingController {
     } catch (error: any) {
       console.error('Cancel booking error:', error);
       if (error.message.includes('not found')) {
+        res.status(404).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Failed to cancel booking' });
+    }
+  }
+
+  static async cancelComplexBooking(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user.id;
+      const { code } = req.params;
+
+      const result = await BookingService.cancelComplexBooking(userId, code);
+      res.json(result);
+    } catch (error: any) {
+      console.error('Cancel complex booking error:', error);
+      if (error.message.includes('not found') || error.message.includes('cancelled')) {
         res.status(404).json({ error: error.message });
         return;
       }
