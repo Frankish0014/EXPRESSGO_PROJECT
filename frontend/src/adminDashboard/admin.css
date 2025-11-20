@@ -241,9 +241,61 @@ th, td {
   color: #155724;
 }
 
-.status.canceled {
+.status.confirmed {
+  background: #c3e6cb;
+  color: #155724;
+}
+
+.status.canceled,
+.status.cancelled {
   background: #f8d7da;
   color: #721c24;
+}
+
+.info-banner {
+  display: none;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: rgba(0, 94, 255, 0.08);
+  border: 1px solid rgba(0, 94, 255, 0.2);
+  color: #0b3a84;
+  font-weight: 500;
+}
+
+.info-banner.show {
+  display: block;
+}
+
+.info-banner.success {
+  background: rgba(56, 161, 105, 0.12);
+  border-color: rgba(56, 161, 105, 0.3);
+  color: #155724;
+}
+
+.info-banner.error {
+  background: rgba(229, 62, 62, 0.12);
+  border-color: rgba(229, 62, 62, 0.3);
+  color: #721c24;
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.table-actions .btn {
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.table-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .table-footer {

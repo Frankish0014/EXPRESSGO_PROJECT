@@ -182,8 +182,21 @@
       const targetUrl = redirectUrl || window.location.href;
       this.setPostLoginRedirect(targetUrl);
 
-      const isInSrcDirectory = window.location.pathname.includes('/src/');
-      const loginPath = isInSrcDirectory ? 'user-log-in.html' : './src/user-log-in.html';
+      // Determine login path based on current location
+      const currentPath = window.location.pathname;
+      let loginPath;
+      
+      if (currentPath.includes('/adminDashboard/')) {
+        // From admin dashboard, go up two levels to src
+        loginPath = '../user-log-in.html';
+      } else if (currentPath.includes('/src/')) {
+        // From src directory, go up one level
+        loginPath = '../user-log-in.html';
+      } else {
+        // From root or other locations
+        loginPath = './src/user-log-in.html';
+      }
+
       window.location.href = loginPath;
       return false;
     },

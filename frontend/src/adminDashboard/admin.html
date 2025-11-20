@@ -57,19 +57,19 @@
         <div class="stats-grid">
           <div class="stat-card">
             <h4>Total Bookings</h4>
-            <p>600</p>
+            <p id="statTotalBookings">--</p>
           </div>
           <div class="stat-card completed">
             <h4>Completed</h4>
-            <p>350</p>
+            <p id="statCompletedBookings">--</p>
           </div>
           <div class="stat-card pending">
             <h4>Pending</h4>
-            <p>180</p>
+            <p id="statPendingBookings">--</p>
           </div>
           <div class="stat-card canceled">
-            <h4>Canceled</h4>
-            <p>70</p>
+            <h4>Cancelled</h4>
+            <p id="statCancelledBookings">--</p>
           </div>
         </div>
 
@@ -88,15 +88,15 @@
             <h3>Revenue Overview</h3>
             <div class="revenue-item">
               <p>Income This Month</p>
-              <span>RWF 1,250,000</span>
+              <span id="revenueCurrentMonth">—</span>
             </div>
             <div class="revenue-item">
               <p>vs. Previous Month</p>
-              <span class="positive">+15.2%</span>
+              <span id="revenueTrend" class="positive">—</span>
             </div>
             <div class="revenue-item">
               <p>Average Daily Income</p>
-              <span>RWF 41,667</span>
+              <span id="revenueAverageDaily">—</span>
             </div>
           </section>
 
@@ -112,24 +112,9 @@
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="recentBookingsBody">
                 <tr>
-                  <td>#600</td>
-                  <td>Chris G.</td>
-                  <td>Kigali → Huye</td>
-                  <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                  <td>#599</td>
-                  <td>Eliane M.</td>
-                  <td>Kigali → Rubavu</td>
-                  <td><span class="status completed">Completed</span></td>
-                </tr>
-                <tr>
-                  <td>#598</td>
-                  <td>David K.</td>
-                  <td>Kigali → Musanze</td>
-                  <td><span class="status completed">Completed</span></td>
+                  <td colspan="4">Loading recent bookings...</td>
                 </tr>
               </tbody>
             </table>
@@ -139,11 +124,8 @@
           <!-- Popular Routes -->
           <section class="popular-routes-container card">
             <h3>Most Popular Routes</h3>
-            <ul>
-              <li>Kigali → Musanze <span>(120 bookings)</span></li>
-              <li>Kigali → Rubavu <span>(95 bookings)</span></li>
-              <li>Kigali → Huye <span>(80 bookings)</span></li>
-              <li>Kigali → Rusizi <span>(65 bookings)</span></li>
+            <ul id="popularRoutesList">
+              <li>Loading popular routes...</li>
             </ul>
           </section>
         </div>
@@ -183,58 +165,26 @@
 
         <!-- Booking Table -->
         <section class="table-section">
+          <div class="info-banner" id="adminMessage"></div>
           <table>
             <thead>
               <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Address</th>
+                <th>ID</th>
+                <th>Passenger</th>
+                <th>Route</th>
                 <th>Date</th>
-                <th>Price</th>
+                <th>Amount</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="adminBookingsTableBody">
               <tr>
-                <td>#1</td>
-                <td>Frank I.</td>
-                <td>KK 435 st</td>
-                <td>31 Jul 2024</td>
-                <td>4,500 frw</td>
-                <td><span class="status pending">Pending</span></td>
-                <td>⚙️</td>
-              </tr>
-              <tr>
-                <td>#2</td>
-                <td>Attorney V.</td>
-                <td>KK 535 st</td>
-                <td>02 Aug 2024</td>
-                <td>3,000 frw</td>
-                <td><span class="status completed">Completed</span></td>
-                <td>⚙️</td>
-              </tr>
-              <tr>
-                <td>#3</td>
-                <td>Mugabo A.</td>
-                <td>KK 565 st</td>
-                <td>04 Aug 2024</td>
-                <td>3,000 frw</td>
-                <td><span class="status canceled">Canceled</span></td>
-                <td>⚙️</td>
-              </tr>
-              <tr>
-                <td>#4</td>
-                <td>Saad B.</td>
-                <td>Kg 453 st</td>
-                <td>06 Aug 2024</td>
-                <td>5,500 frw</td>
-                <td><span class="status completed">Completed</span></td>
-                <td>⚙️</td>
+                <td colspan="7">Loading bookings...</td>
               </tr>
             </tbody>
           </table>
-          <p class="table-footer">Showing 18 of 600</p>
+          <p class="table-footer" id="bookingsTableFooter">Showing 0 bookings</p>
         </section>
       </section>
 
@@ -352,7 +302,8 @@
     </main>
   </div>
 
-  <script src="admin.js"></script>
+  <script defer src="../../js/api-client.js"></script>
+  <script defer src="admin.js"></script>
 </body>
 </html>
 
