@@ -660,8 +660,12 @@ async function loadRoutes() {
         <td>${route.distance_km || '—'}</td>
         <td>${route.estimated_duration_minutes || '—'}</td>
         <td>
-          <button class="btn-small btn-primary" data-route-id="${route.id}" data-action="edit">Edit</button>
-          <button class="btn-small btn-danger" data-route-id="${route.id}" data-action="delete">Delete</button>
+          <button class="icon-btn icon-btn-edit" data-route-id="${route.id}" data-action="edit" title="Edit route">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="icon-btn icon-btn-delete" data-route-id="${route.id}" data-action="delete" title="Delete route">
+            <i class="fas fa-trash-alt"></i>
+          </button>
         </td>
       </tr>
     `).join('');
@@ -846,8 +850,12 @@ async function loadSchedules() {
           <td>${formatCurrency(schedule.price || 0)}</td>
           <td><span class="status ${schedule.is_active ? 'confirmed' : 'cancelled'}">${schedule.is_active ? 'Active' : 'Inactive'}</span></td>
           <td>
-            <button class="btn-small btn-primary" data-schedule-id="${schedule.id}" data-action="edit">Edit</button>
-            <button class="btn-small btn-danger" data-schedule-id="${schedule.id}" data-action="delete">Delete</button>
+            <button class="icon-btn icon-btn-edit" data-schedule-id="${schedule.id}" data-action="edit" title="Edit schedule">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="icon-btn icon-btn-delete" data-schedule-id="${schedule.id}" data-action="delete" title="Delete schedule">
+              <i class="fas fa-trash-alt"></i>
+            </button>
           </td>
         </tr>
       `;

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="admin.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -17,18 +18,18 @@
       <div class="brand"><a href="../../index.html">ExpressGo</a></div>
       <nav>
         <ul>
-          <li><a href="#" data-section="overview" class="nav-link active">Dashboard</a></li>
-          <li><a href="#" data-section="bookings" class="nav-link">Bookings</a></li>
-          <li><a href="#" data-section="routes" class="nav-link">Routes</a></li>
-          <li><a href="#" data-section="schedules" class="nav-link">Schedules</a></li>
-          <li><a href="#" data-section="statistics" class="nav-link">Statistics</a></li>
-          <li><a href="#" data-section="offers" class="nav-link">Offers</a></li>
+          <li><a href="#" data-section="overview" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a></li>
+          <li><a href="#" data-section="bookings" class="nav-link"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+          <li><a href="#" data-section="routes" class="nav-link"><i class="fas fa-route"></i> Routes</a></li>
+          <li><a href="#" data-section="schedules" class="nav-link"><i class="fas fa-clock"></i> Schedules</a></li>
+          <li><a href="#" data-section="statistics" class="nav-link"><i class="fas fa-chart-bar"></i> Statistics</a></li>
+          <li><a href="#" data-section="offers" class="nav-link"><i class="fas fa-tags"></i> Offers</a></li>
         </ul>
       </nav>
       <div class="bottom-nav">
         <ul>
-          <li><a href="#" data-section="help" class="nav-link">Get Help</a></li>
-          <li><a href="#" data-section="settings" class="nav-link">Settings</a></li>
+          <li><a href="#" data-section="help" class="nav-link"><i class="fas fa-question-circle"></i> Get Help</a></li>
+          <li><a href="#" data-section="settings" class="nav-link"><i class="fas fa-cog"></i> Settings</a></li>
         </ul>
       </div>
     </aside>
@@ -49,7 +50,7 @@
                   <p><strong>ExpressGo</strong></p>
                   <p class="email">admin@expressgo.com</p>
                 </div>
-                <a href="#" class="dropdown-item" id="logoutBtn">Logout</a>
+                <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
               </div>
             </div>
           </div>
@@ -195,7 +196,7 @@
         <header class="header">
           <h2>Routes Management</h2>
           <div class="header-right">
-            <button class="btn-primary" id="createRouteBtn">+ Create Route</button>
+            <button class="btn-primary" id="createRouteBtn"><i class="fas fa-plus"></i> Create Route</button>
             <div class="profile-container">
               <div class="profile" id="profileMenuBtnRoutes">
                 <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">
@@ -243,7 +244,7 @@
         <header class="header">
           <h2>Schedules Management</h2>
           <div class="header-right">
-            <button class="btn-primary" id="createScheduleBtn">+ Create Schedule</button>
+            <button class="btn-primary" id="createScheduleBtn"><i class="fas fa-plus"></i> Create Schedule</button>
             <div class="profile-container">
               <div class="profile" id="profileMenuBtnSchedules">
                 <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">
@@ -415,7 +416,7 @@
         <header class="header">
           <h2>Manage Offers & Promotions</h2>
           <div class="header-right">
-            <button class="btn-primary" id="createOfferBtn">+ Create Offer</button>
+            <button class="btn-primary" id="createOfferBtn"><i class="fas fa-plus"></i> Create Offer</button>
             <div class="profile-container">
               <div class="profile" id="profileMenuBtnOffers">
                 <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">

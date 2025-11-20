@@ -82,11 +82,19 @@ body {
 }
 
 .sidebar nav a {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   padding: 1rem 1.5rem;
   text-decoration: none;
   color: #ffffff;
   transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar nav a i {
+  width: 20px;
+  text-align: center;
+  font-size: 1rem;
 }
 
 .sidebar nav a:hover,
@@ -111,11 +119,20 @@ body {
 }
 
 .sidebar .bottom-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   padding: 0.75rem 1.5rem;
   cursor: pointer;
   text-decoration: none;
   color: #ffffff;
   transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar .bottom-nav a i {
+  width: 20px;
+  text-align: center;
+  font-size: 1rem;
 }
 
 .sidebar .bottom-nav a:hover {
@@ -228,10 +245,18 @@ body {
 }
 
 .dropdown-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem 1rem;
   text-decoration: none;
   color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.dropdown-item i {
+  width: 18px;
+  text-align: center;
   font-size: 0.9rem;
 }
 
@@ -576,14 +601,20 @@ th, td {
 }
 
 .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   background: #002e9b;
   color: #fff;
   border: none;
   padding: 0.8rem 1.5rem;
   border-radius: 6px;
   cursor: pointer;
-  width: 100%;
   font-size: 1rem;
+}
+
+.btn-primary i {
+  font-size: 0.9rem;
 }
 
 /* Settings Container */
@@ -878,5 +909,49 @@ input:checked + .slider:before {
   .modal-actions button {
     width: 100%;
   }
+}
+
+/* Icon Buttons */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin: 0 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: #666;
+}
+
+.icon-btn:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.1);
+}
+
+.icon-btn-edit {
+  color: #002e9b;
+}
+
+.icon-btn-edit:hover {
+  background-color: #e3e8f5;
+  color: #002080;
+}
+
+.icon-btn-delete {
+  color: #dc3545;
+}
+
+.icon-btn-delete:hover {
+  background-color: #f8e8ea;
+  color: #c82333;
+}
+
+.icon-btn i {
+  font-size: 1rem;
 }
 

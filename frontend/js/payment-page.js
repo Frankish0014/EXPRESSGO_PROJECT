@@ -236,7 +236,11 @@ function processPayment() {
     document.getElementById('ticketSeats').textContent = ticketSeats || 'Assigned at station';
     document.getElementById('ticketTotal').textContent = amountText;
     
-    generateQRCode(primaryBooking?.booking_code || 'REF0000');
+    // Wait a bit to ensure QRious is loaded, then generate QR code
+    setTimeout(() => {
+      generateQRCode(primaryBooking?.booking_code || 'REF0000');
+    }, 200);
+    
     AppState.clearBookingCheckout();
     
     // Show ticket
@@ -255,34 +259,71 @@ function generateQRCode(reference) {
 
     const payload = `EXPRESSGO|REF:${reference}|AGENT:${scheduleData?.bus?.company?.name || 'UNKNOWN'}|DATE:${bookingContext?.schedule?.travelDate || ''}|TIME:${scheduleData?.departure_time || ''}`;
 
-    if (typeof QRious !== 'function') {
-        qrContainer.innerHTML = `
-            <div style="font-size: 0.75rem; padding: 0.75rem; text-align: center;">
-                <div style="font-weight: bold; margin-bottom: 0.4rem;">${reference}</div>
-                <div style="color: #c0392b;">QR unavailable</div>
-            </div>
-        `;
-        return;
-    }
+    // Wait for QRious to be available (with timeout)
+    let attempts = 0;
+    const maxAttempts = 50; // 5 seconds max wait
+    
+    const tryGenerateQR = () => {
+        attempts++;
+        
+        // Check if QRious is available
+        if (typeof QRious !== 'undefined' && QRious) {
+            try {
+                // Clear existing content
+                qrContainer.innerHTML = '';
+                
+                // Remove old canvas if exists
+                const oldCanvas = document.getElementById('ticketQrCanvas');
+                if (oldCanvas) {
+                    oldCanvas.remove();
+                }
+                
+                // Create canvas element
+                const canvas = document.createElement('canvas');
+                canvas.id = 'ticketQrCanvas';
+                canvas.style.display = 'block';
+                canvas.style.margin = '0 auto';
+                qrContainer.appendChild(canvas);
 
-    if (!qrCodeInstance) {
-        const canvas = document.createElement('canvas');
-        canvas.id = 'ticketQrCanvas';
-        qrContainer.innerHTML = '';
-        qrContainer.appendChild(canvas);
-
-        qrCodeInstance = new QRious({
-            element: canvas,
-            value: payload,
-            size: 140,
-            background: '#ffffff',
-            foreground: '#2c3e50',
-            level: 'H',
-            padding: 10
-        });
-    } else {
-        qrCodeInstance.set({ value: payload });
-    }
+                // Create new QR code instance
+                qrCodeInstance = new QRious({
+                    element: canvas,
+                    value: payload,
+                    size: 140,
+                    background: '#ffffff',
+                    foreground: '#2c3e50',
+                    level: 'H',
+                    padding: 10
+                });
+                
+                console.log('QR code generated successfully for:', reference);
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                qrContainer.innerHTML = `
+                    <div style="font-size: 0.75rem; padding: 0.75rem; text-align: center;">
+                        <div style="font-weight: bold; margin-bottom: 0.4rem;">${reference}</div>
+                        <div style="color: #c0392b;">QR generation failed: ${error.message}</div>
+                    </div>
+                `;
+            }
+        } else if (attempts < maxAttempts) {
+            // QRious not loaded yet, try again
+            setTimeout(tryGenerateQR, 100);
+        } else {
+            // Timeout - QRious not loaded
+            console.warn('QRious library not loaded after timeout');
+            qrContainer.innerHTML = `
+                <div style="font-size: 0.75rem; padding: 0.75rem; text-align: center;">
+                    <div style="font-weight: bold; margin-bottom: 0.4rem;">${reference}</div>
+                    <div style="color: #c0392b;">QR unavailable - Library not loaded</div>
+                    <div style="font-size: 0.7rem; color: #7f8c8d; margin-top: 0.5rem;">Please refresh the page</div>
+                </div>
+            `;
+        }
+    };
+    
+    // Start trying to generate QR code
+    tryGenerateQR();
 }
 
 async function downloadTicket() {
