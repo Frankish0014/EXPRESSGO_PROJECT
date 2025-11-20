@@ -1,7 +1,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import BusSchedule from './BusSchedule'; // Import the related model
-import User from './User'; // Import the related model
+import BusSchedule from './BusSchedule';
+import User from './User';
 
 interface BookingAttributes {
   id: number;
@@ -11,13 +11,22 @@ interface BookingAttributes {
   travel_date: Date;
   seat_number: number;
   status: 'confirmed' | 'cancelled' | 'completed';
+  booking_type: 'one-way' | 'round-trip' | 'multi-city';
+  parent_booking_id?: number;
+  leg_sequence?: number;
+  return_travel_date?: Date;
   created_at?: Date;
   updated_at?: Date;
 }
 
-interface BookingCreationAttributes extends Optional<BookingAttributes, 'id' | 'booking_code' | 'status' | 'created_at' | 'updated_at'> {}
+interface BookingCreationAttributes 
+  extends Optional<BookingAttributes, 
+    'id' | 'booking_code' | 'status' | 'booking_type' | 
+    'parent_booking_id' | 'leg_sequence' | 'return_travel_date' | 
+    'created_at' | 'updated_at'> {}
 
-class Booking extends Model<BookingAttributes, BookingCreationAttributes> implements BookingAttributes {
+class Booking extends Model<BookingAttributes, BookingCreationAttributes> 
+  implements BookingAttributes {
   public id!: number;
   public booking_code!: string;
   public user_id!: number;
@@ -25,12 +34,18 @@ class Booking extends Model<BookingAttributes, BookingCreationAttributes> implem
   public travel_date!: Date;
   public seat_number!: number;
   public status!: 'confirmed' | 'cancelled' | 'completed';
+  public booking_type!: 'one-way' | 'round-trip' | 'multi-city';
+  public parent_booking_id?: number;
+  public leg_sequence?: number;
+  public return_travel_date?: Date;
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
 
   // Associated data (optional, populated when using include)
   public readonly user?: User;
   public readonly schedule?: BusSchedule;
+  public readonly parentBooking?: Booking;
+  public readonly childBookings?: Booking[];
 }
 
 Booking.init(
@@ -41,7 +56,7 @@ Booking.init(
       primaryKey: true,
     },
     booking_code: {
-      type: DataTypes.STRING(25),
+      type: DataTypes.STRING(30), // Changed from 25 to 30
       allowNull: false,
       unique: true,
     },
@@ -73,6 +88,27 @@ Booking.init(
       type: DataTypes.ENUM('confirmed', 'cancelled', 'completed'),
       allowNull: false,
       defaultValue: 'confirmed',
+    },
+    booking_type: {
+      type: DataTypes.ENUM('one-way', 'round-trip', 'multi-city'),
+      allowNull: false,
+      defaultValue: 'one-way',
+    },
+    parent_booking_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'bookings',
+        key: 'id',
+      },
+    },
+    leg_sequence: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    return_travel_date: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
     },
     created_at: {
       type: DataTypes.DATE,
