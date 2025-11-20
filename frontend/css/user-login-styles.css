@@ -1,283 +1,188 @@
-
-/* User Log In Page */
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Inter", sans-serif;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  line-height: 1.6;
-  color: #333;
-}
-
-.navbar{
-    background-color: #002E9B;
-    color: white;
-    padding: 1rem 0;
-
-}
-
-.nav-content a:hover,
-.nav-content a.active {
-  border-bottom: 2px solid #ff8c00;
+  background: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  display: flex;
+  width: 95%;
+  height: 90vh;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  overflow: hidden;
 }
 
-/* Header */
-.nav-content {
+/* LEFT PANEL */
+.left-panel {
+  width: 50%;
+  background: #f0f5ff;
+  padding: 40px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
 }
 
-.logo {
-  font-size: 1.8rem;
-  font-weight: bold;
+.brand {
+  text-align: left;
 }
 
-nav ul {
-  display: flex;
-  list-style: none;
-  gap: 2rem;
+.brand-logo {
+  width: 50px;
 }
 
-nav a {
-  color: white;
-  text-decoration: none;
-  transition: color 0.3s;
+.brand h2 {
+  font-size: 28px;
+  margin-top: 10px;
+  color: #1a3fa8;
 }
 
-nav a:hover,
-nav a.active {
-  color: #3498db;
+.brand p {
+  font-size: 14px;
+  color: #3b4a6b;
 }
 
-/* Login Section */
-.login-section {
-  min-height: calc(100vh - 200px);
+.illustration img {
+  width: 100%;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+  width: 50%;
+  padding: 60px 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem 0;
-  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
 }
 
-.login-container {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-  padding: 3rem;
+.form-wrapper {
   width: 100%;
-  max-width: 450px;
-  margin: 0 20px;
+  max-width: 380px;
 }
 
-.login-header {
-  text-align: center;
-  margin-bottom: 2rem;
+.title {
+  font-size: 32px;
+  color: #1a1a1a;
 }
 
-.login-header h1 {
-  color: #2c3e50;
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+.subtitle {
+  margin-bottom: 25px;
+  color: #606060;
+  font-size: 15px;
 }
 
-.login-header p {
-  color: #7f8c8d;
-  font-size: 0.95rem;
+.input-group {
+  margin-bottom: 18px;
 }
 
-.form-group {
-  margin-bottom: 1.5rem;
+.input-group label {
+  font-size: 14px;
+  color: #333;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #2c3e50;
-  font-weight: 500;
-}
-
-.form-group input {
+.input-group input {
   width: 100%;
-  padding: 0.8rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #3498db;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 6px;
 }
 
 .form-options {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
+  margin-bottom: 18px;
 }
 
-.remember-me {
+.remember {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 6px;
 }
 
-.remember-me input[type="checkbox"] {
-  width: auto;
-}
-
-.forgot-password {
-  color: #3498db;
+.forgot {
+  color: #1a3fa8;
+  font-weight: 500;
   text-decoration: none;
-  transition: color 0.3s;
-}
-
-.forgot-password:hover {
-  color: #2980b9;
 }
 
 .btn-primary {
   width: 100%;
-  padding: 1rem;
-  background: #3498db;
+  padding: 12px;
+  background: #1a3fa8;
   color: white;
   border: none;
-  border-radius: 5px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
-  transition: background 0.3s;
-}
-
-.btn-primary:hover {
-  background: #2980b9;
+  margin-bottom: 18px;
 }
 
 .divider {
   text-align: center;
-  margin: 1.5rem 0;
-  color: #7f8c8d;
-  position: relative;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 40%;
-  height: 1px;
-  background: #e0e0e0;
-}
-
-.divider::before {
-  left: 0;
-}
-
-.divider::after {
-  right: 0;
-}
-
-.social-login {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  color: #999;
+  margin: 15px 0;
 }
 
 .social-btn {
-  flex: 1;
-  padding: 0.8rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 5px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
   background: white;
+  margin-bottom: 12px;
   cursor: pointer;
-  font-size: 0.95rem;
-  transition: all 0.3s;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  gap: 12px;
 }
 
-.social-btn:hover {
-  border-color: #3498db;
-  color: #3498db;
+.social-btn img {
+  width: 20px;
 }
 
-.signup-link {
+.google {
+  border-color: #db4437;
+}
+
+.facebook {
+  border-color: #1877f2;
+}
+
+.signup-text {
+  margin-top: 10px;
   text-align: center;
-  margin-top: 1.5rem;
-  color: #7f8c8d;
 }
 
-.signup-link a {
-  color: #3498db;
+.signup-text a {
+  color: #1a3fa8;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
 }
 
-.signup-link a:hover {
-  text-decoration: underline;
-}
-
-/* Footer */
-.footer {
-  background: #002E9B;
-  color: white;
-  padding: 2rem 0 1rem;
-  margin-top: auto;
-}
-
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 1rem;
-}
-
-.footer h3,
-.footer h4 {
-  color: #3498db;
-  margin-bottom: 0.5rem;
-}
-
-.footer p {
-  color: #bdc3c7;
-  margin-bottom: 0.3rem;
-}
-
-.footer-bottom {
-  text-align: center;
-  padding-top: 1rem;
-  border-top: 1px solid #34495e;
-  color: #bdc3c7;
-}
-
-@media (max-width: 768px) {
-  nav ul {
-    gap: 1rem;
-    font-size: 0.9rem;
-  }
-
-  .login-container {
-    padding: 2rem;
-  }
-
-  .social-login {
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .container {
     flex-direction: column;
+    height: auto;
+  }
+
+  .left-panel,
+  .right-panel {
+    width: 100%;
+  }
+
+  .right-panel {
+    padding: 40px;
   }
 }
-

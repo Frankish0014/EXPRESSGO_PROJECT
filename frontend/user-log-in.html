@@ -3,95 +3,582 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/user-login-styles.css">
   <title>Login - ExpressGo</title>
+  <style >
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  background: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  width: 95%;
+  height: 90vh;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* BACK BUTTON */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: #1a3fa8;
+  font-size: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn:hover {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #0f2d78;
+}
+
+/* LEFT PANEL */
+.left-panel {
+  width: 50%;
+  background: #f0f5ff;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.brand {
+  text-align: left;
+}
+
+.brand-logo {
+  width: 60px;
+  height: 60px;
+}
+
+.brand h2 {
+  font-size: 28px;
+  margin-top: 10px;
+  color: #1a3fa8;
+}
+
+.brand p {
+  font-size: 14px;
+  color: #3b4a6b;
+}
+
+.illustration img {
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+  width: 50%;
+  padding: 60px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 380px;
+}
+
+.title {
+  font-size: 32px;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  margin-bottom: 25px;
+  color: #606060;
+  font-size: 15px;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  font-size: 14px;
+  color: #333;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 6px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #1a3fa8;
+  box-shadow: 0 0 0 3px rgba(26, 63, 168, 0.1);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.forgot {
+  color: #1a3fa8;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #1a3fa8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 18px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #0f2d78;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 63, 168, 0.3);
+}
+
+.divider {
+  text-align: center;
+  color: #999;
+  margin: 15px 0;
+}
+
+.social-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  margin-bottom: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+  background: #f9fafb;
+  border-color: #1a3fa8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.social-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.google {
+  border-color: #db4437;
+}
+
+.facebook {
+  border-color: #1877f2;
+}
+
+.signup-text {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.signup-text a {
+  color: #1a3fa8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* POPUP MODAL STYLES */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 450px;
+  border-radius: 12px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transform: scale(0.9);
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.modal-header h2 {
+  font-size: 24px;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.modal-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.success-message {
+  display: none;
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.error-message {
+  display: none;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left-panel,
+  .right-panel {
+    width: 100%;
+  }
+
+  .right-panel {
+    padding: 40px;
+  }
+
+  .modal-content {
+    padding: 25px;
+    margin: 20px;
+  }
+
+  .back-btn {
+    top: 15px;
+    left: 15px;
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+}
+
+  </style>
 </head>
+
 <body>
-  <!-- Header -->
-  <header class="navbar">
-    <div class="container nav-content">
-      <div class="logo">ExpressGo</div>
-      <nav>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#destinations">Destinations</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="#" class="active">Login</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <!-- BACK TO HOME BUTTON -->
+  <a href="index.html" class="back-btn" title="Back to Home">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+    </svg>
+  </a>
 
-  <!-- Login Section -->
-  <section class="login-section">
-    <div class="login-container">
-      <div class="login-header">
-        <h1>Welcome Back!</h1>
-        <p>Log in to book your next journey</p>
+  <div class="container">
+
+    <!-- LEFT SIDE IMAGE / BRAND PANEL -->
+    <div class="left-panel">
+      <div class="brand">
+        <img src="assets/logo.svg" alt="ExpressGo Logo" class="brand-logo">
+        <h2>ExpressGo</h2>
+        <p>Reliable transport across Rwanda</p>
       </div>
 
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" required />
+      <div class="illustration">
+        <img src="assets/bus-illustration.svg" alt="Bus Illustration">
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE LOGIN FORM -->
+    <div class="right-panel">
+
+      <div class="form-wrapper">
+        <h1 class="title">Welcome Back</h1>
+        <p class="subtitle">Log in to book your next journey</p>
+
+        <form id="loginForm">
+
+          <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="Enter your email" required>
+          </div>
+
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" placeholder="Enter your password" required>
+          </div>
+
+          <div class="form-options">
+            <label class="remember">
+              <input type="checkbox"> Remember me
+            </label>
+            <a href="#" class="forgot" id="forgotPasswordLink">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-primary">Log In</button>
+        </form>
+
+        <div class="divider">OR</div>
+
+        <!-- SOCIAL LOGIN BUTTONS -->
+        <button class="social-btn google">
+          <img src="assets/google.svg" alt="Google Icon">
+          Continue with Google
+        </button>
+
+        <button class="social-btn facebook">
+          <img src="assets/facebook.svg" alt="Facebook Icon">
+          Continue with Facebook
+        </button>
+
+        <p class="signup-text">
+          Don't have an account?  
+          <a href="register-page.html">Sign up</a>
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PASSWORD RESET POPUP MODAL -->
+  <div class="modal-overlay" id="resetPasswordModal">
+    <div class="modal-content">
+      <button class="close-btn" id="closeModal">&times;</button>
+      
+      <div class="modal-header">
+        <h2>Reset Password</h2>
+        <p>Enter your email address and we'll send you a link to reset your password</p>
+      </div>
+
+      <div class="success-message" id="successMessage">
+        Password reset link has been sent to your email address. Please check your inbox.
+      </div>
+
+      <div class="error-message" id="errorMessage">
+        Something went wrong. Please try again later.
+      </div>
+
+      <form id="resetPasswordForm">
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" id="resetEmail" placeholder="Enter your email" required>
         </div>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" required />
-        </div>
-
-        <div class="form-options">
-          <label class="remember-me">
-            <input type="checkbox" name="remember" />
-            <span>Remember me</span>
-          </label>
-          <a href="#" class="forgot-password">Forgot Password?</a>
-        </div>
-
-        <button type="submit" class="btn-primary"><a href="user-booking-history.html">Log In</a></button>
+        <button type="submit" class="btn-primary">Send Reset Link</button>
+        <button type="button" class="btn-secondary" id="cancelReset">Cancel</button>
       </form>
-
-      <div class="divider">OR</div>
-
-      <div class="social-login">
-        <button class="social-btn" type="button">
-          <span>🌐</span> Google
-        </button>
-        <button class="social-btn" type="button">
-          <span>📘</span> Facebook
-        </button>
-      </div>
-
-      <div class="signup-link">
-        Don't have an account? <a href="register-page.html">Sign Up</a>
-      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Footer -->
-  <footer id="contact" class="footer">
-    <div class="container footer-content">
-      <div>
-        <h3>ExpressGo</h3>
-        <p>Reliable transport across Rwanda.</p>
-      </div>
-      <div>
-        <h4>Contact</h4>
-        <p>Email: info@expressgo.com</p>
-        <p>Phone: +250 7813 489</p>
-      </div>
-      <div>
-        <h4>Follow Us</h4>
-        <p>🌐 Facebook | Twitter | Instagram</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 ExpressGo. All rights reserved.</p>
-    </div>
-  </footer>
+  <script>
+    // Get modal elements
+    const modal = document.getElementById('resetPasswordModal');
+    const forgotLink = document.getElementById('forgotPasswordLink');
+    const closeBtn = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelReset');
+    const resetForm = document.getElementById('resetPasswordForm');
+    const resetEmail = document.getElementById('resetEmail');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
 
-  <script src="js/user-log-in.js"></script>
+    // Open modal
+    forgotLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Close modal functions
+    function closeModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      resetForm.reset();
+      successMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
+    }
+
+    // Close modal events
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // Handle password reset form submission
+    resetForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = resetEmail.value.trim();
+      
+      if (!email) {
+        errorMessage.textContent = 'Please enter your email address.';
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        errorMessage.textContent = 'Please enter a valid email address.';
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+        return;
+      }
+
+      // Hide error message
+      errorMessage.style.display = 'none';
+
+      // Here you would typically make an API call to your backend
+      const submitBtn = resetForm.querySelector('.btn-primary');
+      const originalText = submitBtn.textContent;
+      
+      submitBtn.textContent = 'Sending...';
+      submitBtn.disabled = true;
+
+      // Simulate API call
+      setTimeout(function() {
+        // Show success message
+        successMessage.style.display = 'block';
+        resetForm.style.display = 'none';
+        
+        // Reset button
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+
+        // Close modal after 3 seconds
+        setTimeout(function() {
+          closeModal();
+          resetForm.style.display = 'block';
+        }, 3000);     
+      }, 1500); 
+    });
+  </script>
 </body>
 </html>

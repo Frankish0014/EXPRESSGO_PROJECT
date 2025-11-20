@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/user-settings.css">
+  <title>Account Settings - ExpressGo</title>
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="logo"><a href="index.html">ExpressGo</a></div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="user-booking-history.html">My Bookings</a></li>
+          <li><a href="#" class="active">Settings</a></li>
+          <li class="user-menu">
+            <span class="user-name" id="headerUserName">John Doe</span>
+            <div class="dropdown">
+              <a href="#" onclick="logout()">Logout</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="settings-main">
+    <div class="container">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1>Account Settings</h1>
+        <p>Manage your profile, security, and preferences</p>
+      </div>
+
+      <div class="settings-layout">
+        <!-- Settings Navigation -->
+        <aside class="settings-sidebar">
+          <nav class="settings-nav">
+            <button class="nav-item active" data-tab="profile">
+              <span class="nav-icon">👤</span>
+              Profile Information
+            </button>
+            <button class="nav-item" data-tab="security">
+              <span class="nav-icon">🔒</span>
+              Password & Security
+            </button>
+            <button class="nav-item" data-tab="preferences">
+              <span class="nav-icon">⚙️</span>
+              Preferences
+            </button>
+            <button class="nav-item" data-tab="notifications">
+              <span class="nav-icon">🔔</span>
+              Notifications
+            </button>
+            <button class="nav-item" data-tab="privacy">
+              <span class="nav-icon">🛡️</span>
+              Privacy & Data
+            </button>
+            <button class="nav-item danger" data-tab="account">
+              <span class="nav-icon">⚠️</span>
+              Account Management
+            </button>
+          </nav>
+        </aside>
+
+        <!-- Settings Content -->
+        <div class="settings-content">
+          
+          <!-- Profile Information Tab -->
+          <div id="profile" class="tab-content active">
+            <div class="tab-header">
+              <h2>Profile Information</h2>
+              <p>Update your personal details and contact information</p>
+            </div>
+
+            <div class="profile-photo-section">
+              <div class="photo-container">
+                <img src="images/default-avatar.png" alt="Profile Photo" id="profilePhoto" class="profile-photo">
+                <div class="photo-overlay">
+                  <span class="camera-icon">📷</span>
+                </div>
+              </div>
+              <div class="photo-actions">
+                <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                <button type="button" class="btn-secondary" onclick="document.getElementById('photoInput').click()">
+                  Change Photo
+                </button>
+                <button type="button" class="btn-text danger" id="removePhotoBtn">
+                  Remove Photo
+                </button>
+              </div>
+            </div>
+
+            <form id="profileForm" class="settings-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="firstName">First Name</label>
+                  <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name</label>
+                  <input type="text" id="lastName" name="lastName" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+                <small class="form-hint">We'll send a verification email if you change your address</small>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+              </div>
+
+              <div class="form-group">
+                <label for="dateOfBirth">Date of Birth</label>
+                <input type="date" id="dateOfBirth" name="dateOfBirth">
+              </div>
+
+              <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender">
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                  <option value="prefer-not-to-say">Prefer not to say</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" rows="3" placeholder="Enter your full address"></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" class="btn-secondary" id="cancelProfileBtn">Cancel</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Password & Security Tab -->
+          <div id="security" class="tab-content">
+            <div class="tab-header">
+              <h2>Password & Security</h2>
+              <p>Keep your account secure with a strong password and security features</p>
+            </div>
+
+            <!-- Change Password Section -->
+            <div class="security-section">
+              <h3>Change Password</h3>
+              <form id="passwordForm" class="settings-form">
+                <div class="form-group">
+                  <label for="currentPassword">Current Password</label>
+                  <div class="password-input-container">
+                    <input type="password" id="currentPassword" name="currentPassword" required>
+                    <button type="button" class="password-toggle" data-target="currentPassword">👁️</button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="newPasswordSettings">New Password</label>
+                  <div class="password-input-container">
+                    <input type="password" id="newPasswordSettings" name="newPasswordSettings" required>
+                    <button type="button" class="password-toggle" data-target="newPasswordSettings">👁️</button>
+                  </div>
+                  <div class="password-strength">
+                    <div class="password-strength-bar" id="passwordStrengthBarSettings"></div>
+                    <span class="password-strength-text" id="passwordStrengthTextSettings">Password strength</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="confirmNewPassword">Confirm New Password</label>
+                  <div class="password-input-container">
+                    <input type="password" id="confirmNewPassword" name="confirmNewPassword" required>
+                    <button type="button" class="password-toggle" data-target="confirmNewPassword">👁️</button>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn-primary">Update Password</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="security-section">
+              <h3>Security Settings</h3>
+              <div class="security-options">
+                <div class="security-option">
+                  <div class="option-info">
+                    <h4>Two-Factor Authentication</h4>
+                    <p>Add an extra layer of security to your account</p>
+                  </div>
+                  <div class="option-control">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="twoFactorAuth">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="security-option">
+                  <div class="option-info">
+                    <h4>Login Notifications</h4>
+                    <p>Get notified when someone logs into your account</p>
+                  </div>
+                  <div class="option-control">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="loginNotifications" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="security-option">
+                  <div class="option-info">
+                    <h4>Session Timeout</h4>
+                    <p>Automatically log out after period of inactivity</p>
+                  </div>
+                  <div class="option-control">
+                    <select id="sessionTimeout">
+                      <option value="30">30 minutes</option>
+                      <option value="60" selected>1 hour</option>
+                      <option value="120">2 hours</option>
+                      <option value="0">Never</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Sessions -->
+            <div class="security-section">
+              <h3>Active Sessions</h3>
+              <div id="activeSessions" class="sessions-list">
+                <!-- Sessions will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferences Tab -->
+          <div id="preferences" class="tab-content">
+            <div class="tab-header">
+              <h2>Preferences</h2>
+              <p>Customize your ExpressGo experience</p>
+            </div>
+
+            <form id="preferencesForm" class="settings-form">
+              <div class="preferences-section">
+                <h3>Language & Region</h3>
+                
+                <div class="form-group">
+                  <label for="language">Language</label>
+                  <select id="language" name="language">
+                    <option value="en" selected>English</option>
+                    <option value="rw">Kinyarwanda</option>
+                    <option value="fr">French</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="currency">Currency</label>
+                  <select id="currency" name="currency">
+                    <option value="RWF" selected>Rwandan Franc (RWF)</option>
+                    <option value="USD">US Dollar (USD)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="timezone">Timezone</label>
+                  <select id="timezone" name="timezone">
+                    <option value="Africa/Kigali" selected>Kigali (CAT)</option>
+                    <option value="UTC">UTC</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="preferences-section">
+                <h3>Booking Preferences</h3>
+                
+                <div class="preference-option">
+                  <div class="option-info">
+                    <label for="defaultDepartureCity">Default Departure City</label>
+                    <p>Pre-select your most common departure location</p>
+                  </div>
+                  <div class="option-control">
+                    <select id="defaultDepartureCity" name="defaultDepartureCity">
+                      <option value="">None</option>
+                      <option value="kigali" selected>Kigali</option>
+                      <option value="butare">Butare</option>
+                      <option value="huye">Huye</option>
+                      <option value="rubavu">Rubavu</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="preference-option">
+                  <div class="option-info">
+                    <h4>Auto-fill Passenger Information</h4>
+                    <p>Use your profile information for new bookings</p>
+                  </div>
+                  <div class="option-control">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="autoFillInfo" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="preference-option">
+                  <div class="option-info">
+                    <h4>Seat Preference</h4>
+                    <p>Your preferred seat type</p>
+                  </div>
+                  <div class="option-control">
+                    <select id="seatPreference" name="seatPreference">
+                      <option value="any">No preference</option>
+                      <option value="window">Window seat</option>
+                      <option value="aisle">Aisle seat</option>
+                      <option value="front">Front of bus</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Preferences</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Notifications Tab -->
+          <div id="notifications" class="tab-content">
+            <div class="tab-header">
+              <h2>Notification Settings</h2>
+              <p>Choose what notifications you'd like to receive</p>
+            </div>
+
+            <form id="notificationsForm" class="settings-form">
+              <div class="notification-section">
+                <h3>Email Notifications</h3>
+                
+                <div class="notification-option">
+                  <div class="option-info">
+                    <h4>Booking Confirmations</h4>
+                    <p>Receive emails when you make a booking</p>
+                  </div>
+                  <div class="option-control">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="emailBookingConfirmation" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="notification-option">
+                  <div class="option-info">
+                    <h4>Booking Reminders</h4>
+                    <p>Get reminded about upcoming trips</p>
+                  </div>
+                  <div class="option-control">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="emailBookingReminders" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="notification-option">
+                  <div class="option-info">
+                    <h4>Schedule Changes</h4>
+                    <p>Be notified if your trip schedule changes</p>
+                  </div>
+                  <div class="option-control">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="emailScheduleChanges" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="notification-option">
+                  <div class="option-info">
+                    <h4>Promotional Offers</h4>
+                    <p>Receive information about deals and discounts</p>
+                  </div>
+                  <div class="option-control">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="emailPromotions">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="notification-section">
+                <h3>SMS Notifications</h3>
+                
+                <div class="notification-option">
+                  <div class="option-info">
+                    <h4>Booking Confirmations</h4>
+                    <p>Receive SMS confirmations for bookings</p>
+                  </div>
+                  <div class="option-control">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="smsBookingConfirmation">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="notification-option">
+                  <div class="option-info">
+                    <h4>Trip Reminders</h4>
+                    <p>Get SMS reminders before your trip</p>
+                  </div>
+                  <div class="option-control">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="smsTripReminders">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Notification Settings</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Privacy & Data Tab -->
+          <div id="privacy" class="tab-content">
+            <div class="tab-header">
+              <h2>Privacy & Data</h2>
+              <p>Control your privacy settings and manage your data</p>
+            </div>
+
+            <div class="privacy-section">
+              <h3>Data & Privacy Controls</h3>
+              
+              <div class="privacy-option">
+                <div class="option-info">
+                  <h4>Data Collection</h4>
+                  <p>Allow ExpressGo to collect usage data to improve our services</p>
+                </div>
+                <div class="option-control">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="dataCollection" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="privacy-option">
+                <div class="option-info">
+                  <h4>Marketing Communications</h4>
+                  <p>Allow us to contact you with marketing information</p>
+                </div>
+                <div class="option-control">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="marketingCommunications">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="data-actions">
+                <h4>Data Management</h4>
+                <div class="action-buttons">
+                  <button type="button" class="btn-secondary" id="downloadDataBtn">
+                    📥 Download My Data
+                  </button>
+                  <button type="button" class="btn-secondary" id="deleteDataBtn">
+                    🗑️ Request Data Deletion
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Management Tab -->
+          <div id="account" class="tab-content">
+            <div class="tab-header">
+              <h2>Account Management</h2>
+              <p>Manage your account status and data</p>
+            </div>
+
+            <div class="danger-zone">
+              <h3>⚠️ Danger Zone</h3>
+              
+              <div class="danger-action">
+                <div class="action-info">
+                  <h4>Deactivate Account</h4>
+                  <p>Temporarily disable your account. You can reactivate it later by logging in.</p>
+                </div>
+                <button type="button" class="btn-secondary" id="deactivateAccountBtn">
+                  Deactivate Account
+                </button>
+              </div>
+
+              <div class="danger-action">
+                <div class="action-info">
+                  <h4>Delete Account</h4>
+                  <p>Permanently delete your account and all associated data. This action cannot be undone.</p>
+                </div>
+                <button type="button" class="btn-danger" id="deleteAccountBtn">
+                  Delete Account
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer id="contact" class="footer">
+    <div class="container footer-content">
+      <div>
+        <h3>ExpressGo</h3>
+        <p>Reliable transport across Rwanda.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>Email: info@expressgo.com</p>
+        <p>Phone: +250 7813 489</p>
+      </div>
+      <div>
+        <h4>Follow Us</h4>
+        <p>🌐 Facebook | Twitter | Instagram</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ExpressGo. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Confirmation Modals -->
+  
+  <!-- Delete Account Modal -->
+  <div id="deleteAccountModal" class="modal">
+    <div class="modal-content danger">
+      <h2>Delete Account</h2>
+      <p>Are you sure you want to permanently delete your account? This action cannot be undone and will:</p>
+      <ul>
+        <li>Delete all your booking history</li>
+        <li>Remove your profile information</li>
+        <li>Cancel any future bookings</li>
+        <li>Permanently remove your account data</li>
+      </ul>
+      
+      <div class="confirmation-input">
+        <label for="deleteConfirmation">Type "DELETE" to confirm:</label>
+        <input type="text" id="deleteConfirmation" placeholder="DELETE">
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn-danger" id="confirmDeleteBtn" disabled>
+          Delete My Account
+        </button>
+        <button type="button" class="btn-secondary" id="cancelDeleteBtn">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success/Error Notifications -->
+  <div id="successNotification" class="notification success">
+    <div class="notification-content">
+      <span class="notification-icon">✅</span>
+      <span class="notification-message" id="successNotificationMessage"></span>
+      <button class="notification-close" onclick="closeNotification('successNotification')">×</button>
+    </div>
+  </div>
+
+  <div id="errorNotification" class="notification error">
+    <div class="notification-content">
+      <span class="notification-icon">❌</span>
+      <span class="notification-message" id="errorNotificationMessage"></span>
+      <button class="notification-close" onclick="closeNotification('errorNotification')">×</button>
+    </div>
+  </div>
+
+  <script src="js/user-settings.js"></script>
+</body>
+</html>

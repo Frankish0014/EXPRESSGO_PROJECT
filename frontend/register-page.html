@@ -3,119 +3,784 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/register-page-styles.css">
   <title>Register - ExpressGo</title>
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  background: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.container {
+  display: flex;
+  width: 95%;
+  max-width: 1200px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  overflow: hidden;
+  min-height: 90vh;
+}
+
+/* LEFT PANEL */
+.left-panel {
+  width: 50%;
+  background: #f0f5ff;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.brand {
+  text-align: left;
+}
+
+.brand-logo {
+  width: 60px;
+  height: 60px;
+}
+
+.brand h2 {
+  font-size: 28px;
+  margin-top: 10px;
+  color: #1a3fa8;
+}
+
+.brand p {
+  font-size: 14px;
+  color: #3b4a6b;
+}
+
+.illustration img {
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+  width: 50%;
+  padding: 40px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 400px;
+}
+
+.title {
+  font-size: 32px;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  margin-bottom: 25px;
+  color: #606060;
+  font-size: 15px;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.input-group input, .input-group select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 6px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus, .input-group select:focus {
+  outline: none;
+  border-color: #1a3fa8;
+  box-shadow: 0 0 0 3px rgba(26, 63, 168, 0.1);
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row .input-group {
+  flex: 1;
+}
+
+.terms-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.terms-checkbox input[type="checkbox"] {
+  width: auto;
+  margin-top: 2px;
+}
+
+.terms-checkbox label {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #555;
+}
+
+.terms-checkbox a {
+  color: #1a3fa8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.terms-checkbox a:hover {
+  text-decoration: underline;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #1a3fa8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 18px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #0f2d78;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 63, 168, 0.3);
+}
+
+.btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.divider {
+  text-align: center;
+  color: #999;
+  margin: 15px 0;
+}
+
+.social-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  margin-bottom: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+  background: #f9fafb;
+  border-color: #1a3fa8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.social-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.google {
+  border-color: #db4437;
+}
+
+.facebook {
+  border-color: #1877f2;
+}
+
+.login-text {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.login-text a {
+  color: #1a3fa8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.error-message {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+  display: none;
+}
+
+.success-message {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+  display: none;
+}
+
+/* PASSWORD STRENGTH INDICATOR */
+.password-strength {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.strength-bar {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 5px;
+}
+
+.strength-segment {
+  height: 4px;
+  flex: 1;
+  background: #e0e0e0;
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+.strength-segment.active {
+  background: #dc3545;
+}
+
+.strength-segment.medium {
+  background: #ffc107;
+}
+
+.strength-segment.strong {
+  background: #28a745;
+}
+
+.strength-text {
+  color: #666;
+}
+
+/* BACK BUTTON */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: #1a3fa8;
+  font-size: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn:hover {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #0f2d78;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .left-panel,
+  .right-panel {
+    width: 100%;
+  }
+
+  .left-panel {
+    padding: 30px;
+    min-height: 200px;
+  }
+
+  .right-panel {
+    padding: 30px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .illustration {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px 0;
+  }
+  
+  .right-panel {
+    padding: 20px;
+  }
+  
+  .title {
+    font-size: 28px;
+  }
+
+  .back-btn {
+    top: 15px;
+    left: 15px;
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+}
+  </style>
 </head>
+
 <body>
-  <!-- Header -->
-  <header class="navbar">
-    <div class="container nav-content">
-      <div class="logo"><a href="">ExpressGo</a></div>
-      <nav>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#destinations">Destinations</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="#" class="active">Register</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-  <!-- Register Section -->
-  <section class="register-section">
-    <div class="register-container">
-      <div class="register-header">
-        <h1>Create Account</h1>
-        <p>Join ExpressGo for seamless travel booking</p>
+  <!-- BACK TO HOME BUTTON -->
+  <a href="index.html" class="back-btn" title="Back to Home">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+    </svg>
+  </a>
+
+  <div class="container">
+
+    <!-- LEFT SIDE IMAGE / BRAND PANEL -->
+    <div class="left-panel">
+      <div class="brand">
+        <img src="assets/logo.svg" alt="ExpressGo Logo" class="brand-logo">
+        <h2>ExpressGo</h2>
+        <p>Reliable transport across Rwanda</p>
       </div>
 
-      <form id="registerForm">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" placeholder="type firstName.." required />
+      <div class="illustration">
+        <img src="assets/bus-illustration.svg" alt="Bus Illustration">
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE REGISTRATION FORM -->
+    <div class="right-panel">
+
+      <div class="form-wrapper">
+        <h1 class="title">Create Account</h1>
+        <p class="subtitle">Join ExpressGo and start booking your journeys</p>
+
+        <div class="error-message" id="errorMessage">
+          Something went wrong. Please try again.
+        </div>
+
+        <div class="success-message" id="successMessage">
+          Account created successfully! Please check your email to verify your account.
+        </div>
+
+        <form id="registerForm">
+          <!-- Name Fields -->
+          <div class="form-row">
+            <div class="input-group">
+              <label>First Name</label>
+              <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+            </div>
+            <div class="input-group">
+              <label>Last Name</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName" placeholder="type lastName.." required />
+
+          <!-- Email -->
+          <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email address" required>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="type email here.." required />
-          <div class="error-message" id="emailError">Please enter a valid email address</div>
-        </div>
-
-        <div class="form-group">
-          <label for="phone">Phone Number</label>
-          <input type="tel" id="phone" name="phone" placeholder="+250 7XX XXX XXX" required />
-        </div>
-
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Create a strong password" required />
-          <div class="password-strength">
-            <div class="password-strength-bar" id="passwordStrengthBar"></div>
+          <!-- Phone Number -->
+          <div class="input-group">
+            <label>Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="+250 7XX XXX XXX" required>
           </div>
-          <div class="password-hint">Use at least 8 characters with letters, numbers, and symbols</div>
-        </div>
 
-        <div class="form-group">
-          <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password" required />
-          <div class="error-message" id="passwordError">Passwords do not match</div>
-        </div>
+          <!-- Date of Birth and Gender -->
+          <div class="form-row">
+            <div class="input-group">
+              <label>Date of Birth</label>
+              <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+            </div>
+            <div class="input-group">
+              <label>Gender</label>
+              <select id="gender" name="gender" required>
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
 
-        <div class="terms-checkbox">
-          <input type="checkbox" id="terms" name="terms" required />
-          <label for="terms">
-            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-          </label>
-        </div>
+          <!-- Password -->
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+            <div class="password-strength" id="passwordStrength">
+              <div class="strength-bar">
+                <div class="strength-segment"></div>
+                <div class="strength-segment"></div>
+                <div class="strength-segment"></div>
+                <div class="strength-segment"></div>
+              </div>
+              <div class="strength-text">Password strength: <span id="strengthText">Weak</span></div>
+            </div>
+          </div>
 
-        <button type="submit" class="btn-primary" id="submitBtn">Create Account</button>
-      </form>
+          <!-- Confirm Password -->
+          <div class="input-group">
+            <label>Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+          </div>
 
-      <div class="divider">OR</div>
+          <!-- Terms and Conditions -->
+          <div class="terms-checkbox">
+            <input type="checkbox" id="terms" name="terms" required>
+            <label for="terms">
+              I agree to the <a href="#" id="termsLink">Terms and Conditions</a> and 
+              <a href="#" id="privacyLink">Privacy Policy</a>
+            </label>
+          </div>
 
-      <div class="social-login">
-        <button class="social-btn" type="button">
-          <span>🌐</span> Google
+          <!-- Marketing Emails -->
+          <div class="terms-checkbox">
+            <input type="checkbox" id="marketing" name="marketing">
+            <label for="marketing">
+              I want to receive promotional emails and updates about new routes and offers
+            </label>
+          </div>
+
+          <button type="submit" class="btn-primary" id="registerBtn">Create Account</button>
+        </form>
+
+        <div class="divider">OR</div>
+
+        <!-- SOCIAL REGISTRATION BUTTONS -->
+        <button class="social-btn google" id="googleRegister">
+          <img src="assets/google.svg" alt="Google Icon">
+          Sign up with Google
         </button>
-        <button class="social-btn" type="button">
-          <span>📘</span> Facebook
+
+        <button class="social-btn facebook" id="facebookRegister">
+          <img src="assets/facebook.svg" alt="Facebook Icon">
+          Sign up with Facebook
         </button>
+
+        <p class="login-text">
+          Already have an account?  
+          <a href="user-log-in.html">Sign in</a>
+        </p>
       </div>
 
-      <div class="login-link">
-        Already have an account? <a href="user-log-in.html">Log In</a>
-      </div>
     </div>
-  </section>
 
-  <!-- Footer -->
-  <footer id="contact" class="footer">
-    <div class="container footer-content">
-      <div>
-        <h3>ExpressGo</h3>
-        <p>Reliable transport across Rwanda.</p>
-      </div>
-      <div>
-        <h4>Contact</h4>
-        <p>Email: info@expressgo.com</p>
-        <p>Phone: +250 7813 489</p>
-      </div>
-      <div>
-        <h4>Follow Us</h4>
-        <p>🌐 Facebook | Twitter | Instagram</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 ExpressGo. All rights reserved.</p>
-    </div>
-  </footer>
-  <script src="js/register-page.js"></script>
+  </div>
+
+  <script>
+    // Get form elements
+    const registerForm = document.getElementById('registerForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const registerBtn = document.getElementById('registerBtn');
+    
+    // Password strength elements
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const strengthSegments = document.querySelectorAll('.strength-segment');
+    const strengthText = document.getElementById('strengthText');
+
+    // Phone number formatting
+    const phoneInput = document.getElementById('phone');
+    
+    phoneInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      
+      // Add Rwanda country code if not present
+      if (value.length > 0 && !value.startsWith('250')) {
+        if (value.startsWith('7') || value.startsWith('06') || value.startsWith('02')) {
+          value = '250' + value;
+        }
+      }
+      
+      // Format the number
+      if (value.length >= 3) {
+        let formatted = '+' + value.substring(0, 3);
+        if (value.length > 3) {
+          formatted += ' ' + value.substring(3, 4);
+          if (value.length > 4) {
+            formatted += value.substring(4, 6);
+            if (value.length > 6) {
+              formatted += ' ' + value.substring(6, 9);
+              if (value.length > 9) {
+                formatted += ' ' + value.substring(9, 12);
+              }
+            }
+          }
+        }
+        e.target.value = formatted;
+      }
+    });
+
+    // Password strength checker
+    function checkPasswordStrength(password) {
+      let strength = 0;
+      let text = 'Very Weak';
+      
+      if (password.length >= 8) strength++;
+      if (/[a-z]/.test(password)) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+      
+      // Reset all segments
+      strengthSegments.forEach(segment => {
+        segment.classList.remove('active', 'medium', 'strong');
+      });
+      
+      // Update segments based on strength
+      for (let i = 0; i < strength; i++) {
+        strengthSegments[i].classList.add('active');
+        
+        if (strength >= 3) {
+          strengthSegments[i].classList.add('medium');
+        }
+        if (strength >= 4) {
+          strengthSegments[i].classList.add('strong');
+        }
+      }
+      
+      // Update text
+      switch (strength) {
+        case 0:
+        case 1:
+          text = 'Very Weak';
+          break;
+        case 2:
+          text = 'Weak';
+          break;
+        case 3:
+          text = 'Medium';
+          break;
+        case 4:
+          text = 'Strong';
+          break;
+        case 5:
+          text = 'Very Strong';
+          break;
+      }
+      
+      strengthText.textContent = text;
+      return strength;
+    }
+
+    passwordInput.addEventListener('input', function() {
+      checkPasswordStrength(this.value);
+    });
+
+    // Form validation
+    function validateForm() {
+      const formData = new FormData(registerForm);
+      const data = Object.fromEntries(formData);
+      
+      // Reset messages
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+      
+      // Basic validation
+      if (!data.firstName || !data.lastName) {
+        showError('Please enter your full name.');
+        return false;
+      }
+      
+      if (!data.email) {
+        showError('Please enter your email address.');
+        return false;
+      }
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(data.email)) {
+        showError('Please enter a valid email address.');
+        return false;
+      }
+      
+      if (!data.phone) {
+        showError('Please enter your phone number.');
+        return false;
+      }
+      
+      // Phone validation (Rwanda format)
+      const phoneRegex = /^\+250\s?[0-9]{1}\d{2}\s?\d{3}\s?\d{3}$/;
+      if (!phoneRegex.test(data.phone)) {
+        showError('Please enter a valid Rwandan phone number.');
+        return false;
+      }
+      
+      if (!data.dateOfBirth) {
+        showError('Please enter your date of birth.');
+        return false;
+      }
+      
+      // Age validation (must be 16+)
+      const birthDate = new Date(data.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      if (age < 16) {
+        showError('You must be at least 16 years old to register.');
+        return false;
+      }
+      
+      if (!data.gender) {
+        showError('Please select your gender.');
+        return false;
+      }
+      
+      if (!data.password) {
+        showError('Please enter a password.');
+        return false;
+      }
+      
+      // Password strength validation
+      const passwordStrength = checkPasswordStrength(data.password);
+      if (passwordStrength < 3) {
+        showError('Please choose a stronger password. Use at least 8 characters with a mix of letters, numbers, and symbols.');
+        return false;
+      }
+      
+      if (data.password !== data.confirmPassword) {
+        showError('Passwords do not match.');
+        return false;
+      }
+      
+      if (!data.terms) {
+        showError('Please accept the Terms and Conditions.');
+        return false;
+      }
+      
+      return true;
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+      errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.style.display = 'block';
+      successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Handle form submission
+    registerForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      if (!validateForm()) {
+        return;
+      }
+      
+      const formData = new FormData(registerForm);
+      const data = Object.fromEntries(formData);
+      
+      // Update button state
+      const originalText = registerBtn.textContent;
+      registerBtn.textContent = 'Creating Account...';
+      registerBtn.disabled = true;
+      
+      // Simulate API call
+      setTimeout(function() {
+        // Simulate successful registration
+        showSuccess('Account created successfully! Please check your email to verify your account.');
+        registerForm.style.display = 'none';
+        
+        // Redirect to login page after 3 seconds
+        setTimeout(function() {
+          window.location.href = 'user-log-in.html';
+        }, 3000);
+        
+        
+      }, 2000); 
+    });
+
+    // Social registration handlers
+    document.getElementById('googleRegister').addEventListener('click', function() {
+      // TODO: Implement Google OAuth
+      alert('Google registration will be available soon!');
+    });
+
+    document.getElementById('facebookRegister').addEventListener('click', function() {
+      // TODO: Implement Facebook OAuth
+      alert('Facebook registration will be available soon!');
+    });
+
+    // Terms and Privacy links
+    document.getElementById('termsLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      // TODO: Show terms and conditions modal or redirect to terms page
+      alert('Terms and Conditions page will be available soon!');
+    });
+
+    document.getElementById('privacyLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      // TODO: Show privacy policy modal or redirect to privacy page
+      alert('Privacy Policy page will be available soon!');
+    });
+  </script>
 </body>
 </html>

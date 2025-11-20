@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <!-- Background Sky -->
+  <defs>
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f5ff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="220" fill="url(#skyGradient)"/>
+  
+  <!-- Mountains/Hills in background -->
+  <polygon points="0,180 80,120 160,140 240,100 320,130 400,110 400,220 0,220" fill="#d0d8e8" opacity="0.6"/>
+  
+  <!-- Road -->
+  <rect x="0" y="220" width="400" height="80" fill="#555"/>
+  <rect x="0" y="240" width="400" height="5" fill="#ffeb3b" opacity="0.9"/>
+  <!-- Dashed center line -->
+  <rect x="0" y="250" width="30" height="3" fill="#fff"/>
+  <rect x="50" y="250" width="30" height="3" fill="#fff"/>
+  <rect x="100" y="250" width="30" height="3" fill="#fff"/>
+  <rect x="150" y="250" width="30" height="3" fill="#fff"/>
+  <rect x="200" y="250" width="30" height="3" fill="#fff"/>
+  <rect x="250" y="250" width="30" height="3" fill="#fff"/>
+  <rect x="300" y="250" width="30" height="3" fill="#fff"/>
+  <rect x="350" y="250" width="30" height="3" fill="#fff"/>
+  
+  <!-- Bus Body with gradient -->
+  <defs>
+    <linearGradient id="busGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a3fa8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="80" y="140" width="240" height="80" rx="12" fill="url(#busGradient)"/>
+  
+  <!-- Bus Front -->
+  <rect x="70" y="150" width="15" height="60" rx="7" fill="#0f2d78"/>
+  
+  <!-- Bus Roof -->
+  <rect x="85" y="130" width="230" height="15" rx="7" fill="#0f2d78"/>
+  
+  <!-- Windows with reflections -->
+  <rect x="95" y="150" width="35" height="25" rx="4" fill="#e3f2fd"/>
+  <rect x="140" y="150" width="35" height="25" rx="4" fill="#e3f2fd"/>
+  <rect x="185" y="150" width="35" height="25" rx="4" fill="#e3f2fd"/>
+  <rect x="230" y="150" width="35" height="25" rx="4" fill="#e3f2fd"/>
+  <rect x="275" y="150" width="35" height="25" rx="4" fill="#e3f2fd"/>
+  
+  <!-- Window reflections -->
+  <rect x="97" y="152" width="8" height="20" fill="#fff" opacity="0.4"/>
+  <rect x="142" y="152" width="8" height="20" fill="#fff" opacity="0.4"/>
+  <rect x="187" y="152" width="8" height="20" fill="#fff" opacity="0.4"/>
+  <rect x="232" y="152" width="8" height="20" fill="#fff" opacity="0.4"/>
+  <rect x="277" y="152" width="8" height="20" fill="#fff" opacity="0.4"/>
+  
+  <!-- Door -->
+  <rect x="95" y="185" width="30" height="35" rx="4" fill="#0f2d78"/>
+  <rect x="100" y="195" width="4" height="15" fill="#fff"/>
+  <circle cx="120" cy="202" r="2" fill="#fff"/>
+  
+  <!-- Wheels with more detail -->
+  <circle cx="130" cy="230" r="20" fill="#1a1a1a"/>
+  <circle cx="130" cy="230" r="15" fill="#333"/>
+  <circle cx="130" cy="230" r="10" fill="#666"/>
+  <circle cx="130" cy="230" r="5" fill="#999"/>
+  
+  <circle cx="290" cy="230" r="20" fill="#1a1a1a"/>
+  <circle cx="290" cy="230" r="15" fill="#333"/>
+  <circle cx="290" cy="230" r="10" fill="#666"/>
+  <circle cx="290" cy="230" r="5" fill="#999"/>
+  
+  <!-- Headlights -->
+  <circle cx="73" cy="165" r="7" fill="#fff"/>
+  <circle cx="73" cy="165" r="5" fill="#ffeb3b"/>
+  <circle cx="73" cy="190" r="7" fill="#fff"/>
+  <circle cx="73" cy="190" r="5" fill="#ffeb3b"/>
+  
+  <!-- Side Details -->
+  <rect x="90" y="205" width="220" height="4" fill="#0f2d78"/>
+  <rect x="90" y="212" width="220" height="2" fill="#2563eb"/>
+  
+  <!-- ExpressGo Text on Bus -->
+  <text x="200" y="200" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="16" font-weight="bold">ExpressGo</text>
+  
+  <!-- Destination sign -->
+  <rect x="95" y="135" width="60" height="12" rx="2" fill="#000"/>
+  <text x="125" y="144" text-anchor="middle" fill="#00ff00" font-family="Arial, sans-serif" font-size="8">KIGALI</text>
+  
+  <!-- Fluffy clouds -->
+  <ellipse cx="60" cy="40" rx="20" ry="12" fill="#fff" opacity="0.9"/>
+  <ellipse cx="80" cy="35" rx="25" ry="15" fill="#fff" opacity="0.9"/>
+  <ellipse cx="100" cy="40" rx="18" ry="10" fill="#fff" opacity="0.9"/>
+  
+  <ellipse cx="320" cy="30" rx="18" ry="10" fill="#fff" opacity="0.9"/>
+  <ellipse cx="340" cy="25" rx="22" ry="13" fill="#fff" opacity="0.9"/>
+  <ellipse cx="360" cy="30" rx="16" ry="9" fill="#fff" opacity="0.9"/>
+  
+  <!-- Modern buildings in background -->
+  <rect x="340" y="80" width="35" height="140" fill="#e0e0e0"/>
+  <rect x="345" y="85" width="6" height="8" fill="#4169e1"/>
+  <rect x="355" y="85" width="6" height="8" fill="#4169e1"/>
+  <rect x="365" y="85" width="6" height="8" fill="#4169e1"/>
+  <rect x="345" y="100" width="6" height="8" fill="#4169e1"/>
+  <rect x="355" y="100" width="6" height="8" fill="#4169e1"/>
+  <rect x="365" y="100" width="6" height="8" fill="#4169e1"/>
+  <rect x="345" y="115" width="6" height="8" fill="#4169e1"/>
+  <rect x="355" y="115" width="6" height="8" fill="#4169e1"/>
+  <rect x="365" y="115" width="6" height="8" fill="#4169e1"/>
+  
+  <rect x="15" y="100" width="30" height="120" fill="#f0f0f0"/>
+  <rect x="18" y="105" width="5" height="7" fill="#4169e1"/>
+  <rect x="25" y="105" width="5" height="7" fill="#4169e1"/>
+  <rect x="32" y="105" width="5" height="7" fill="#4169e1"/>
+  <rect x="18" y="120" width="5" height="7" fill="#4169e1"/>
+  <rect x="25" y="120" width="5" height="7" fill="#4169e1"/>
+  <rect x="32" y="120" width="5" height="7" fill="#4169e1"/>
+  
+  <!-- Trees -->
+  <rect x="385" y="180" width="8" height="40" fill="#8B4513"/>
+  <circle cx="389" cy="170" r="15" fill="#228B22"/>
+  
+  <!-- Motion lines to suggest movement -->
+  <line x1="60" y1="240" x2="70" y2="240" stroke="#ddd" stroke-width="2" opacity="0.6"/>
+  <line x1="50" y1="245" x2="65" y2="245" stroke="#ddd" stroke-width="2" opacity="0.6"/>
+  <line x1="55" y1="250" x2="68" y2="250" stroke="#ddd" stroke-width="2" opacity="0.6"/>
+</svg>
