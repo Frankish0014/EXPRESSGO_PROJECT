@@ -193,6 +193,33 @@ nav a.active {
     margin-bottom: 3rem;
 }
 
+.info-banner {
+    display: none;
+    margin-bottom: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    background: rgba(52, 152, 219, 0.12);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    color: #1f3a5c;
+    font-weight: 500;
+}
+
+.info-banner.show {
+    display: block;
+}
+
+.info-banner.error {
+    background: rgba(231, 76, 60, 0.12);
+    border-color: rgba(231, 76, 60, 0.2);
+    color: #80251e;
+}
+
+.info-banner.success {
+    background: rgba(46, 204, 113, 0.12);
+    border-color: rgba(46, 204, 113, 0.2);
+    color: #1f5c32;
+}
+
 .section-title {
     font-size: 1.5rem;
     color: #2c3e50;

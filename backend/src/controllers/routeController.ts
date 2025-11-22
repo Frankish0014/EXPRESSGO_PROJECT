@@ -103,4 +103,26 @@ export class RouteController {
       res.status(500).json({ error: 'Failed to delete route' });
     }
   }
+
+  static async searchRoutes(req: Request, res: Response): Promise<void> {
+    try {
+      const departure = (req.query.departure as string | undefined)?.trim();
+      const arrival = (req.query.arrival as string | undefined)?.trim();
+
+      if (!departure && !arrival) {
+        res.status(400).json({ error: 'Provide departure or arrival city to search' });
+        return;
+      }
+
+      const routes = await RouteService.searchRoutes({
+        departure_city: departure,
+        arrival_city: arrival,
+      });
+
+      res.json({ routes });
+    } catch (error: any) {
+      console.error('Search routes error:', error);
+      res.status(500).json({ error: 'Failed to search routes' });
+    }
+  }
 }

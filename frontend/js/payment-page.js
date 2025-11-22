@@ -1,40 +1,35 @@
-// GET BOOKING DATA FROM LOCALSTORAGE
-const bookingData = JSON.parse(localStorage.getItem('currentBooking'));
+const bookingContext = AppState.getBookingCheckout();
 
-// Check if booking data exists
-if (!bookingData) {
-    alert('No booking found! Please complete your booking first.');
+if (!bookingContext) {
+    alert('No confirmed booking found. Please complete a booking first.');
     window.location.href = 'booking-page.html';
 }
 
-// DISPLAY BOOKING SUMMARY ON PAGE LOAD
-if (bookingData) {
-    // Display in summary section (if you have these elements on your page)
-    if (document.getElementById('summaryRoute')) {
-        document.getElementById('summaryRoute').textContent = `${bookingData.from} → ${bookingData.to}`;
+const bookingsList = bookingContext?.bookings || [];
+const firstBooking = bookingsList[0];
+const scheduleData = bookingContext?.schedule?.schedule || {};
+const routeData = scheduleData.route || {};
+const seats = bookingContext?.seats || [];
+const passengersCount = seats.length || bookingContext?.schedule?.passengers || 1;
+const totalAmountText = bookingContext.total || `${(Number(scheduleData.price) || 0) * passengersCount} Rwf`;
+
+const setIfExists = (id, value) => {
+    const el = document.getElementById(id);
+    if (el && value !== undefined && value !== null) {
+        el.textContent = value;
     }
-    if (document.getElementById('summaryAgent')) {
-        document.getElementById('summaryAgent').textContent = bookingData.agent;
-    }
-    if (document.getElementById('summaryPlate')) {
-        document.getElementById('summaryPlate').textContent = bookingData.plate;
-    }
-    if (document.getElementById('summaryDate')) {
-        document.getElementById('summaryDate').textContent = bookingData.date;
-    }
-    if (document.getElementById('summaryTime')) {
-        document.getElementById('summaryTime').textContent = bookingData.time;
-    }
-    if (document.getElementById('summaryPassengers')) {
-        document.getElementById('summaryPassengers').textContent = bookingData.passengers;
-    }
-    if (document.getElementById('summarySeats')) {
-        document.getElementById('summarySeats').textContent = bookingData.seats.join(', ');
-    }
-    if (document.getElementById('summaryTotal')) {
-        document.getElementById('summaryTotal').textContent = `${bookingData.total.toLocaleString()} Rwf`;
-    }
-}
+};
+
+setIfExists('summaryRoute', `${routeData.departure_city || 'Departure'} → ${routeData.arrival_city || 'Arrival'}`);
+setIfExists('summaryAgent', scheduleData?.bus?.company?.name || 'ExpressGo');
+setIfExists('summaryPlate', scheduleData?.bus?.plate_number || 'N/A');
+setIfExists('summaryDate', bookingContext?.schedule?.travelDate || '');
+setIfExists('summaryTime', scheduleData?.departure_time || '');
+setIfExists('summaryPassengers', passengersCount);
+setIfExists('summarySeats', seats.join(', '));
+setIfExists('summaryTotal', totalAmountText);
+setIfExists('momoPaymentAmount', totalAmountText);
+setIfExists('bankPaymentAmount', totalAmountText);
 
 let selectedPaymentMethod = null;
 let uploadedFile = null;
@@ -150,10 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // reading and displaying user booking info!
 
 function openPaymentModal() {
-    // if (!selectedPaymentMethod){
-    //     alert('Please select a payment method first!');
-    //     return;
-    // }
+    if (!bookingContext) {
+        alert('No booking data available. Please make a booking first.');
+        window.location.href = 'booking-page.html';
+        return;
+    }
     document.getElementById('paymentModal').classList.add('show');
 }
 
@@ -214,28 +210,38 @@ function handleFileUpload(event) {
 }
 
 function processPayment() {
-    // In real application, this would upload the screenshot and create booking
-    // For demo, we'll just show the ticket
+    if (!bookingContext) {
+        alert('No booking data available. Please make a booking first.');
+        window.location.href = 'booking-page.html';
+        return;
+    }
     
     closePaymentModal();
     
-    // Populate ticket with booking data
-    document.getElementById('bookingRef').textContent = bookingData.reference;
-    document.getElementById('ticketFrom').textContent = bookingData.from.split(' - ')[1] || bookingData.from;
-    document.getElementById('ticketTo').textContent = bookingData.to;
-    document.getElementById('ticketAgent').textContent = bookingData.agent;
-    document.getElementById('ticketPlate').textContent = bookingData.plate;
-    document.getElementById('ticketDate').textContent = bookingData.date;
+    const primaryBooking = firstBooking || bookingsList[0];
+    const ticketSeats = seats.join(', ');
+    const amountText = totalAmountText;
+    const departureTime = scheduleData.departure_time || '';
+    const hour = parseInt(departureTime.split(':')[0] || '0', 10);
+    const timeSuffix = hour < 12 ? 'AM' : 'PM';
+
+    document.getElementById('bookingRef').textContent = primaryBooking?.booking_code || 'N/A';
+    document.getElementById('ticketFrom').textContent = routeData.departure_city || 'Departure';
+    document.getElementById('ticketTo').textContent = routeData.arrival_city || 'Arrival';
+    document.getElementById('ticketAgent').textContent = scheduleData?.bus?.company?.name || 'ExpressGo';
+    document.getElementById('ticketPlate').textContent = scheduleData?.bus?.plate_number || 'N/A';
+    document.getElementById('ticketDate').textContent = bookingContext?.schedule?.travelDate || '';
+    document.getElementById('ticketTime').textContent = departureTime ? `${departureTime} ${timeSuffix}` : '--';
+    document.getElementById('ticketPassengers').textContent = passengersCount;
+    document.getElementById('ticketSeats').textContent = ticketSeats || 'Assigned at station';
+    document.getElementById('ticketTotal').textContent = amountText;
     
-    const hour = parseInt(bookingData.time.split(':')[0]);
-    document.getElementById('ticketTime').textContent = hour < 12 ? `${bookingData.time} AM` : `${bookingData.time} PM`;
+    // Wait a bit to ensure QRious is loaded, then generate QR code
+    setTimeout(() => {
+      generateQRCode(primaryBooking?.booking_code || 'REF0000');
+    }, 200);
     
-    document.getElementById('ticketPassengers').textContent = bookingData.passengers;
-    document.getElementById('ticketSeats').textContent = bookingData.seats.join(', ');
-    document.getElementById('ticketTotal').textContent = `${bookingData.total.toLocaleString()} Rwf`;
-    
-    // Generate QR code (in real app, this would contain booking reference + payment proof link)
-    generateQRCode(bookingData.reference);
+    AppState.clearBookingCheckout();
     
     // Show ticket
     document.getElementById('ticketContainer').classList.add('show');
@@ -251,36 +257,73 @@ function generateQRCode(reference) {
         return;
     }
 
-    const payload = `EXPRESSGO|REF:${reference}|AGENT:${bookingData?.agent || 'UNKNOWN'}|DATE:${bookingData?.date || ''}|TIME:${bookingData?.time || ''}`;
+    const payload = `EXPRESSGO|REF:${reference}|AGENT:${scheduleData?.bus?.company?.name || 'UNKNOWN'}|DATE:${bookingContext?.schedule?.travelDate || ''}|TIME:${scheduleData?.departure_time || ''}`;
 
-    if (typeof QRious !== 'function') {
-        qrContainer.innerHTML = `
-            <div style="font-size: 0.75rem; padding: 0.75rem; text-align: center;">
-                <div style="font-weight: bold; margin-bottom: 0.4rem;">${reference}</div>
-                <div style="color: #c0392b;">QR unavailable</div>
-            </div>
-        `;
-        return;
-    }
+    // Wait for QRious to be available (with timeout)
+    let attempts = 0;
+    const maxAttempts = 50; // 5 seconds max wait
+    
+    const tryGenerateQR = () => {
+        attempts++;
+        
+        // Check if QRious is available
+        if (typeof QRious !== 'undefined' && QRious) {
+            try {
+                // Clear existing content
+                qrContainer.innerHTML = '';
+                
+                // Remove old canvas if exists
+                const oldCanvas = document.getElementById('ticketQrCanvas');
+                if (oldCanvas) {
+                    oldCanvas.remove();
+                }
+                
+                // Create canvas element
+                const canvas = document.createElement('canvas');
+                canvas.id = 'ticketQrCanvas';
+                canvas.style.display = 'block';
+                canvas.style.margin = '0 auto';
+                qrContainer.appendChild(canvas);
 
-    if (!qrCodeInstance) {
-        const canvas = document.createElement('canvas');
-        canvas.id = 'ticketQrCanvas';
-        qrContainer.innerHTML = '';
-        qrContainer.appendChild(canvas);
-
-        qrCodeInstance = new QRious({
-            element: canvas,
-            value: payload,
-            size: 140,
-            background: '#ffffff',
-            foreground: '#2c3e50',
-            level: 'H',
-            padding: 10
-        });
-    } else {
-        qrCodeInstance.set({ value: payload });
-    }
+                // Create new QR code instance
+                qrCodeInstance = new QRious({
+                    element: canvas,
+                    value: payload,
+                    size: 140,
+                    background: '#ffffff',
+                    foreground: '#2c3e50',
+                    level: 'H',
+                    padding: 10
+                });
+                
+                console.log('QR code generated successfully for:', reference);
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                qrContainer.innerHTML = `
+                    <div style="font-size: 0.75rem; padding: 0.75rem; text-align: center;">
+                        <div style="font-weight: bold; margin-bottom: 0.4rem;">${reference}</div>
+                        <div style="color: #c0392b;">QR generation failed: ${error.message}</div>
+                    </div>
+                `;
+            }
+        } else if (attempts < maxAttempts) {
+            // QRious not loaded yet, try again
+            setTimeout(tryGenerateQR, 100);
+        } else {
+            // Timeout - QRious not loaded
+            console.warn('QRious library not loaded after timeout');
+            qrContainer.innerHTML = `
+                <div style="font-size: 0.75rem; padding: 0.75rem; text-align: center;">
+                    <div style="font-weight: bold; margin-bottom: 0.4rem;">${reference}</div>
+                    <div style="color: #c0392b;">QR unavailable - Library not loaded</div>
+                    <div style="font-size: 0.7rem; color: #7f8c8d; margin-top: 0.5rem;">Please refresh the page</div>
+                </div>
+            `;
+        }
+    };
+    
+    // Start trying to generate QR code
+    tryGenerateQR();
 }
 
 async function downloadTicket() {
@@ -333,7 +376,7 @@ async function downloadTicket() {
         pdf.text('ExpressGo Ticket', margin, margin - 10);
         pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
 
-        const fileName = `ExpressGo-Ticket-${bookingData?.reference || 'booking'}.pdf`;
+        const fileName = `ExpressGo-Ticket-${firstBooking?.booking_code || 'booking'}.pdf`;
         pdf.save(fileName);
         
         alert('Your ticket PDF has been downloaded. Check your downloads folder.');

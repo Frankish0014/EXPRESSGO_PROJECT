@@ -1,4 +1,6 @@
+import { Op, WhereOptions } from 'sequelize';
 import { BusSchedule, Bus, Route, BusCompany, Booking } from '../models';
+import { BookingService } from './bookingService';
 
 export class ScheduleService {
   static async getAllSchedules() {
@@ -177,5 +179,76 @@ export class ScheduleService {
 
     await schedule.destroy();
     return { message: 'Schedule deleted successfully' };
+  }
+
+  static async searchSchedules(filters: {
+    departure?: string;
+    arrival?: string;
+    travelDate?: string;
+  }) {
+    const routeWhere: WhereOptions = {};
+
+    if (filters.departure) {
+      routeWhere.departure_city = { [Op.iLike]: filters.departure };
+    }
+
+    if (filters.arrival) {
+      routeWhere.arrival_city = { [Op.iLike]: filters.arrival };
+    }
+
+    const routeInclude: any = {
+      model: Route,
+      as: 'route',
+      attributes: [
+        'departure_city',
+        'arrival_city',
+        'distance_km',
+        'estimated_duration_minutes',
+      ],
+    };
+
+    if (Object.keys(routeWhere).length > 0) {
+      routeInclude.where = routeWhere;
+    }
+
+    const schedules = await BusSchedule.findAll({
+      where: { is_active: true },
+      include: [
+        {
+          model: Bus,
+          as: 'bus',
+          attributes: ['plate_number', 'bus_type', 'total_seats'],
+          include: [
+            {
+              model: BusCompany,
+              as: 'company',
+              attributes: ['name'],
+            },
+          ],
+        },
+        routeInclude,
+      ],
+      order: [['departure_time', 'ASC']],
+    });
+
+    if (!filters.travelDate) {
+      return schedules;
+    }
+
+    const enriched = await Promise.all(
+      schedules.map(async (schedule) => {
+        const availability = await BookingService.getAvailableSeatsForSchedule(
+          schedule.id,
+          filters.travelDate!
+        );
+
+        return {
+          ...schedule.toJSON(),
+          availability,
+        };
+      })
+    );
+
+    return enriched;
   }
 }

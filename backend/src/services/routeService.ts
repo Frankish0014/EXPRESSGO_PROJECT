@@ -1,3 +1,4 @@
+import { Op, WhereOptions } from 'sequelize';
 import { Route } from '../models';
 
 export class RouteService {
@@ -58,5 +59,25 @@ export class RouteService {
 
     await route.destroy();
     return { message: 'Route deleted successfully' };
+  }
+
+  static async searchRoutes(filters: {
+    departure_city?: string;
+    arrival_city?: string;
+  }) {
+    const where: WhereOptions = {};
+
+    if (filters.departure_city) {
+      where.departure_city = { [Op.iLike]: filters.departure_city };
+    }
+
+    if (filters.arrival_city) {
+      where.arrival_city = { [Op.iLike]: filters.arrival_city };
+    }
+
+    return await Route.findAll({
+      where,
+      order: [['departure_city', 'ASC'], ['arrival_city', 'ASC']],
+    });
   }
 }

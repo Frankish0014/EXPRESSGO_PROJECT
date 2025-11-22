@@ -1,5 +1,3 @@
-const API_BASE_URL = 'http://localhost:3000/api';
-
 const bookingForm = document.getElementById('bookingForm');
 const tripTypeRadios = document.querySelectorAll('input[name="tripType"]');
 const returnDateField = document.querySelector('.return-date');
@@ -132,38 +130,6 @@ const setLoading = (isLoading) => {
   }
 };
 
-const searchSchedules = async (from, to, date) => {
-  try {
-    const routesResponse = await fetch(`${API_BASE_URL}/routes`);
-    const routesData = await routesResponse.json();
-    
-    if (!routesResponse.ok) {
-      throw new Error(routesData.error || 'Failed to fetch routes');
-    }
-
-    const route = routesData.routes.find(r => 
-      r.departure_city.toLowerCase() === from.toLowerCase() &&
-      r.arrival_city.toLowerCase() === to.toLowerCase()
-    );
-
-    if (!route) {
-      return { schedules: [], message: 'No route found for this journey' };
-    }
-
-    const schedulesResponse = await fetch(`${API_BASE_URL}/schedules/route/${route.id}`);
-    const schedulesData = await schedulesResponse.json();
-    
-    if (!schedulesResponse.ok) {
-      throw new Error(schedulesData.error || 'Failed to fetch schedules');
-    }
-
-    return schedulesData;
-  } catch (error) {
-    console.error('Search error:', error);
-    throw error;
-  }
-};
-
 const handleFormSubmit = async (e) => {
   e.preventDefault();
   
@@ -173,69 +139,30 @@ const handleFormSubmit = async (e) => {
 
   const tripType = document.querySelector('input[name="tripType"]:checked').value;
   const formData = new FormData(bookingForm);
-  
+
+  const payload = {
+    type: tripType,
+    from: formData.get('from').trim(),
+    to: formData.get('to').trim(),
+    passengers: parseInt(formData.get('passengers'), 10) || 1,
+    departDate: formData.get('departDate'),
+    returnDate: formData.get('returnDate') || null,
+  };
+
+  if (tripType === 'multi') {
+    showFormError('Multi-city booking is not yet available. Please select One Way or Round Trip.');
+    return;
+  }
+
   setLoading(true);
   hideFormError();
+  AppState.saveSearchQuery(payload);
+  AppState.clearSelectedSchedule();
 
-  try {
-    if (tripType === 'oneway') {
-      const from = formData.get('from').trim();
-      const to = formData.get('to').trim();
-      const date = formData.get('departDate');
-      const passengers = formData.get('passengers');
-
-      const result = await searchSchedules(from, to, date);
-      
-      if (result.schedules && result.schedules.length > 0) {
-        sessionStorage.setItem('searchResults', JSON.stringify({
-          type: 'oneway',
-          from,
-          to,
-          date,
-          passengers,
-          schedules: result.schedules
-        }));
-        window.location.href = './src/search-results.html';
-      } else {
-        showFormError(result.message || 'No schedules found for this route');
-      }
-    } else if (tripType === 'round') {
-      const from = formData.get('from').trim();
-      const to = formData.get('to').trim();
-      const departDate = formData.get('departDate');
-      const returnDate = formData.get('returnDate');
-      const passengers = formData.get('passengers');
-
-      const [outbound, inbound] = await Promise.all([
-        searchSchedules(from, to, departDate),
-        searchSchedules(to, from, returnDate)
-      ]);
-
-      if (outbound.schedules && outbound.schedules.length > 0 && 
-          inbound.schedules && inbound.schedules.length > 0) {
-        sessionStorage.setItem('searchResults', JSON.stringify({
-          type: 'round',
-          from,
-          to,
-          departDate,
-          returnDate,
-          passengers,
-          outbound: outbound.schedules,
-          inbound: inbound.schedules
-        }));
-        window.location.href = './src/search-results.html';
-      } else {
-        showFormError('No schedules found for one or both legs of your journey');
-      }
-    } else {
-      showFormError('Multi-city booking is not yet available. Please select One Way or Round Trip.');
-    }
-  } catch (error) {
-    console.error('Search failed:', error);
-    showFormError('Unable to search schedules. Please check your connection and try again.');
-  } finally {
+  setTimeout(() => {
+    window.location.href = './src/search-results.html';
     setLoading(false);
-  }
+  }, 300);
 };
 
 tripTypeRadios.forEach(radio => {
@@ -311,6 +238,185 @@ document.getElementById('departDate').addEventListener('change', (e) => {
 });
 
 setMinDate();
+
+// Load routes dynamically for destinations section
+async function loadRoutesForDestinations() {
+  try {
+    // Fetch both routes and schedules to get accurate pricing
+    const [routesResponse, schedulesResponse] = await Promise.all([
+      ApiClient.get('/routes'),
+      ApiClient.get('/schedules')
+    ]);
+    
+    const routes = routesResponse?.routes || [];
+    const schedules = schedulesResponse?.schedules || [];
+    
+    // Get unique routes (group by departure/arrival) with pricing from schedules
+    const routeMap = new Map();
+    routes.forEach(route => {
+      const key = `${route.departure_city}-${route.arrival_city}`;
+      if (!routeMap.has(key)) {
+        // Find schedules for this route to get pricing
+        const routeSchedules = schedules.filter(s => 
+          s.route && 
+          s.route.departure_city === route.departure_city && 
+          s.route.arrival_city === route.arrival_city &&
+          s.is_active
+        );
+        
+        // Get minimum price from active schedules
+        const prices = routeSchedules.map(s => parseFloat(s.price || 0)).filter(p => p > 0);
+        const minPrice = prices.length > 0 ? Math.min(...prices) : null;
+        
+        // Get time range from schedules
+        const times = routeSchedules
+          .map(s => {
+            if (s.departure_time) {
+              const time = s.departure_time.substring(0, 5); // HH:MM
+              const [hours, minutes] = time.split(':').map(Number);
+              return hours * 60 + minutes; // Convert to minutes for comparison
+            }
+            return null;
+          })
+          .filter(t => t !== null);
+        
+        const minTime = times.length > 0 ? Math.min(...times) : null;
+        const maxTime = times.length > 0 ? Math.max(...times) : null;
+        
+        const formatTime = (minutes) => {
+          if (minutes === null) return null;
+          const h = Math.floor(minutes / 60);
+          const m = minutes % 60;
+          const period = h >= 12 ? 'PM' : 'AM';
+          const displayHour = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+          return `${displayHour}:${m.toString().padStart(2, '0')} ${period}`;
+        };
+        
+        routeMap.set(key, {
+          ...route,
+          minPrice,
+          timeRange: minTime !== null && maxTime !== null 
+            ? `${formatTime(minTime)} - ${formatTime(maxTime)}`
+            : '6:00 AM - 8:00 PM'
+        });
+      }
+    });
+    
+    const uniqueRoutes = Array.from(routeMap.values()).slice(0, 8);
+    const destinationsGrid = document.querySelector('#destinations .grid-4');
+    
+    if (!destinationsGrid) return;
+    
+    // Clear existing cards and create new ones dynamically
+    destinationsGrid.innerHTML = '';
+    
+    // City images mapping (fallback to first available)
+    const cityImages = {
+      'Rusizi': 'rusizi.jpg',
+      'Rubavu': 'rubavu.jpg',
+      'Musanze': 'musanze.jpg',
+      'Nyagatare': 'nyagatare.jpg',
+      'Huye': 'huye.jpg',
+      'Karongi': 'karongi.jpg',
+      'Rwamagana': 'rwamagana.jpg',
+      'Muhanga': 'muhanga.jpg'
+    };
+    
+    uniqueRoutes.forEach((route) => {
+      const arrivalCity = route.arrival_city;
+      const imageName = cityImages[arrivalCity] || 'rusizi.jpg'; // Default fallback
+      const price = route.minPrice 
+        ? `${Math.round(route.minPrice).toLocaleString()} Rwf`
+        : '2,000 Rwf';
+      
+      const distance = route.distance_km 
+        ? `~${route.distance_km} km`
+        : 'N/A';
+      
+      const duration = route.estimated_duration_minutes
+        ? `~${Math.round(route.estimated_duration_minutes / 60 * 10) / 10} hours`
+        : 'N/A';
+      
+      const cardHTML = `
+        <div class="destination-card card-3d">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-image-wrapper">
+                <img src="images/${imageName}" alt="${arrivalCity}" onerror="this.src='images/rusizi.jpg'" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="info">
+                <h4>${route.departure_city} → ${route.arrival_city}</h4>
+                <p class="price">${price}</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-back-content">
+                <h4>${route.departure_city} → ${route.arrival_city}</h4>
+                <p class="price">${price}</p>
+                <p class="route-info">
+                  Distance: ${distance}<br>
+                  Duration: ${duration}<br>
+                  Daily Departures: ${route.timeRange}
+                </p>
+                <button class="btn-card" data-route-from="${route.departure_city}" data-route-to="${route.arrival_city}">Book Now</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      destinationsGrid.insertAdjacentHTML('beforeend', cardHTML);
+    });
+    
+    // Attach event listeners to "Book Now" buttons
+    destinationsGrid.querySelectorAll('.btn-card').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const from = button.dataset.routeFrom;
+        const to = button.dataset.routeTo;
+        
+        if (from && to) {
+          AppState.saveSearchQuery({
+            type: 'oneway',
+            from: from,
+            to: to,
+            departDate: new Date().toISOString().split('T')[0],
+            passengers: 1
+          });
+          window.location.href = './src/search-results.html';
+        }
+      });
+    });
+    
+    // If no routes found, show a message
+    if (uniqueRoutes.length === 0) {
+      destinationsGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+          <p>No routes available at the moment. Please check back later.</p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Failed to load routes for destinations:', error);
+    // Show error message but keep static content as fallback
+    const destinationsGrid = document.querySelector('#destinations .grid-4');
+    if (destinationsGrid && destinationsGrid.children.length === 0) {
+      destinationsGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+          <p>Unable to load routes. Please refresh the page or try again later.</p>
+        </div>
+      `;
+    }
+  }
+}
+
+// Load routes when page loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadRoutesForDestinations);
+} else {
+  loadRoutesForDestinations();
+}
 
 const contactForm = document.getElementById('contactForm');
 const contactSubmitBtn = document.getElementById('contactSubmitBtn');
@@ -434,9 +540,12 @@ if (contactForm) {
     hideContactFormSuccess();
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      // Submit to backend (for now, we'll use a simple approach)
+      // In production, you'd have a /api/contact endpoint
       console.log('Contact form submission:', data);
+      
+      // Simulate API call - replace with actual endpoint when available
+      // await ApiClient.post('/contact', data);
       
       showContactFormSuccess('Thank you for contacting us! We will get back to you soon.');
       contactForm.reset();

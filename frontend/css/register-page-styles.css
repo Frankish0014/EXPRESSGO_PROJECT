@@ -212,6 +212,27 @@ background: #bdc3c7;
 cursor: not-allowed;
 }
 
+.form-message {
+display: none;
+margin-top: 1rem;
+padding: 0.85rem 1rem;
+border-radius: 8px;
+font-size: 0.95rem;
+background: rgba(231, 76, 60, 0.1);
+color: #c0392b;
+border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+.form-message.show {
+display: block;
+}
+
+.form-message.success {
+background: rgba(46, 204, 113, 0.1);
+border-color: rgba(46, 204, 113, 0.2);
+color: #1e8449;
+}
+
 .divider {
 text-align: center;
 margin: 1.5rem 0;

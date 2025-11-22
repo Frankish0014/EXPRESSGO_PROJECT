@@ -26,9 +26,10 @@ const scheduleUpdateValidation = [
 
 // Public routes
 router.get('/', ScheduleController.getAllSchedules);
-router.get('/:id', ScheduleController.getScheduleById);
+router.get('/search', ScheduleController.searchSchedules);
 router.get('/route/:routeId', ScheduleController.getSchedulesByRoute);
 router.get('/:scheduleId/available-seats', ScheduleController.getAvailableSeats);
+router.get('/:id', ScheduleController.getScheduleById);
 
 // Admin routes
 router.post('/', authenticate, authorizeAdmin, validate(scheduleValidation), ScheduleController.createSchedule);
