@@ -13,7 +13,7 @@ const app: Application = express();
 
 // Security middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors()); // what's this line 
 
 // Body parser middleware
 app.use(express.json());
