@@ -55,44 +55,36 @@
               </label>
             </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label for="searchFrom">From</label>
-                <input
-                  type="text"
-                  id="searchFrom"
-                  placeholder="Kigali"
-                  name="from"
-                  autocomplete="off"
-                  list="cities"
-                  required
-                />
-                <datalist id="cities">
-                  <option value="Kigali"></option>
-                  <option value="Musanze"></option>
-                  <option value="Rubavu"></option>
-                  <option value="Rusizi"></option>
-                  <option value="Huye"></option>
-                  <option value="Nyagatare"></option>
-                  <option value="Karongi"></option>
-                  <option value="Rwamagana"></option>
-                  <option value="Muhanga"></option>
-                </datalist>
-              </div>
+             <div class="form-row">
+               <div class="form-group">
+                 <label for="searchFrom">From</label>
+                 <input
+                   type="text"
+                   id="searchFrom"
+                   placeholder="Select or type departure city"
+                   name="from"
+                   autocomplete="off"
+                   list="bookingCities"
+                   required
+                 />
+                 <datalist id="bookingCities">
+                   <!-- Options will be populated by districts.js -->
+                 </datalist>
+               </div>
 
-              <div class="form-group">
-                <label for="searchTo">To</label>
-                <input
-                  type="text"
-                  id="searchTo"
-                  placeholder="Musanze"
-                  name="to"
-                  autocomplete="off"
-                  list="cities"
-                  required
-                />
-              </div>
-            </div>
+               <div class="form-group">
+                 <label for="searchTo">To</label>
+                 <input
+                   type="text"
+                   id="searchTo"
+                   placeholder="Select or type destination city"
+                   name="to"
+                   autocomplete="off"
+                   list="bookingCities"
+                   required
+                 />
+               </div>
+             </div>
 
             <div class="form-row">
               <div class="form-group">
@@ -454,8 +446,9 @@
         <p>© 2025 ExpressGo. All rights reserved.</p>
       </div>
     </footer>
-    <script defer src="../js/api-client.js"></script>
-    <script defer src="../js/navigation.js"></script>
-    <script defer src="../js/booking-page.js"></script>
+     <script defer src="../js/api-client.js"></script>
+     <script defer src="../js/districts.js"></script>
+     <script defer src="../js/navigation.js"></script>
+     <script defer src="../js/booking-page.js"></script>
   </body>
 </html>

@@ -443,9 +443,24 @@ if (searchDepartDateInput) {
   });
 }
 
+// Populate districts datalist for booking page
+function populateBookingDistrictsDatalist() {
+  const bookingCitiesDatalist = document.getElementById('bookingCities');
+  if (bookingCitiesDatalist && window.RWANDAN_DISTRICTS) {
+    window.RWANDAN_DISTRICTS.forEach(district => {
+      const option = document.createElement('option');
+      option.value = district;
+      bookingCitiesDatalist.appendChild(option);
+    });
+  }
+}
+
 const initialize = async () => {
   // Set minimum dates
   setMinDate();
+  
+  // Populate districts datalist
+  populateBookingDistrictsDatalist();
   
   // If we have a selected schedule, populate the form
   if (selectedSchedule && selectedSchedule.schedule) {

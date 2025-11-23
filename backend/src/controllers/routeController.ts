@@ -59,7 +59,11 @@ export class RouteController {
         res.status(400).json({ error: 'Route already exists' });
         return;
       }
-      res.status(500).json({ error: 'Failed to create route' });
+      if (error.message && error.message.includes('already exists')) {
+        res.status(400).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: error.message || 'Failed to create route' });
     }
   }
 

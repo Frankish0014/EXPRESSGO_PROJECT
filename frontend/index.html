@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="css/styles.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script defer src="./js/api-client.js"></script>
+    <script defer src="./js/districts.js"></script>
     <script defer src="./js/navigation.js"></script>
     <script defer src="./js/main.js"></script>
     <script defer src="./js/3d-interactive.js"></script>
@@ -94,7 +95,7 @@
             <input
               type="text"
               id="from"
-              placeholder="Kigali"
+              placeholder="Select or type departure city"
               name="from"
               autocomplete="off"
               list="cities"
@@ -102,15 +103,7 @@
               aria-required="true"
             />
             <datalist id="cities">
-              <option value="Kigali"></option>
-              <option value="Musanze"></option>
-              <option value="Rubavu"></option>
-              <option value="Rusizi"></option>
-              <option value="Huye"></option>
-              <option value="Nyagatare"></option>
-              <option value="Karongi"></option>
-              <option value="Rwamagana"></option>
-              <option value="Muhanga"></option>
+              <!-- Options will be populated by districts.js -->
             </datalist>
 
             <span class="error-message" id="fromError"></span>
@@ -121,7 +114,7 @@
             <input
               type="text"
               id="to"
-              placeholder="Musanze"
+              placeholder="Select or type destination city"
               name="to"
               autocomplete="off"
               list="cities"

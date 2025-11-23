@@ -684,11 +684,46 @@ async function loadRoutes() {
   }
 }
 
+function populateDistrictDropdowns() {
+  const departureSelect = document.getElementById('modalRouteDepartureCity');
+  const arrivalSelect = document.getElementById('modalRouteArrivalCity');
+  
+  if (!window.RWANDAN_DISTRICTS) {
+    console.warn('RWANDAN_DISTRICTS not loaded');
+    return;
+  }
+  
+  const districts = window.RWANDAN_DISTRICTS;
+  
+  // Populate departure dropdown
+  if (departureSelect) {
+    districts.forEach(district => {
+      const option = document.createElement('option');
+      option.value = district;
+      option.textContent = district;
+      departureSelect.appendChild(option);
+    });
+  }
+  
+  // Populate arrival dropdown
+  if (arrivalSelect) {
+    districts.forEach(district => {
+      const option = document.createElement('option');
+      option.value = district;
+      option.textContent = district;
+      arrivalSelect.appendChild(option);
+    });
+  }
+}
+
 function initRoutesForm() {
   const createBtn = document.getElementById('createRouteBtn');
   const cancelBtn = document.getElementById('cancelRouteModal');
   const closeBtn = document.getElementById('closeRouteModal');
   const routeForm = document.getElementById('routeModalForm');
+  
+  // Populate district dropdowns
+  populateDistrictDropdowns();
   
   if (createBtn) {
     createBtn.addEventListener('click', () => {
@@ -720,11 +755,22 @@ function initRoutesForm() {
       e.preventDefault();
       const formData = new FormData(routeForm);
       const data = {
-        departure_city: formData.get('departure_city'),
-        arrival_city: formData.get('arrival_city'),
+        departure_city: formData.get('departure_city')?.toString().trim() || '',
+        arrival_city: formData.get('arrival_city')?.toString().trim() || '',
         distance_km: formData.get('distance_km') ? parseFloat(formData.get('distance_km')) : null,
         estimated_duration_minutes: formData.get('estimated_duration_minutes') ? parseInt(formData.get('estimated_duration_minutes')) : null,
       };
+      
+      // Validate that cities are selected
+      if (!data.departure_city || !data.arrival_city) {
+        showRoutesMessage('Please select both departure and arrival cities', 'error');
+        return;
+      }
+      
+      if (data.departure_city === data.arrival_city) {
+        showRoutesMessage('Departure and arrival cities must be different', 'error');
+        return;
+      }
       
       try {
         const isEditing = editingRouteId !== null;

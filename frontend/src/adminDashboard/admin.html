@@ -1,666 +1,894 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ExpressGo | Admin Dashboard</title>
-  <link rel="stylesheet" href="admin.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-
-  <div class="dashboard">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="brand"><a href="../../index.html">ExpressGo</a></div>
-      <nav>
-        <ul>
-          <li><a href="#" data-section="overview" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a></li>
-          <li><a href="#" data-section="bookings" class="nav-link"><i class="fas fa-calendar-check"></i> Bookings</a></li>
-          <li><a href="#" data-section="routes" class="nav-link"><i class="fas fa-route"></i> Routes</a></li>
-          <li><a href="#" data-section="schedules" class="nav-link"><i class="fas fa-clock"></i> Schedules</a></li>
-          <li><a href="#" data-section="statistics" class="nav-link"><i class="fas fa-chart-bar"></i> Statistics</a></li>
-          <li><a href="#" data-section="offers" class="nav-link"><i class="fas fa-tags"></i> Offers</a></li>
-        </ul>
-      </nav>
-      <div class="bottom-nav">
-        <ul>
-          <li><a href="#" data-section="help" class="nav-link"><i class="fas fa-question-circle"></i> Get Help</a></li>
-          <li><a href="#" data-section="settings" class="nav-link"><i class="fas fa-cog"></i> Settings</a></li>
-        </ul>
-      </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main">
-      <!-- Overview Section -->
-      <section id="overview-section" class="content-section active">
-        <header class="header">
-          <h2>Dashboard Overview</h2>
-          <div class="header-right">
-            <div class="profile-container">
-              <div class="profile" id="profileMenuBtn">
-                <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">
-              </div>
-              <div id="profileDropdown" class="profile-dropdown hidden">
-                <div class="profile-info">
-                  <p><strong>ExpressGo</strong></p>
-                  <p class="email">admin@expressgo.com</p>
-                </div>
-                <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h4>Total Bookings</h4>
-            <p id="statTotalBookings">--</p>
-          </div>
-          <div class="stat-card completed">
-            <h4>Completed</h4>
-            <p id="statCompletedBookings">--</p>
-          </div>
-          <div class="stat-card pending">
-            <h4>Pending</h4>
-            <p id="statPendingBookings">--</p>
-          </div>
-          <div class="stat-card canceled">
-            <h4>Cancelled</h4>
-            <p id="statCancelledBookings">--</p>
-          </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExpressGo | Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="dashboard">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand"><a href="../../index.html">ExpressGo</a></div>
+        <nav>
+          <ul>
+            <li>
+              <a href="#" data-section="overview" class="nav-link active"
+                ><i class="fas fa-home"></i> Dashboard</a
+              >
+            </li>
+            <li>
+              <a href="#" data-section="bookings" class="nav-link"
+                ><i class="fas fa-calendar-check"></i> Bookings</a
+              >
+            </li>
+            <li>
+              <a href="#" data-section="routes" class="nav-link"
+                ><i class="fas fa-route"></i> Routes</a
+              >
+            </li>
+            <li>
+              <a href="#" data-section="schedules" class="nav-link"
+                ><i class="fas fa-clock"></i> Schedules</a
+              >
+            </li>
+            <li>
+              <a href="#" data-section="statistics" class="nav-link"
+                ><i class="fas fa-chart-bar"></i> Statistics</a
+              >
+            </li>
+            <li>
+              <a href="#" data-section="offers" class="nav-link"
+                ><i class="fas fa-tags"></i> Offers</a
+              >
+            </li>
+          </ul>
+        </nav>
+        <div class="bottom-nav">
+          <ul>
+            <li>
+              <a href="#" data-section="help" class="nav-link"
+                ><i class="fas fa-question-circle"></i> Get Help</a
+              >
+            </li>
+            <li>
+              <a href="#" data-section="settings" class="nav-link"
+                ><i class="fas fa-cog"></i> Settings</a
+              >
+            </li>
+          </ul>
         </div>
+      </aside>
 
-        <!-- Main Grid -->
-        <div class="main-grid">
-          <!-- Performance Chart -->
-          <section class="chart-container card">
-            <h3>Bookings & Revenue (Last 6 Months)</h3>
-            <div class="chart-wrapper">
-              <canvas id="performanceChart"></canvas>
-            </div>
-          </section>
-
-          <!-- Revenue Overview -->
-          <section class="revenue-container card">
-            <h3>Revenue Overview</h3>
-            <div class="revenue-item">
-              <p>Income This Month</p>
-              <span id="revenueCurrentMonth">—</span>
-            </div>
-            <div class="revenue-item">
-              <p>vs. Previous Month</p>
-              <span id="revenueTrend" class="positive">—</span>
-            </div>
-            <div class="revenue-item">
-              <p>Average Daily Income</p>
-              <span id="revenueAverageDaily">—</span>
-            </div>
-          </section>
-
-          <!-- Recent Bookings -->
-          <section class="recent-bookings-container card">
-            <h3>Recent Bookings</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Customer</th>
-                  <th>Route</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="recentBookingsBody">
-                <tr>
-                  <td colspan="4">Loading recent bookings...</td>
-                </tr>
-              </tbody>
-            </table>
-            <a href="#" class="view-all" data-section="bookings">View All Bookings</a>
-          </section>
-
-          <!-- Popular Routes -->
-          <section class="popular-routes-container card">
-            <h3>Most Popular Routes</h3>
-            <ul id="popularRoutesList">
-              <li>Loading popular routes...</li>
-            </ul>
-          </section>
-        </div>
-      </section>
-
-      <!-- Bookings Section -->
-      <section id="bookings-section" class="content-section">
-        <header class="header">
-          <h2>Booking details</h2>
-          <div class="header-right">
-            <div class="filters">
-              <div class="tabs">
-                <a href="#" class="active">All Bookings</a>
-                <a href="#">Pending</a>
-                <a href="#">Completed</a>
-              </div>
-              <div class="date-filter">
-                <input type="date" value="2025-01-19">
-                <span>to</span>
-                <input type="date" value="2025-11-11">
-              </div>
-            </div>
-            <div class="profile-container">
-              <div class="profile" id="profileMenuBtnBookings">
-                <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">
-              </div>
-              <div id="profileDropdownBookings" class="profile-dropdown hidden">
-                <div class="profile-info">
-                  <p><strong>ExpressGo</strong></p>
-                  <p class="email">admin@expressgo.com</p>
+      <!-- Main Content -->
+      <main class="main">
+        <!-- Overview Section -->
+        <section id="overview-section" class="content-section active">
+          <header class="header">
+            <h2>Dashboard Overview</h2>
+            <div class="header-right">
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtn">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
                 </div>
-                <a href="#" class="dropdown-item" id="logoutBtnBookings">Logout</a>
+                <div id="profileDropdown" class="profile-dropdown hidden">
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a href="#" class="dropdown-item" id="logoutBtn"
+                    ><i class="fas fa-sign-out-alt"></i> Logout</a
+                  >
+                </div>
               </div>
+            </div>
+          </header>
+
+          <!-- Stats Cards -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h4>Total Bookings</h4>
+              <p id="statTotalBookings">--</p>
+            </div>
+            <div class="stat-card completed">
+              <h4>Completed</h4>
+              <p id="statCompletedBookings">--</p>
+            </div>
+            <div class="stat-card pending">
+              <h4>Pending</h4>
+              <p id="statPendingBookings">--</p>
+            </div>
+            <div class="stat-card canceled">
+              <h4>Cancelled</h4>
+              <p id="statCancelledBookings">--</p>
             </div>
           </div>
-        </header>
 
-        <!-- Booking Table -->
-        <section class="table-section">
-          <div class="info-banner" id="adminMessage"></div>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Passenger</th>
-                <th>Route</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="adminBookingsTableBody">
-              <tr>
-                <td colspan="7">Loading bookings...</td>
-              </tr>
-            </tbody>
-          </table>
-          <p class="table-footer" id="bookingsTableFooter">Showing 0 bookings</p>
+          <!-- Main Grid -->
+          <div class="main-grid">
+            <!-- Performance Chart -->
+            <section class="chart-container card">
+              <h3>Bookings & Revenue (Last 6 Months)</h3>
+              <div class="chart-wrapper">
+                <canvas id="performanceChart"></canvas>
+              </div>
+            </section>
+
+            <!-- Revenue Overview -->
+            <section class="revenue-container card">
+              <h3>Revenue Overview</h3>
+              <div class="revenue-item">
+                <p>Income This Month</p>
+                <span id="revenueCurrentMonth">—</span>
+              </div>
+              <div class="revenue-item">
+                <p>vs. Previous Month</p>
+                <span id="revenueTrend" class="positive">—</span>
+              </div>
+              <div class="revenue-item">
+                <p>Average Daily Income</p>
+                <span id="revenueAverageDaily">—</span>
+              </div>
+            </section>
+
+            <!-- Recent Bookings -->
+            <section class="recent-bookings-container card">
+              <h3>Recent Bookings</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Route</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recentBookingsBody">
+                  <tr>
+                    <td colspan="4">Loading recent bookings...</td>
+                  </tr>
+                </tbody>
+              </table>
+              <a href="#" class="view-all" data-section="bookings"
+                >View All Bookings</a
+              >
+            </section>
+
+            <!-- Popular Routes -->
+            <section class="popular-routes-container card">
+              <h3>Most Popular Routes</h3>
+              <ul id="popularRoutesList">
+                <li>Loading popular routes...</li>
+              </ul>
+            </section>
+          </div>
         </section>
-      </section>
 
-      <!-- Routes Management Section -->
-      <section id="routes-section" class="content-section">
-        <header class="header">
-          <h2>Routes Management</h2>
-          <div class="header-right">
-            <button class="btn-primary" id="createRouteBtn"><i class="fas fa-plus"></i> Create Route</button>
-            <div class="profile-container">
-              <div class="profile" id="profileMenuBtnRoutes">
-                <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">
-              </div>
-              <div id="profileDropdownRoutes" class="profile-dropdown hidden">
-                <div class="profile-info">
-                  <p><strong>ExpressGo</strong></p>
-                  <p class="email">admin@expressgo.com</p>
+        <!-- Bookings Section -->
+        <section id="bookings-section" class="content-section">
+          <header class="header">
+            <h2>Booking details</h2>
+            <div class="header-right">
+              <div class="filters">
+                <div class="tabs">
+                  <a href="#" class="active">All Bookings</a>
+                  <a href="#">Pending</a>
+                  <a href="#">Completed</a>
                 </div>
-                <a href="#" class="dropdown-item" id="logoutBtnRoutes">Logout</a>
+                <div class="date-filter">
+                  <input type="date" value="2025-01-19" />
+                  <span>to</span>
+                  <input type="date" value="2025-11-11" />
+                </div>
+              </div>
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtnBookings">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
+                </div>
+                <div
+                  id="profileDropdownBookings"
+                  class="profile-dropdown hidden"
+                >
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a href="#" class="dropdown-item" id="logoutBtnBookings"
+                    >Logout</a
+                  >
+                </div>
               </div>
             </div>
-          </div>
-        </header>
+          </header>
 
-        <div class="routes-container">
-          <div class="info-banner" id="routesMessage"></div>
-          
-          <!-- Routes Table -->
-          <section class="card">
-            <h3>All Routes</h3>
+          <!-- Booking Table -->
+          <section class="table-section">
+            <div class="info-banner" id="adminMessage"></div>
             <table>
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Departure City</th>
-                  <th>Arrival City</th>
-                  <th>Distance (km)</th>
-                  <th>Duration (min)</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="routesTableBody">
-                <tr>
-                  <td colspan="6">Loading routes...</td>
-                </tr>
-              </tbody>
-            </table>
-          </section>
-        </div>
-      </section>
-
-      <!-- Schedules Management Section -->
-      <section id="schedules-section" class="content-section">
-        <header class="header">
-          <h2>Schedules Management</h2>
-          <div class="header-right">
-            <button class="btn-primary" id="createScheduleBtn"><i class="fas fa-plus"></i> Create Schedule</button>
-            <div class="profile-container">
-              <div class="profile" id="profileMenuBtnSchedules">
-                <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">
-              </div>
-              <div id="profileDropdownSchedules" class="profile-dropdown hidden">
-                <div class="profile-info">
-                  <p><strong>ExpressGo</strong></p>
-                  <p class="email">admin@expressgo.com</p>
-                </div>
-                <a href="#" class="dropdown-item" id="logoutBtnSchedules">Logout</a>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <div class="schedules-container">
-          <div class="info-banner" id="schedulesMessage"></div>
-          
-          <!-- Schedules Table -->
-          <section class="card">
-            <h3>All Schedules</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
+                  <th>Passenger</th>
                   <th>Route</th>
-                  <th>Bus</th>
-                  <th>Departure Time</th>
-                  <th>Arrival Time</th>
-                  <th>Price</th>
+                  <th>Date</th>
+                  <th>Amount</th>
                   <th>Status</th>
-                  <th>Actions</th>
+                  <th>Action</th>
                 </tr>
               </thead>
-              <tbody id="schedulesTableBody">
+              <tbody id="adminBookingsTableBody">
                 <tr>
-                  <td colspan="8">Loading schedules...</td>
+                  <td colspan="7">Loading bookings...</td>
                 </tr>
               </tbody>
             </table>
+            <p class="table-footer" id="bookingsTableFooter">
+              Showing 0 bookings
+            </p>
           </section>
+        </section>
 
-        </div>
-      </section>
-
-      <!-- Help Section -->
-      <section id="help-section" class="content-section">
-        <header class="header">
-          <h2>Get Help & Support</h2>
-        </header>
-
-        <div class="help-grid">
-          <!-- FAQs -->
-          <section class="card faq-container">
-            <h3>Frequently Asked Questions</h3>
-            <div class="faq-item">
-              <button class="faq-question">How to create a booking?</button>
-              <div class="faq-answer">
-                <p>To create a booking, navigate to the 'Bookings' page and click the 'New Booking' button. Fill in the required details and save.</p>
-              </div>
-            </div>
-            <div class="faq-item">
-              <button class="faq-question">How to cancel or modify a booking?</button>
-              <div class="faq-answer">
-                <p>Find the booking in the bookings list and use the 'Action' menu to select 'Cancel' or 'Edit'.</p>
-              </div>
-            </div>
-            <div class="faq-item">
-              <button class="faq-question">Who do I contact for technical issues?</button>
-              <div class="faq-answer">
-                <p>You can use the contact form on this page or email us directly at support@expressgo.com.</p>
-              </div>
-            </div>
-          </section>
-
-          <!-- Contact Form -->
-          <section class="card contact-container">
-            <h3>Contact Support</h3>
-            <form>
-              <div class="form-group">
-                <label for="name">Your Name</label>
-                <input type="text" id="name" name="name" required>
-              </div>
-              <div class="form-group">
-                <label for="email">Your Email</label>
-                <input type="email" id="email" name="email" required>
-              </div>
-              <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-              </div>
-              <button type="submit" class="btn-primary">Submit Query</button>
-            </form>
-          </section>
-        </div>
-      </section>
-
-      <!-- Statistics Section -->
-      <section id="statistics-section" class="content-section">
-        <header class="header">
-          <h2>Statistics & Analytics</h2>
-          <div class="header-right">
-            <div class="profile-container">
-              <div class="profile" id="profileMenuBtnStats">
-                <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">
-              </div>
-              <div id="profileDropdownStats" class="profile-dropdown hidden">
-                <div class="profile-info">
-                  <p><strong>ExpressGo</strong></p>
-                  <p class="email">admin@expressgo.com</p>
+        <!-- Routes Management Section -->
+        <section id="routes-section" class="content-section">
+          <header class="header">
+            <h2>Routes Management</h2>
+            <div class="header-right">
+              <button class="btn-primary" id="createRouteBtn">
+                <i class="fas fa-plus"></i> Create Route
+              </button>
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtnRoutes">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
                 </div>
-                <a href="#" class="dropdown-item" id="logoutBtnStats">Logout</a>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <div class="statistics-container">
-          <!-- Revenue Statistics -->
-          <section class="card">
-            <h3>Revenue Statistics</h3>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <h4>Total Revenue</h4>
-                <p id="statTotalRevenue">--</p>
-              </div>
-              <div class="stat-card">
-                <h4>This Month</h4>
-                <p id="statMonthRevenue">--</p>
-              </div>
-              <div class="stat-card">
-                <h4>Average per Booking</h4>
-                <p id="statAvgRevenue">--</p>
-              </div>
-            </div>
-          </section>
-
-          <!-- Booking Statistics -->
-          <section class="card">
-            <h3>Booking Statistics</h3>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <h4>Total Bookings</h4>
-                <p id="statTotalBookingsStats">--</p>
-              </div>
-              <div class="stat-card">
-                <h4>This Month</h4>
-                <p id="statMonthBookings">--</p>
-              </div>
-              <div class="stat-card">
-                <h4>Completion Rate</h4>
-                <p id="statCompletionRate">--</p>
-              </div>
-            </div>
-          </section>
-
-          <!-- Route Performance -->
-          <section class="card">
-            <h3>Route Performance</h3>
-            <div id="routePerformanceList">
-              <p>Loading route statistics...</p>
-            </div>
-          </section>
-        </div>
-      </section>
-
-      <!-- Offers Section -->
-      <section id="offers-section" class="content-section">
-        <header class="header">
-          <h2>Manage Offers & Promotions</h2>
-          <div class="header-right">
-            <button class="btn-primary" id="createOfferBtn"><i class="fas fa-plus"></i> Create Offer</button>
-            <div class="profile-container">
-              <div class="profile" id="profileMenuBtnOffers">
-                <img src="images/profile.png" alt="Admin Avatar" class="profile-avatar">
-              </div>
-              <div id="profileDropdownOffers" class="profile-dropdown hidden">
-                <div class="profile-info">
-                  <p><strong>ExpressGo</strong></p>
-                  <p class="email">admin@expressgo.com</p>
+                <div id="profileDropdownRoutes" class="profile-dropdown hidden">
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a href="#" class="dropdown-item" id="logoutBtnRoutes"
+                    >Logout</a
+                  >
                 </div>
-                <a href="#" class="dropdown-item" id="logoutBtnOffers">Logout</a>
               </div>
             </div>
+          </header>
+
+          <div class="routes-container">
+            <div class="info-banner" id="routesMessage"></div>
+
+            <!-- Routes Table -->
+            <section class="card">
+              <h3>All Routes</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Departure City</th>
+                    <th>Arrival City</th>
+                    <th>Distance (km)</th>
+                    <th>Duration (min)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="routesTableBody">
+                  <tr>
+                    <td colspan="6">Loading routes...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
           </div>
-        </header>
+        </section>
 
-        <div class="offers-container">
-          <div class="info-banner" id="offersMessage"></div>
-          
-          <!-- Active Offers -->
-          <section class="card">
-            <h3>Active Offers</h3>
-            <div id="activeOffersList">
-              <p>No active offers at the moment.</p>
+        <!-- Schedules Management Section -->
+        <section id="schedules-section" class="content-section">
+          <header class="header">
+            <h2>Schedules Management</h2>
+            <div class="header-right">
+              <button class="btn-primary" id="createScheduleBtn">
+                <i class="fas fa-plus"></i> Create Schedule
+              </button>
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtnSchedules">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
+                </div>
+                <div
+                  id="profileDropdownSchedules"
+                  class="profile-dropdown hidden"
+                >
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a href="#" class="dropdown-item" id="logoutBtnSchedules"
+                    >Logout</a
+                  >
+                </div>
+              </div>
             </div>
-          </section>
+          </header>
 
-          <!-- Create/Edit Offer Form (Hidden by default) -->
-          <section class="card hidden" id="offerFormCard">
-            <h3 id="offerFormTitle">Create New Offer</h3>
-            <form id="offerForm">
-              <div class="form-group">
-                <label for="offerTitle">Offer Title</label>
-                <input type="text" id="offerTitle" name="title" required placeholder="e.g., Summer Special">
+          <div class="schedules-container">
+            <div class="info-banner" id="schedulesMessage"></div>
+
+            <!-- Schedules Table -->
+            <section class="card">
+              <h3>All Schedules</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Route</th>
+                    <th>Bus</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="schedulesTableBody">
+                  <tr>
+                    <td colspan="8">Loading schedules...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </section>
+
+        <!-- Help Section -->
+        <section id="help-section" class="content-section">
+          <header class="header">
+            <h2>Get Help & Support</h2>
+          </header>
+
+          <div class="help-grid">
+            <!-- FAQs -->
+            <section class="card faq-container">
+              <h3>Frequently Asked Questions</h3>
+              <div class="faq-item">
+                <button class="faq-question">How to create a booking?</button>
+                <div class="faq-answer">
+                  <p>
+                    To create a booking, navigate to the 'Bookings' page and
+                    click the 'New Booking' button. Fill in the required details
+                    and save.
+                  </p>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="offerDescription">Description</label>
-                <textarea id="offerDescription" name="description" rows="3" required placeholder="Describe the offer..."></textarea>
+              <div class="faq-item">
+                <button class="faq-question">
+                  How to cancel or modify a booking?
+                </button>
+                <div class="faq-answer">
+                  <p>
+                    Find the booking in the bookings list and use the 'Action'
+                    menu to select 'Cancel' or 'Edit'.
+                  </p>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="offerDiscount">Discount (%)</label>
-                <input type="number" id="offerDiscount" name="discount" min="0" max="100" required placeholder="10">
+              <div class="faq-item">
+                <button class="faq-question">
+                  Who do I contact for technical issues?
+                </button>
+                <div class="faq-answer">
+                  <p>
+                    You can use the contact form on this page or email us
+                    directly at support@expressgo.com.
+                  </p>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="offerStartDate">Start Date</label>
-                <input type="date" id="offerStartDate" name="startDate" required>
+            </section>
+
+            <!-- Contact Form -->
+            <section class="card contact-container">
+              <h3>Contact Support</h3>
+              <form>
+                <div class="form-group">
+                  <label for="name">Your Name</label>
+                  <input type="text" id="name" name="name" required />
+                </div>
+                <div class="form-group">
+                  <label for="email">Your Email</label>
+                  <input type="email" id="email" name="email" required />
+                </div>
+                <div class="form-group">
+                  <label for="message">Message</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="5"
+                    required
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Submit Query</button>
+              </form>
+            </section>
+          </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section id="statistics-section" class="content-section">
+          <header class="header">
+            <h2>Statistics & Analytics</h2>
+            <div class="header-right">
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtnStats">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
+                </div>
+                <div id="profileDropdownStats" class="profile-dropdown hidden">
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a href="#" class="dropdown-item" id="logoutBtnStats"
+                    >Logout</a
+                  >
+                </div>
               </div>
-              <div class="form-group">
-                <label for="offerEndDate">End Date</label>
-                <input type="date" id="offerEndDate" name="endDate" required>
+            </div>
+          </header>
+
+          <div class="statistics-container">
+            <!-- Revenue Statistics -->
+            <section class="card">
+              <h3>Revenue Statistics</h3>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <h4>Total Revenue</h4>
+                  <p id="statTotalRevenue">--</p>
+                </div>
+                <div class="stat-card">
+                  <h4>This Month</h4>
+                  <p id="statMonthRevenue">--</p>
+                </div>
+                <div class="stat-card">
+                  <h4>Average per Booking</h4>
+                  <p id="statAvgRevenue">--</p>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="offerRoute">Apply to Route (Optional)</label>
-                <select id="offerRoute" name="routeId">
-                  <option value="">All Routes</option>
-                </select>
+            </section>
+
+            <!-- Booking Statistics -->
+            <section class="card">
+              <h3>Booking Statistics</h3>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <h4>Total Bookings</h4>
+                  <p id="statTotalBookingsStats">--</p>
+                </div>
+                <div class="stat-card">
+                  <h4>This Month</h4>
+                  <p id="statMonthBookings">--</p>
+                </div>
+                <div class="stat-card">
+                  <h4>Completion Rate</h4>
+                  <p id="statCompletionRate">--</p>
+                </div>
               </div>
-              <div class="form-actions">
-                <button type="submit" class="btn-primary">Save Offer</button>
-                <button type="button" class="btn-secondary" id="cancelOfferBtn">Cancel</button>
+            </section>
+
+            <!-- Route Performance -->
+            <section class="card">
+              <h3>Route Performance</h3>
+              <div id="routePerformanceList">
+                <p>Loading route statistics...</p>
               </div>
-            </form>
-          </section>
+            </section>
+          </div>
+        </section>
+
+        <!-- Offers Section -->
+        <section id="offers-section" class="content-section">
+          <header class="header">
+            <h2>Manage Offers & Promotions</h2>
+            <div class="header-right">
+              <button class="btn-primary" id="createOfferBtn">
+                <i class="fas fa-plus"></i> Create Offer
+              </button>
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtnOffers">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
+                </div>
+                <div id="profileDropdownOffers" class="profile-dropdown hidden">
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a href="#" class="dropdown-item" id="logoutBtnOffers"
+                    >Logout</a
+                  >
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="offers-container">
+            <div class="info-banner" id="offersMessage"></div>
+
+            <!-- Active Offers -->
+            <section class="card">
+              <h3>Active Offers</h3>
+              <div id="activeOffersList">
+                <p>No active offers at the moment.</p>
+              </div>
+            </section>
+
+            <!-- Create/Edit Offer Form (Hidden by default) -->
+            <section class="card hidden" id="offerFormCard">
+              <h3 id="offerFormTitle">Create New Offer</h3>
+              <form id="offerForm">
+                <div class="form-group">
+                  <label for="offerTitle">Offer Title</label>
+                  <input
+                    type="text"
+                    id="offerTitle"
+                    name="title"
+                    required
+                    placeholder="e.g., Summer Special"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="offerDescription">Description</label>
+                  <textarea
+                    id="offerDescription"
+                    name="description"
+                    rows="3"
+                    required
+                    placeholder="Describe the offer..."
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="offerDiscount">Discount (%)</label>
+                  <input
+                    type="number"
+                    id="offerDiscount"
+                    name="discount"
+                    min="0"
+                    max="100"
+                    required
+                    placeholder="10"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="offerStartDate">Start Date</label>
+                  <input
+                    type="date"
+                    id="offerStartDate"
+                    name="startDate"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="offerEndDate">End Date</label>
+                  <input
+                    type="date"
+                    id="offerEndDate"
+                    name="endDate"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="offerRoute">Apply to Route (Optional)</label>
+                  <select id="offerRoute" name="routeId">
+                    <option value="">All Routes</option>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn-primary">Save Offer</button>
+                  <button
+                    type="button"
+                    class="btn-secondary"
+                    id="cancelOfferBtn"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </section>
+          </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings-section" class="content-section">
+          <header class="header">
+            <h2>Settings</h2>
+          </header>
+
+          <div class="settings-container">
+            <!-- Profile Settings -->
+            <section class="card">
+              <h3>Profile Settings</h3>
+              <form>
+                <div class="form-group">
+                  <label for="fullName">Full Name</label>
+                  <input type="text" id="fullName" value="Admin User" />
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input
+                    type="email"
+                    id="settingsEmail"
+                    value="admin@expressgo.com"
+                    disabled
+                  />
+                </div>
+                <button type="submit" class="btn-primary">Save Changes</button>
+              </form>
+            </section>
+
+            <!-- Display & Theme -->
+            <section class="card">
+              <h3>Display & Theme</h3>
+              <div class="setting-item">
+                <span>Dark Mode</span>
+                <label class="switch">
+                  <input type="checkbox" id="themeToggle" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </section>
+
+            <!-- Security Settings -->
+            <section class="card">
+              <h3>Security</h3>
+              <form>
+                <div class="form-group">
+                  <label for="currentPassword">Current Password</label>
+                  <input type="password" id="currentPassword" />
+                </div>
+                <div class="form-group">
+                  <label for="newPassword">New Password</label>
+                  <input type="password" id="newPassword" />
+                </div>
+                <button type="submit" class="btn-primary">
+                  Change Password
+                </button>
+              </form>
+            </section>
+
+            <!-- Account Management -->
+            <section class="card danger-zone">
+              <h3>Account Management</h3>
+              <p>
+                Deactivating your account will suspend your access. This action
+                can be undone by contacting support.
+              </p>
+              <button class="btn-danger">Deactivate Account</button>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="modal-overlay hidden">
+      <!-- Route Create/Edit Modal -->
+      <div id="routeModal" class="modal hidden">
+        <div class="modal-header">
+          <h3 id="routeModalTitle">Create New Route</h3>
+          <button class="modal-close" id="closeRouteModal">&times;</button>
         </div>
-      </section>
+        <div class="modal-body">
+          <form id="routeModalForm">
+            <div class="form-group">
+              <label for="modalRouteDepartureCity">Departure City</label>
+              <select
+                id="modalRouteDepartureCity"
+                name="departure_city"
+                required
+              >
+                <option value="">Select departure city</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="modalRouteArrivalCity">Arrival City</label>
+              <select id="modalRouteArrivalCity" name="arrival_city" required>
+                <option value="">Select arrival city</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="modalRouteDistance">Distance (km)</label>
+              <input
+                type="number"
+                id="modalRouteDistance"
+                name="distance_km"
+                min="0"
+                step="0.1"
+                placeholder="100"
+              />
+            </div>
+            <div class="form-group">
+              <label for="modalRouteDuration"
+                >Estimated Duration (minutes)</label
+              >
+              <input
+                type="number"
+                id="modalRouteDuration"
+                name="estimated_duration_minutes"
+                min="1"
+                placeholder="120"
+              />
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary" id="cancelRouteModal">
+                Cancel
+              </button>
+              <button type="submit" class="btn-primary">Save Route</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-      <!-- Settings Section -->
-      <section id="settings-section" class="content-section">
-        <header class="header">
-          <h2>Settings</h2>
-        </header>
-
-        <div class="settings-container">
-          <!-- Profile Settings -->
-          <section class="card">
-            <h3>Profile Settings</h3>
-            <form>
-              <div class="form-group">
-                <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" value="Admin User">
-              </div>
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="settingsEmail" value="admin@expressgo.com" disabled>
-              </div>
-              <button type="submit" class="btn-primary">Save Changes</button>
-            </form>
-          </section>
-
-          <!-- Display & Theme -->
-          <section class="card">
-            <h3>Display & Theme</h3>
-            <div class="setting-item">
-              <span>Dark Mode</span>
-              <label class="switch">
-                <input type="checkbox" id="themeToggle">
-                <span class="slider round"></span>
+      <!-- Schedule Create/Edit Modal -->
+      <div id="scheduleModal" class="modal hidden">
+        <div class="modal-header">
+          <h3 id="scheduleModalTitle">Create New Schedule</h3>
+          <button class="modal-close" id="closeScheduleModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="scheduleModalForm">
+            <div class="form-group">
+              <label for="modalScheduleRoute">Route</label>
+              <select id="modalScheduleRoute" name="route_id" required>
+                <option value="">Select a route</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="modalScheduleBus">Bus</label>
+              <select id="modalScheduleBus" name="bus_id" required>
+                <option value="">Select a bus</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="modalScheduleDepartureTime">Departure Time</label>
+              <input
+                type="time"
+                id="modalScheduleDepartureTime"
+                name="departure_time"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="modalScheduleArrivalTime">Arrival Time</label>
+              <input
+                type="time"
+                id="modalScheduleArrivalTime"
+                name="arrival_time"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="modalSchedulePrice">Price (RWF)</label>
+              <input
+                type="number"
+                id="modalSchedulePrice"
+                name="price"
+                min="0"
+                step="0.01"
+                required
+                placeholder="3000"
+              />
+            </div>
+            <div class="form-group">
+              <label for="modalScheduleAvailableDays"
+                >Available Days (comma-separated)</label
+              >
+              <input
+                type="text"
+                id="modalScheduleAvailableDays"
+                name="available_days"
+                placeholder="Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+              />
+            </div>
+            <div class="form-group">
+              <label>
+                <input
+                  type="checkbox"
+                  id="modalScheduleIsActive"
+                  name="is_active"
+                  checked
+                />
+                Active
               </label>
             </div>
-          </section>
-
-          <!-- Security Settings -->
-          <section class="card">
-            <h3>Security</h3>
-            <form>
-              <div class="form-group">
-                <label for="currentPassword">Current Password</label>
-                <input type="password" id="currentPassword">
-              </div>
-              <div class="form-group">
-                <label for="newPassword">New Password</label>
-                <input type="password" id="newPassword">
-              </div>
-              <button type="submit" class="btn-primary">Change Password</button>
-            </form>
-          </section>
-
-          <!-- Account Management -->
-          <section class="card danger-zone">
-            <h3>Account Management</h3>
-            <p>Deactivating your account will suspend your access. This action can be undone by contacting support.</p>
-            <button class="btn-danger">Deactivate Account</button>
-          </section>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                id="cancelScheduleModal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn-primary">Save Schedule</button>
+            </div>
+          </form>
         </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- Modal Overlay -->
-  <div id="modalOverlay" class="modal-overlay hidden">
-    <!-- Route Create/Edit Modal -->
-    <div id="routeModal" class="modal hidden">
-      <div class="modal-header">
-        <h3 id="routeModalTitle">Create New Route</h3>
-        <button class="modal-close" id="closeRouteModal">&times;</button>
       </div>
-      <div class="modal-body">
-        <form id="routeModalForm">
-          <div class="form-group">
-            <label for="modalRouteDepartureCity">Departure City</label>
-            <input type="text" id="modalRouteDepartureCity" name="departure_city" required placeholder="e.g., Kigali">
-          </div>
-          <div class="form-group">
-            <label for="modalRouteArrivalCity">Arrival City</label>
-            <input type="text" id="modalRouteArrivalCity" name="arrival_city" required placeholder="e.g., Musanze">
-          </div>
-          <div class="form-group">
-            <label for="modalRouteDistance">Distance (km)</label>
-            <input type="number" id="modalRouteDistance" name="distance_km" min="0" step="0.1" placeholder="100">
-          </div>
-          <div class="form-group">
-            <label for="modalRouteDuration">Estimated Duration (minutes)</label>
-            <input type="number" id="modalRouteDuration" name="estimated_duration_minutes" min="1" placeholder="120">
-          </div>
+
+      <!-- Delete Confirmation Modal -->
+      <div id="deleteModal" class="modal modal-small hidden">
+        <div class="modal-header">
+          <h3 id="deleteModalTitle">Confirm Delete</h3>
+          <button class="modal-close" id="closeDeleteModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="deleteModalMessage">
+            Are you sure you want to delete this item? This action cannot be
+            undone.
+          </p>
           <div class="modal-actions">
-            <button type="button" class="btn-secondary" id="cancelRouteModal">Cancel</button>
-            <button type="submit" class="btn-primary">Save Route</button>
+            <button type="button" class="btn-secondary" id="cancelDeleteModal">
+              Cancel
+            </button>
+            <button type="button" class="btn-danger" id="confirmDeleteModal">
+              Delete
+            </button>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
 
-    <!-- Schedule Create/Edit Modal -->
-    <div id="scheduleModal" class="modal hidden">
-      <div class="modal-header">
-        <h3 id="scheduleModalTitle">Create New Schedule</h3>
-        <button class="modal-close" id="closeScheduleModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form id="scheduleModalForm">
-          <div class="form-group">
-            <label for="modalScheduleRoute">Route</label>
-            <select id="modalScheduleRoute" name="route_id" required>
-              <option value="">Select a route</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="modalScheduleBus">Bus</label>
-            <select id="modalScheduleBus" name="bus_id" required>
-              <option value="">Select a bus</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="modalScheduleDepartureTime">Departure Time</label>
-            <input type="time" id="modalScheduleDepartureTime" name="departure_time" required>
-          </div>
-          <div class="form-group">
-            <label for="modalScheduleArrivalTime">Arrival Time</label>
-            <input type="time" id="modalScheduleArrivalTime" name="arrival_time" required>
-          </div>
-          <div class="form-group">
-            <label for="modalSchedulePrice">Price (RWF)</label>
-            <input type="number" id="modalSchedulePrice" name="price" min="0" step="0.01" required placeholder="3000">
-          </div>
-          <div class="form-group">
-            <label for="modalScheduleAvailableDays">Available Days (comma-separated)</label>
-            <input type="text" id="modalScheduleAvailableDays" name="available_days" placeholder="Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday">
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="modalScheduleIsActive" name="is_active" checked>
-              Active
-            </label>
-          </div>
+      <!-- Logout Confirmation Modal -->
+      <div id="logoutModal" class="modal modal-small hidden">
+        <div class="modal-header">
+          <h3>Confirm Logout</h3>
+          <button class="modal-close" id="closeLogoutModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to logout?</p>
           <div class="modal-actions">
-            <button type="button" class="btn-secondary" id="cancelScheduleModal">Cancel</button>
-            <button type="submit" class="btn-primary">Save Schedule</button>
+            <button type="button" class="btn-secondary" id="cancelLogoutModal">
+              Cancel
+            </button>
+            <button type="button" class="btn-primary" id="confirmLogoutModal">
+              Logout
+            </button>
           </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="modal modal-small hidden">
-      <div class="modal-header">
-        <h3 id="deleteModalTitle">Confirm Delete</h3>
-        <button class="modal-close" id="closeDeleteModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p id="deleteModalMessage">Are you sure you want to delete this item? This action cannot be undone.</p>
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" id="cancelDeleteModal">Cancel</button>
-          <button type="button" class="btn-danger" id="confirmDeleteModal">Delete</button>
         </div>
       </div>
     </div>
 
-    <!-- Logout Confirmation Modal -->
-    <div id="logoutModal" class="modal modal-small hidden">
-      <div class="modal-header">
-        <h3>Confirm Logout</h3>
-        <button class="modal-close" id="closeLogoutModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to logout?</p>
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" id="cancelLogoutModal">Cancel</button>
-          <button type="button" class="btn-primary" id="confirmLogoutModal">Logout</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script defer src="../../js/api-client.js"></script>
-  <script defer src="admin.js"></script>
-</body>
+    <script defer src="../../js/api-client.js"></script>
+    <script defer src="../../js/districts.js"></script>
+    <script defer src="admin.js"></script>
+  </body>
 </html>
-
