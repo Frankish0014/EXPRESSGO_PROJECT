@@ -1,6 +1,6 @@
 /* General Styles */
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background-color: #f4f7fa;
   margin: 0;
   color: #333;
@@ -63,7 +63,7 @@ body {
   border-radius: 0 25px 25px 0;
 }
 
-.brand a{
+.brand a {
   color: #fff;
   text-decoration: none;
 }
@@ -115,7 +115,7 @@ body {
 }
 
 .bottom-nav ul li {
-  margin-bottom: 15px; 
+  margin-bottom: 15px;
 }
 
 .sidebar .bottom-nav a {
@@ -282,7 +282,8 @@ thead {
   color: #222;
 }
 
-th, td {
+th,
+td {
   padding: 0.8rem;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -416,9 +417,15 @@ th, td {
   color: #1a202c;
 }
 
-.stat-card.completed { border-color: #38a169; }
-.stat-card.pending { border-color: #dd6b20; }
-.stat-card.canceled { border-color: #e53e3e; }
+.stat-card.completed {
+  border-color: #38a169;
+}
+.stat-card.pending {
+  border-color: #dd6b20;
+}
+.stat-card.canceled {
+  border-color: #e53e3e;
+}
 
 /* Main Grid Layout */
 .main-grid {
@@ -487,7 +494,8 @@ th, td {
   border-collapse: collapse;
 }
 
-.recent-bookings-container th, .recent-bookings-container td {
+.recent-bookings-container th,
+.recent-bookings-container td {
   text-align: left;
   padding: 0.75rem;
   border-bottom: 1px solid #e2e8f0;
@@ -561,7 +569,7 @@ th, td {
 }
 
 .faq-question::after {
-  content: '+';
+  content: "+";
   position: absolute;
   right: 0.5rem;
   font-size: 1.5rem;
@@ -671,7 +679,7 @@ th, td {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -682,7 +690,7 @@ th, td {
   left: 4px;
   bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
@@ -693,8 +701,12 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-.slider.round { border-radius: 34px; }
-.slider.round:before { border-radius: 50%; }
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
 
 /* Danger Zone */
 .danger-zone {
@@ -715,7 +727,10 @@ input:checked + .slider:before {
   .main-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .chart-container, .recent-bookings-container, .revenue-container, .popular-routes-container {
+  .chart-container,
+  .recent-bookings-container,
+  .revenue-container,
+  .popular-routes-container {
     grid-column: auto;
     grid-row: auto;
   }
@@ -901,11 +916,11 @@ input:checked + .slider:before {
     width: 95%;
     max-height: 95vh;
   }
-  
+
   .modal-actions {
     flex-direction: column;
   }
-  
+
   .modal-actions button {
     width: 100%;
   }
@@ -955,3 +970,382 @@ input:checked + .slider:before {
   font-size: 1rem;
 }
 
+/* Modern Bus Company Profile Styles - Clean Dashboard Theme */
+.bus-company-profile-container {
+  padding: 0;
+}
+
+/* Company Header */
+.company-header-section {
+  margin-bottom: 2rem;
+}
+
+.company-name {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 0.75rem 0;
+}
+
+.company-contact-info {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #718096;
+}
+
+.contact-item i {
+  font-size: 0.875rem;
+  color: #a0aec0;
+}
+
+/* Summary Cards */
+.summary-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.summary-card {
+  background: white;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: box-shadow 0.2s;
+}
+
+.summary-card:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.summary-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.summary-icon.total {
+  background: #fff5e6;
+  color: #ff8c00;
+}
+
+.summary-icon.active {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.summary-icon.maintenance {
+  background: #fff0f6;
+  color: #eb2f96;
+}
+
+.summary-icon.inactive {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.summary-content {
+  flex: 1;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+/* Monitoring Section */
+.monitoring-section {
+  margin-bottom: 2.5rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+/* Buses Grid */
+.buses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.bus-card {
+  background: white;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+
+.bus-card:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.bus-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bus-logo {
+  width: 40px;
+  height: 40px;
+  background: #f7fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #1a202c;
+  font-size: 1rem;
+}
+
+.bus-card-title {
+  flex: 1;
+}
+
+.bus-card-title h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 0.25rem 0;
+}
+
+.bus-card-title p {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0;
+}
+
+.bus-status {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.bus-status.up {
+  color: #52c41a;
+}
+
+.bus-status.down {
+  color: #ff4d4f;
+}
+
+.bus-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.bus-metric {
+  display: flex;
+  flex-direction: column;
+}
+
+.bus-metric-label {
+  font-size: 0.75rem;
+  color: #718096;
+  margin-bottom: 0.25rem;
+}
+
+.bus-metric-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.bus-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+  justify-content: flex-end;
+}
+
+/* Table Section */
+.table-section {
+  margin-bottom: 2rem;
+}
+
+.table-card {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.clean-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.clean-table thead {
+  background: #fafafa;
+}
+
+.clean-table th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a202c;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.clean-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.15s;
+}
+
+.clean-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.clean-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.clean-table td {
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  color: #1a202c;
+}
+
+.table-empty {
+  text-align: center;
+  padding: 3rem 1.5rem !important;
+  color: #a0aec0;
+}
+
+.table-empty p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Status Badges */
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.status.confirmed {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.status.pending {
+  background: #fff7e6;
+  color: #fa8c16;
+}
+
+.status.cancelled {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+/* Responsive Design */
+/* Days Checkbox Group */
+.days-checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.day-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  user-select: none;
+}
+
+.day-checkbox-label:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.day-checkbox-label input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.day-checkbox-label input[type="checkbox"]:checked + span,
+.day-checkbox-label:has(input[type="checkbox"]:checked) {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+@media (max-width: 768px) {
+  .summary-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .buses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .section-header button {
+    width: 100%;
+  }
+
+  .bus-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .days-checkbox-group {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -12,6 +12,7 @@
     "db:migrate:undo:all": "sequelize-cli db:migrate:undo:all",
     "db:seed": "sequelize-cli db:seed:all",
     "db:seed:undo": "sequelize-cli db:seed:undo:all",
+    "create-admin": "ts-node src/scripts/create-admin.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

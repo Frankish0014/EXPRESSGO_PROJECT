@@ -10,6 +10,25 @@ const formError = document.getElementById('formError');
 
 let cityCount = 0;
 
+// Populate districts datalist
+function populateDistrictsDatalist() {
+  const citiesDatalist = document.getElementById('cities');
+  if (citiesDatalist && window.RWANDAN_DISTRICTS) {
+    window.RWANDAN_DISTRICTS.forEach(district => {
+      const option = document.createElement('option');
+      option.value = district;
+      citiesDatalist.appendChild(option);
+    });
+  }
+}
+
+// Initialize districts when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', populateDistrictsDatalist);
+} else {
+  populateDistrictsDatalist();
+}
+
 const setMinDate = () => {
   const today = new Date().toISOString().split('T')[0];
   const departDateInput = document.getElementById('departDate');

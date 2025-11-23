@@ -1,6 +1,6 @@
-import app from './app';
-import { config } from './config/app';
-import sequelize, { testConnection } from './config/database';
+import app from "./app";
+import { config } from "./config/app";
+import sequelize, { testConnection } from "./config/database";
 
 const PORT = config.port;
 
@@ -19,23 +19,23 @@ const startServer = async () => {
       console.log(`📚 API Docs: ${config.app.url}/api-docs`);
     });
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    console.error("❌ Failed to start server:", error);
     process.exit(1);
   }
 };
 
 // Graceful shutdown
-process.on('SIGTERM', async () => {
-  console.log('👋 SIGTERM signal received: closing HTTP server');
+process.on("SIGTERM", async () => {
+  console.log("👋 SIGTERM signal received: closing HTTP server");
   await sequelize.close();
-  console.log('✅ Database connection closed');
+  console.log("✅ Database connection closed");
   process.exit(0);
 });
 
-process.on('SIGINT', async () => {
-  console.log('👋 SIGINT signal received: closing HTTP server');
+process.on("SIGINT", async () => {
+  console.log("👋 SIGINT signal received: closing HTTP server");
   await sequelize.close();
-  console.log('✅ Database connection closed');
+  console.log("✅ Database connection closed");
   process.exit(0);
 });
 

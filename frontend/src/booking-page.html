@@ -1,273 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../css/booking-styles.css">
-  <title>Book Your Trip - ExpressGo</title>
-</head>
-<body>
-  <!-- Header -->
-  <header class="navbar">
-    <div class="container nav-content">
-      <div class="logo"><a href="">ExpressGo</a></div>
-      <nav>
-        <ul>
-          <li><a href="../index.html">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#destinations">Destinations</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="user-log-in.html">Login</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Booking Section -->
-  <section class="booking-section">
-    <div class="container">
-      <div class="page-header">
-        <h1>Book Your Journey</h1>
-        <p>Travel comfortably across Rwanda with ExpressGo</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/booking-styles.css" />
+    <title>Book Your Trip - ExpressGo</title>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="navbar">
+      <div class="container nav-content">
+        <div class="logo"><a href="">ExpressGo</a></div>
+        <nav>
+          <!-- Navigation will be rendered by navigation.js -->
+        </nav>
       </div>
+    </header>
 
-      <div class="booking-container">
-        <!-- Booking Form -->
-        <div class="booking-form-card">
-          <h2 class="section-title">Trip Details</h2>
-          <div class="schedule-banner" id="scheduleBanner">
-            <p id="scheduleBannerContent">Select a trip from the homepage search to autofill this form.</p>
-          </div>
-          <div class="form-error" id="bookingFormError" role="alert" aria-live="assertive"></div>
-          
-          <form id="bookingForm">
-            <div class="form-group">
-              <label for="from">From (Departure)</label>
-              <select id="from" name="from" required>
-                <option value="">Select departure point</option>
-                <option value="Kigali - Nyabugogo">Kigali - Nyabugogo</option>
-              </select>
+    <!-- Booking Section -->
+    <section class="booking-section">
+      <div class="container">
+        <div class="page-header">
+          <h1>Book Your Journey</h1>
+          <p>Travel comfortably across Rwanda with ExpressGo</p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section" id="searchSection">
+          <h2 class="section-title">Search for Your Trip</h2>
+          <form class="booking-search-form" id="bookingSearchForm" novalidate>
+            <div
+              class="trip-type"
+              role="group"
+              aria-label="Trip type selection"
+            >
+              <label>
+                <input
+                  type="radio"
+                  name="tripType"
+                  value="oneway"
+                  checked
+                  aria-label="One way trip"
+                />
+                One Way
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="tripType"
+                  value="round"
+                  aria-label="Round trip"
+                />
+                Round Trip
+              </label>
             </div>
 
-                        <div class="form-group">
-              <label for="to">To (Destination)</label>
-              <select id="to" name="to" required>
-                <option value="">Select destination</option>
-                <optgroup label="Eastern Province">
-                  <option value="Bugesera" data-price="750">Bugesera</option>
-                  <option value="Gatsibo" data-price="4500">Gatsibo</option>
-                  <option value="Kayonza" data-price="3000">Kayonza</option>
-                  <option value="Kirehe" data-price="4000">Kirehe</option>
-                  <option value="Ngoma" data-price="3500">Ngoma</option>
-                  <option value="Nyagatare" data-price="5000">Nyagatare</option>
-                  <option value="Rwamagana" data-price="2000">Rwamagana</option>
-                </optgroup>
-                <optgroup label="Northern Province">
-                  <option value="Burera" data-price="3500">Burera</option>
-                  <option value="Gakenke" data-price="3000">Gakenke</option>
-                  <option value="Gicumbi" data-price="302">Gicumbi</option>
-                  <option value="Rukomo" data-price="672">Rukomo</option>
-                  <option value="Musanze" data-price="2200">Musanze</option>
-                  <option value="Rulindo" data-price="2500">Rulindo</option>
-                </optgroup>
-                <optgroup label="Southern Province">
-                  <option value="Gisagara" data-price="3500">Gisagara</option>
-                  <option value="Huye" data-price="3000">Huye</option>
-                  <option value="Kamonyi" data-price="1800">Kamonyi</option>
-                  <option value="Muhanga" data-price="2000">Muhanga</option>
-                  <option value="Nyamagabe" data-price="4000">Nyamagabe</option>
-                  <option value="Nyanza" data-price="2800">Nyanza</option>
-                  <option value="Nyaruguru" data-price="4500">Nyaruguru</option>
-                  <option value="Ruhango" data-price="2200">Ruhango</option>
-                </optgroup>
-                <optgroup label="Western Province">
-                  <option value="Karongi" data-price="5000">Karongi</option>
-                  <option value="Ngororero" data-price="4000">Ngororero</option>
-                  <option value="Nyabihu" data-price="3500">Nyabihu</option>
-                  <option value="Nyamasheke" data-price="6000">Nyamasheke</option>
-                  <option value="Rubavu" data-price="4200">Rubavu</option>
-                  <option value="Rusizi" data-price="7500">Rusizi</option>
-                  <option value="Rutsiro" data-price="4500">Rutsiro</option>
-                </optgroup>
-              </select>
-            </div>
-            
-            <div class="form-row">
-              <div class="form-group">
-                <label for="departDate">Departure Date</label>
-                <input type="date" id="departDate" name="departDate" required />
-              </div>
+             <div class="form-row">
+               <div class="form-group">
+                 <label for="searchFrom">From</label>
+                 <input
+                   type="text"
+                   id="searchFrom"
+                   placeholder="Select or type departure city"
+                   name="from"
+                   autocomplete="off"
+                   list="bookingCities"
+                   required
+                 />
+                 <datalist id="bookingCities">
+                   <!-- Options will be populated by districts.js -->
+                 </datalist>
+               </div>
 
-              <div class="form-group">
-                <label for="departTime">Departure Time</label>
-                <select id="departTime" name="departTime" required>
-                  <option value="">Select time</option>
-                  <optgroup id="agentname" label=""> 
-                    <option value="06:00">06:00 AM</option>
-                    <option value="08:00">08:00 AM</option>
-                    <option value="10:00">10:00 AM</option>
-                    <option value="12:00">12:00 PM</option>
-                    <option value="14:00">02:00 PM</option>
-                    <option value="16:00">04:00 PM</option>
-                    <option value="18:00">06:00 PM</option>
-                  </optgroup>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="agentInfo">Select Agents</label>
-              <select id="agentInfo" name="agentInfo" required>
-                <option value="">Select Agents</option>
-                <optgroup label="Nyabugogo Agents">
-                  <option value="RITCO" data-price="">RITCO</option>
-                  <option value="Volcano" data-price="">Volcano</option>
-                  <option value="Alpha Express" data-price="">Alpha Express</option>
-                  <option value="City Express" data-price="">City Express</option>
-                  <option value="Matunda Express Ltd" data-price="">Matunda Express Ltd</option>
-                  <option value="Select Express Ltd" data-price="">Select Express Ltd </option>
-                  <option value="Yahoo Express" data-price="">Yahoo Express</option>
-                </optgroup>
-              </select>
-            </div>
-
-            <div id="routeInfo" class="route-info">
-              <p><strong>Distance:</strong> <span id="distance">-</span></p>
-              <p><strong>Duration:</strong> <span id="duration">-</span></p>
-              <p><strong>Price per seat:</strong> <span id="pricePerSeat">-</span></p>
-            </div>
-
-
-            <div class="form-group">
-              <label for="plateNumber">Select Car / Plate Number</label>
-              <select id="plateNumber" name="plateNumber" required>
-                <option value="">Select plate number</option>
-                <!-- Options will be generated dynamically -->
-              </select>
-            </div>
-
-
-            <div class="form-group">
-              <label for="passengers">Number of Passengers</label>
-              <input type="number" id="passengers" name="passengers" min="1" max="10" value="1" required />
-            </div>
-
-            <h2 class="section-title" style="margin-top: 2rem;">Passenger Information</h2>
-
-            <div class="form-group">
-              <label for="fullName">Full Name</label>
-              <input type="text" id="fullName" name="fullName" placeholder="Enter full name" required />
-            </div>
+               <div class="form-group">
+                 <label for="searchTo">To</label>
+                 <input
+                   type="text"
+                   id="searchTo"
+                   placeholder="Select or type destination city"
+                   name="to"
+                   autocomplete="off"
+                   list="bookingCities"
+                   required
+                 />
+               </div>
+             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="your@email.com" required />
+                <label for="searchDepartDate">Departure Date</label>
+                <input
+                  type="date"
+                  id="searchDepartDate"
+                  name="departDate"
+                  required
+                />
+              </div>
+
+              <div class="form-group return-date-search hidden">
+                <label for="searchReturnDate">Return Date</label>
+                <input type="date" id="searchReturnDate" name="returnDate" />
               </div>
 
               <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" placeholder="+250 7XX XXX XXX" required />
+                <label for="searchPassengers">Passengers</label>
+                <input
+                  type="number"
+                  id="searchPassengers"
+                  min="1"
+                  max="10"
+                  value="1"
+                  name="passengers"
+                  required
+                />
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="idNumber">ID/Passport Number</label>
-              <input type="text" id="idNumber" name="idNumber" placeholder="Enter ID or Passport number" required />
-            </div>
-
-            <h2 class="section-title" style="margin-top: 2rem;">Select Your Seat(s)</h2>
-            <div class="seat-selection" id="seatSelection">
-              <!-- Seats will be generated by JavaScript -->
-            </div>
-            <div class="seat-legend">
-              <div class="legend-item">
-                <div class="legend-box available"></div>
-                <span>Available</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-box selected"></div>
-                <span>Selected</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-box occupied"></div>
-                <span>Occupied</span>
-              </div>
-            </div>
+            <button type="submit" class="btn-primary" id="searchTripsBtn">
+              <span class="btn-text">Search Trips</span>
+              <span class="btn-loader hidden"></span>
+            </button>
+            <div
+              id="searchFormError"
+              class="form-error hidden"
+              role="alert"
+            ></div>
           </form>
         </div>
 
-        <!-- Booking Summary -->
-        <div class="booking-summary">
-          <h2 class="section-title">Booking Summary</h2>
-          
-          <div class="summary-item">
-            <span class="summary-label">Route:</span>
-            <span class="summary-value" id="summaryRoute">-</span>
+        <div
+          class="booking-container"
+          id="bookingContainer"
+          style="display: none"
+        >
+          <!-- Booking Form -->
+          <div class="booking-form-card">
+            <h2 class="section-title">Trip Details</h2>
+            <div class="schedule-banner" id="scheduleBanner">
+              <p id="scheduleBannerContent">
+                Select a trip to continue with booking.
+              </p>
+            </div>
+            <div
+              class="form-error"
+              id="bookingFormError"
+              role="alert"
+              aria-live="assertive"
+            ></div>
+
+            <form id="bookingForm">
+              <div class="form-group">
+                <label for="from">From (Departure)</label>
+                <select id="from" name="from" required>
+                  <option value="">Select departure point</option>
+                  <option value="Kigali - Nyabugogo">Kigali - Nyabugogo</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="to">To (Destination)</label>
+                <select id="to" name="to" required>
+                  <option value="">Select destination</option>
+                  <optgroup label="Eastern Province">
+                    <option value="Bugesera" data-price="750">Bugesera</option>
+                    <option value="Gatsibo" data-price="4500">Gatsibo</option>
+                    <option value="Kayonza" data-price="3000">Kayonza</option>
+                    <option value="Kirehe" data-price="4000">Kirehe</option>
+                    <option value="Ngoma" data-price="3500">Ngoma</option>
+                    <option value="Nyagatare" data-price="5000">
+                      Nyagatare
+                    </option>
+                    <option value="Rwamagana" data-price="2000">
+                      Rwamagana
+                    </option>
+                  </optgroup>
+                  <optgroup label="Northern Province">
+                    <option value="Burera" data-price="3500">Burera</option>
+                    <option value="Gakenke" data-price="3000">Gakenke</option>
+                    <option value="Gicumbi" data-price="302">Gicumbi</option>
+                    <option value="Rukomo" data-price="672">Rukomo</option>
+                    <option value="Musanze" data-price="2200">Musanze</option>
+                    <option value="Rulindo" data-price="2500">Rulindo</option>
+                  </optgroup>
+                  <optgroup label="Southern Province">
+                    <option value="Gisagara" data-price="3500">Gisagara</option>
+                    <option value="Huye" data-price="3000">Huye</option>
+                    <option value="Kamonyi" data-price="1800">Kamonyi</option>
+                    <option value="Muhanga" data-price="2000">Muhanga</option>
+                    <option value="Nyamagabe" data-price="4000">
+                      Nyamagabe
+                    </option>
+                    <option value="Nyanza" data-price="2800">Nyanza</option>
+                    <option value="Nyaruguru" data-price="4500">
+                      Nyaruguru
+                    </option>
+                    <option value="Ruhango" data-price="2200">Ruhango</option>
+                  </optgroup>
+                  <optgroup label="Western Province">
+                    <option value="Karongi" data-price="5000">Karongi</option>
+                    <option value="Ngororero" data-price="4000">
+                      Ngororero
+                    </option>
+                    <option value="Nyabihu" data-price="3500">Nyabihu</option>
+                    <option value="Nyamasheke" data-price="6000">
+                      Nyamasheke
+                    </option>
+                    <option value="Rubavu" data-price="4200">Rubavu</option>
+                    <option value="Rusizi" data-price="7500">Rusizi</option>
+                    <option value="Rutsiro" data-price="4500">Rutsiro</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="departDate">Departure Date</label>
+                  <input
+                    type="date"
+                    id="departDate"
+                    name="departDate"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="departTime">Departure Time</label>
+                  <select id="departTime" name="departTime" required>
+                    <option value="">Select time</option>
+                    <optgroup id="agentname" label="">
+                      <option value="06:00">06:00 AM</option>
+                      <option value="08:00">08:00 AM</option>
+                      <option value="10:00">10:00 AM</option>
+                      <option value="12:00">12:00 PM</option>
+                      <option value="14:00">02:00 PM</option>
+                      <option value="16:00">04:00 PM</option>
+                      <option value="18:00">06:00 PM</option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="agentInfo">Select Agents</label>
+                <select id="agentInfo" name="agentInfo" required>
+                  <option value="">Select Agents</option>
+                  <optgroup label="Nyabugogo Agents">
+                    <option value="RITCO" data-price="">RITCO</option>
+                    <option value="Volcano" data-price="">Volcano</option>
+                    <option value="Alpha Express" data-price="">
+                      Alpha Express
+                    </option>
+                    <option value="City Express" data-price="">
+                      City Express
+                    </option>
+                    <option value="Matunda Express Ltd" data-price="">
+                      Matunda Express Ltd
+                    </option>
+                    <option value="Select Express Ltd" data-price="">
+                      Select Express Ltd
+                    </option>
+                    <option value="Yahoo Express" data-price="">
+                      Yahoo Express
+                    </option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div id="routeInfo" class="route-info">
+                <p><strong>Distance:</strong> <span id="distance">-</span></p>
+                <p><strong>Duration:</strong> <span id="duration">-</span></p>
+                <p>
+                  <strong>Price per seat:</strong>
+                  <span id="pricePerSeat">-</span>
+                </p>
+              </div>
+
+              <div class="form-group">
+                <label for="plateNumber">Select Car / Plate Number</label>
+                <select id="plateNumber" name="plateNumber" required>
+                  <option value="">Select plate number</option>
+                  <!-- Options will be generated dynamically -->
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="passengers">Number of Passengers</label>
+                <input
+                  type="number"
+                  id="passengers"
+                  name="passengers"
+                  min="1"
+                  max="10"
+                  value="1"
+                  required
+                />
+              </div>
+
+              <h2 class="section-title" style="margin-top: 2rem">
+                Passenger Information
+              </h2>
+
+              <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  placeholder="Enter full name"
+                  required
+                />
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="your@email.com"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="phone">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="+250 7XX XXX XXX"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="idNumber">ID/Passport Number</label>
+                <input
+                  type="text"
+                  id="idNumber"
+                  name="idNumber"
+                  placeholder="Enter ID or Passport number"
+                  required
+                />
+              </div>
+
+              <h2 class="section-title" style="margin-top: 2rem">
+                Select Your Seat(s)
+              </h2>
+              <div class="seat-selection" id="seatSelection">
+                <!-- Seats will be generated by JavaScript -->
+              </div>
+              <div class="seat-legend">
+                <div class="legend-item">
+                  <div class="legend-box available"></div>
+                  <span>Available</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-box selected"></div>
+                  <span>Selected</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-box occupied"></div>
+                  <span>Occupied</span>
+                </div>
+              </div>
+            </form>
           </div>
 
-          <div class="summary-item">
-            <span class="summary-label">Agents</span>
-            <span class="summary-value" id="summaryAgents">-</span>
-          </div>
+          <!-- Booking Summary -->
+          <div class="booking-summary">
+            <h2 class="section-title">Booking Summary</h2>
 
-          <div class="summary-item">
-            <span class="summary-label">Date:</span>
-            <span class="summary-value" id="summaryDate">-</span>
-          </div>
+            <div class="summary-item">
+              <span class="summary-label">Route:</span>
+              <span class="summary-value" id="summaryRoute">-</span>
+            </div>
 
-          <div class="summary-item">
-            <span class="summary-label">Time:</span>
-            <span class="summary-value" id="summaryTime">-</span>
-          </div>
+            <div class="summary-item">
+              <span class="summary-label">Agents</span>
+              <span class="summary-value" id="summaryAgents">-</span>
+            </div>
 
-          <div class="summary-item">
-            <span class="summary-label">Passengers:</span>
-            <span class="summary-value" id="summaryPassengers">1</span>
-          </div>
+            <div class="summary-item">
+              <span class="summary-label">Date:</span>
+              <span class="summary-value" id="summaryDate">-</span>
+            </div>
 
-          <div class="summary-item">
-            <span class="summary-label">Selected Seats:</span>
-            <span class="summary-value" id="summarySeats">None</span>
-          </div>
+            <div class="summary-item">
+              <span class="summary-label">Time:</span>
+              <span class="summary-value" id="summaryTime">-</span>
+            </div>
 
-          <div class="summary-item">
-            <span class="summary-label">Price per seat:</span>
-            <span class="summary-value" id="summaryPricePerSeat">0 Rwf</span>
-          </div>
+            <div class="summary-item">
+              <span class="summary-label">Passengers:</span>
+              <span class="summary-value" id="summaryPassengers">1</span>
+            </div>
 
-          <div class="summary-item">
-            <span class="summary-label">Total:</span>
-            <span class="price" id="summaryTotal">0 Rwf</span>
-          </div>
+            <div class="summary-item">
+              <span class="summary-label">Selected Seats:</span>
+              <span class="summary-value" id="summarySeats">None</span>
+            </div>
 
-          <button type="button" class="btn-primary" id="confirmBooking" disabled>Confirm &amp; Continue</button>
+            <div class="summary-item">
+              <span class="summary-label">Price per seat:</span>
+              <span class="summary-value" id="summaryPricePerSeat">0 Rwf</span>
+            </div>
+
+            <div class="summary-item">
+              <span class="summary-label">Total:</span>
+              <span class="price" id="summaryTotal">0 Rwf</span>
+            </div>
+
+            <button
+              type="button"
+              class="btn-primary"
+              id="confirmBooking"
+              disabled
+            >
+              Confirm &amp; Continue
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-  <!-- Footer -->
-  <footer id="contact" class="footer">
-    <div class="container footer-content">
-      <div>
-        <h3>ExpressGo</h3>
-        <p>Reliable transport across Rwanda.</p>
+    </section>
+    <!-- Footer -->
+    <footer id="contact" class="footer">
+      <div class="container footer-content">
+        <div>
+          <h3>ExpressGo</h3>
+          <p>Reliable transport across Rwanda.</p>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <p>Email: info@expressgo.com</p>
+          <p>Phone: +250 7813 489</p>
+        </div>
+        <div>
+          <h4>Follow Us</h4>
+          <p>🌐 Facebook | Twitter | Instagram</p>
+        </div>
       </div>
-      <div>
-        <h4>Contact</h4>
-        <p>Email: info@expressgo.com</p>
-        <p>Phone: +250 7813 489</p>
+      <div class="footer-bottom">
+        <p>© 2025 ExpressGo. All rights reserved.</p>
       </div>
-      <div>
-        <h4>Follow Us</h4>
-        <p>🌐 Facebook | Twitter | Instagram</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 ExpressGo. All rights reserved.</p>
-    </div>
-  </footer>
-  <script defer src="../js/api-client.js"></script>
-  <script defer src="../js/booking-page.js"></script>
-</body>
+    </footer>
+     <script defer src="../js/api-client.js"></script>
+     <script defer src="../js/districts.js"></script>
+     <script defer src="../js/navigation.js"></script>
+     <script defer src="../js/booking-page.js"></script>
+  </body>
 </html>
