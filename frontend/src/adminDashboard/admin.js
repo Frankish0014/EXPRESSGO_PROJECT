@@ -2,11 +2,33 @@
 
 // Modal Management Functions
 function showModal(modalId) {
+  // First, immediately hide all other modals to prevent overlap
+  const allModals = [
+    "routeModal",
+    "scheduleModal",
+    "deleteModal",
+    "logoutModal",
+    "busCompanyModal",
+    "busModal",
+  ];
+
+  allModals.forEach((id) => {
+    if (id !== modalId) {
+      const otherModal = document.getElementById(id);
+      if (otherModal) {
+        otherModal.classList.add("hidden");
+        otherModal.classList.remove("show");
+      }
+    }
+  });
+
   const overlay = document.getElementById("modalOverlay");
   const modal = document.getElementById(modalId);
   if (overlay && modal) {
+    // Ensure overlay is visible
     overlay.classList.remove("hidden");
     overlay.classList.add("show");
+    // Show the requested modal
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden"; // Prevent background scrolling
   }
@@ -16,20 +38,51 @@ function hideModal(modalId) {
   const overlay = document.getElementById("modalOverlay");
   const modal = document.getElementById(modalId);
   if (overlay && modal) {
+    // Immediately hide the modal
+    modal.classList.add("hidden");
+    modal.classList.remove("show");
+
+    // Animate overlay fade out
     overlay.classList.remove("show");
     setTimeout(() => {
-      overlay.classList.add("hidden");
-      modal.classList.add("hidden");
-      document.body.style.overflow = ""; // Restore scrolling
+      // Check if any other modal is still visible
+      const visibleModals = document.querySelectorAll(".modal:not(.hidden)");
+      if (visibleModals.length === 0) {
+        overlay.classList.add("hidden");
+        document.body.style.overflow = ""; // Restore scrolling
+      }
     }, 300);
   }
 }
 
 function hideAllModals() {
-  hideModal("routeModal");
-  hideModal("scheduleModal");
-  hideModal("deleteModal");
-  hideModal("logoutModal");
+  // Immediately hide all modals
+  const allModals = [
+    "routeModal",
+    "scheduleModal",
+    "deleteModal",
+    "logoutModal",
+    "busCompanyModal",
+    "busModal",
+  ];
+
+  allModals.forEach((modalId) => {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.add("hidden");
+      modal.classList.remove("show");
+    }
+  });
+
+  // Hide overlay
+  const overlay = document.getElementById("modalOverlay");
+  if (overlay) {
+    overlay.classList.remove("show");
+    setTimeout(() => {
+      overlay.classList.add("hidden");
+      document.body.style.overflow = ""; // Restore scrolling
+    }, 300);
+  }
 }
 
 // Close modals when clicking overlay
@@ -139,7 +192,11 @@ function showSection(sectionName) {
       loadBusCompanies();
       initBusCompaniesForm();
       initBusForm();
-      initBusCompanyProfileModal();
+    }, 100);
+  } else if (sectionName === "bus-company-profile") {
+    setTimeout(() => {
+      initBusCompanyProfilePage();
+      initBusForm();
     }, 100);
   } else if (sectionName === "statistics") {
     setTimeout(() => loadStatistics(), 100);
@@ -1074,90 +1131,269 @@ async function loadRoutesAndBusesForSchedule() {
   }
 }
 
+// Store schedule form handler references for cleanup
+let scheduleFormHandlers = {
+  create: null,
+  cancel: null,
+  close: null,
+  submit: null,
+  routeChange: null,
+};
+let isSubmittingSchedule = false;
+
 async function initSchedulesForm() {
   const createBtn = document.getElementById("createScheduleBtn");
   const cancelBtn = document.getElementById("cancelScheduleModal");
   const closeBtn = document.getElementById("closeScheduleModal");
   const scheduleForm = document.getElementById("scheduleModalForm");
+  const routeSelect = document.getElementById("modalScheduleRoute");
+
+  // Remove old listeners if they exist
+  if (createBtn && scheduleFormHandlers.create) {
+    createBtn.removeEventListener("click", scheduleFormHandlers.create);
+  }
+  if (cancelBtn && scheduleFormHandlers.cancel) {
+    cancelBtn.removeEventListener("click", scheduleFormHandlers.cancel);
+  }
+  if (closeBtn && scheduleFormHandlers.close) {
+    closeBtn.removeEventListener("click", scheduleFormHandlers.close);
+  }
+  if (scheduleForm && scheduleFormHandlers.submit) {
+    scheduleForm.removeEventListener("submit", scheduleFormHandlers.submit);
+  }
+  if (routeSelect && scheduleFormHandlers.routeChange) {
+    routeSelect.removeEventListener("change", scheduleFormHandlers.routeChange);
+  }
 
   // Populate dropdowns when form initializes
   await loadRoutesAndBusesForSchedule();
 
-  if (createBtn) {
-    createBtn.addEventListener("click", async () => {
+  // Define handler functions
+  const handleCreateClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    editingScheduleId = null;
+    document.getElementById("scheduleModalTitle").textContent =
+      "Create New Schedule";
+    if (scheduleForm) {
+      scheduleForm.reset();
+      // Reset checkboxes to default (all checked)
+      const dayCheckboxes = scheduleForm.querySelectorAll(
+        'input[name="available_days"]'
+      );
+      dayCheckboxes.forEach((checkbox) => (checkbox.checked = true));
+    }
+    const isActiveCheckbox = document.getElementById("modalScheduleIsActive");
+    if (isActiveCheckbox) isActiveCheckbox.checked = true;
+
+    // Refresh dropdowns in case routes/buses were added
+    await loadRoutesAndBusesForSchedule();
+
+    showModal("scheduleModal");
+  };
+
+  const handleCancelClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    hideModal("scheduleModal");
+    editingScheduleId = null;
+    if (scheduleForm) scheduleForm.reset();
+  };
+
+  const handleCloseClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    hideModal("scheduleModal");
+    editingScheduleId = null;
+    if (scheduleForm) scheduleForm.reset();
+  };
+
+  // Function to calculate arrival time from departure time + route duration
+  const calculateArrivalTime = (departureTime, durationMinutes) => {
+    if (!departureTime || !durationMinutes) return "";
+
+    const [hours, minutes] = departureTime.split(":").map(Number);
+    const departureDate = new Date();
+    departureDate.setHours(hours, minutes, 0, 0);
+
+    const arrivalDate = new Date(
+      departureDate.getTime() + durationMinutes * 60000
+    );
+    const arrivalHours = String(arrivalDate.getHours()).padStart(2, "0");
+    const arrivalMinutes = String(arrivalDate.getMinutes()).padStart(2, "0");
+
+    return `${arrivalHours}:${arrivalMinutes}`;
+  };
+
+  // Handler for route change to auto-calculate arrival time
+  const handleRouteChange = async () => {
+    const routeId = routeSelect?.value;
+    const departureTimeInput = document.getElementById(
+      "modalScheduleDepartureTime"
+    );
+    const departureTime = departureTimeInput?.value;
+
+    if (routeId && departureTime) {
+      try {
+        const response = await ApiClient.get(`/routes/${routeId}`);
+        const route = response?.route;
+
+        if (route && route.estimated_duration_minutes) {
+          const arrivalTime = calculateArrivalTime(
+            departureTime,
+            route.estimated_duration_minutes
+          );
+          const arrivalTimeInput = document.getElementById(
+            "modalScheduleArrivalTime"
+          );
+          if (arrivalTimeInput) {
+            arrivalTimeInput.value = arrivalTime;
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load route details:", error);
+      }
+    }
+  };
+
+  // Handler for departure time change to auto-calculate arrival time
+  const handleDepartureTimeChange = () => {
+    const routeId = routeSelect?.value;
+    const departureTimeInput = document.getElementById(
+      "modalScheduleDepartureTime"
+    );
+    const departureTime = departureTimeInput?.value;
+
+    if (routeId && departureTime) {
+      handleRouteChange();
+    }
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Prevent duplicate submissions
+    if (isSubmittingSchedule) {
+      return;
+    }
+
+    isSubmittingSchedule = true;
+
+    const formData = new FormData(scheduleForm);
+
+    const routeId = parseInt(formData.get("route_id"));
+    const departureTime = formData.get("departure_time");
+
+    // Calculate arrival time from route duration
+    let arrivalTime = "";
+    if (routeId && departureTime) {
+      try {
+        const response = await ApiClient.get(`/routes/${routeId}`);
+        const route = response?.route;
+
+        if (route && route.estimated_duration_minutes) {
+          arrivalTime = calculateArrivalTime(
+            departureTime,
+            route.estimated_duration_minutes
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load route for arrival calculation:", error);
+        showSchedulesMessage("Failed to calculate arrival time", "error");
+        isSubmittingSchedule = false;
+        return;
+      }
+    }
+
+    // Collect selected days from checkboxes
+    const selectedDays = formData.getAll("available_days");
+    const availableDays =
+      selectedDays.length > 0
+        ? selectedDays.join(",")
+        : "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday";
+
+    const data = {
+      route_id: routeId,
+      bus_id: parseInt(formData.get("bus_id")),
+      departure_time: departureTime,
+      arrival_time: arrivalTime,
+      price: parseFloat(formData.get("price")),
+      available_days: availableDays,
+      is_active: document.getElementById("modalScheduleIsActive").checked,
+    };
+
+    try {
+      const isEditing = editingScheduleId !== null;
+      if (isEditing) {
+        await ApiClient.put(`/schedules/${editingScheduleId}`, data, true);
+        showSchedulesMessage("Schedule updated successfully!", "success");
+      } else {
+        await ApiClient.post("/schedules", data, true);
+        showSchedulesMessage("Schedule created successfully!", "success");
+      }
+
+      hideModal("scheduleModal");
       editingScheduleId = null;
-      document.getElementById("scheduleModalTitle").textContent =
-        "Create New Schedule";
-      if (scheduleForm) scheduleForm.reset();
-      const isActiveCheckbox = document.getElementById("modalScheduleIsActive");
-      if (isActiveCheckbox) isActiveCheckbox.checked = true;
+      scheduleForm.reset();
+      // Reset checkboxes to default (all checked)
+      const dayCheckboxes = scheduleForm.querySelectorAll(
+        'input[name="available_days"]'
+      );
+      dayCheckboxes.forEach((checkbox) => (checkbox.checked = true));
+      await loadSchedules();
+    } catch (error) {
+      console.error("Schedule save failed:", error);
+      showSchedulesMessage(error.message || "Failed to save schedule", "error");
+    } finally {
+      isSubmittingSchedule = false;
+    }
+  };
 
-      // Refresh dropdowns in case routes/buses were added
-      await loadRoutesAndBusesForSchedule();
+  // Store handlers for cleanup
+  scheduleFormHandlers.create = handleCreateClick;
+  scheduleFormHandlers.cancel = handleCancelClick;
+  scheduleFormHandlers.close = handleCloseClick;
+  scheduleFormHandlers.submit = handleFormSubmit;
+  scheduleFormHandlers.routeChange = handleRouteChange;
 
-      showModal("scheduleModal");
-    });
+  // Add new listeners
+  if (createBtn) {
+    createBtn.addEventListener("click", handleCreateClick);
   }
 
   if (cancelBtn) {
-    cancelBtn.addEventListener("click", () => {
-      hideModal("scheduleModal");
-      editingScheduleId = null;
-      if (scheduleForm) scheduleForm.reset();
-    });
+    cancelBtn.addEventListener("click", handleCancelClick);
   }
 
   if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      hideModal("scheduleModal");
-      editingScheduleId = null;
-      if (scheduleForm) scheduleForm.reset();
-    });
+    closeBtn.addEventListener("click", handleCloseClick);
   }
 
   if (scheduleForm) {
-    scheduleForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(scheduleForm);
-      const data = {
-        route_id: parseInt(formData.get("route_id")),
-        bus_id: parseInt(formData.get("bus_id")),
-        departure_time: formData.get("departure_time"),
-        arrival_time: formData.get("arrival_time"),
-        price: parseFloat(formData.get("price")),
-        available_days:
-          formData.get("available_days") ||
-          "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday",
-        is_active: document.getElementById("modalScheduleIsActive").checked,
-      };
+    scheduleForm.addEventListener("submit", handleFormSubmit);
+  }
 
-      try {
-        const isEditing = editingScheduleId !== null;
-        if (isEditing) {
-          await ApiClient.put(`/schedules/${editingScheduleId}`, data, true);
-          showSchedulesMessage("Schedule updated successfully!", "success");
-        } else {
-          await ApiClient.post("/schedules", data, true);
-          showSchedulesMessage("Schedule created successfully!", "success");
-        }
+  // Add listeners for auto-calculating arrival time
+  if (routeSelect) {
+    routeSelect.addEventListener("change", handleRouteChange);
+  }
 
-        hideModal("scheduleModal");
-        editingScheduleId = null;
-        scheduleForm.reset();
-        await loadSchedules();
-      } catch (error) {
-        console.error("Schedule save failed:", error);
-        showSchedulesMessage(
-          error.message || "Failed to save schedule",
-          "error"
-        );
-      }
-    });
+  const departureTimeInput = document.getElementById(
+    "modalScheduleDepartureTime"
+  );
+  if (departureTimeInput) {
+    departureTimeInput.addEventListener("change", handleDepartureTimeChange);
+    departureTimeInput.addEventListener("input", handleDepartureTimeChange);
   }
 }
 
 async function editSchedule(scheduleId) {
   try {
+    // Ensure other modals are closed
+    hideModal("busCompanyModal");
+    hideModal("busModal");
+
     const response = await ApiClient.get(`/schedules/${scheduleId}`);
     const schedule = response?.schedule;
 
@@ -1185,8 +1421,26 @@ async function editSchedule(scheduleId) {
     document.getElementById("modalScheduleDepartureTime").value = departureTime;
     document.getElementById("modalScheduleArrivalTime").value = arrivalTime;
     document.getElementById("modalSchedulePrice").value = schedule.price || "";
-    document.getElementById("modalScheduleAvailableDays").value =
-      schedule.available_days || "";
+
+    // Set available days checkboxes
+    const availableDays = schedule.available_days
+      ? schedule.available_days.split(",").map((d) => d.trim())
+      : [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ];
+    const dayCheckboxes = document.querySelectorAll(
+      'input[name="available_days"]'
+    );
+    dayCheckboxes.forEach((checkbox) => {
+      checkbox.checked = availableDays.includes(checkbox.value);
+    });
+
     document.getElementById("modalScheduleIsActive").checked =
       schedule.is_active !== false;
 
@@ -1251,7 +1505,6 @@ let editingBusCompanyId = null;
 let editingBusId = null;
 let currentCompanyId = null;
 let busCompaniesFormInitialized = false;
-let busFormInitialized = false;
 
 async function loadBusCompanies() {
   try {
@@ -1411,6 +1664,9 @@ async function initBusCompaniesForm() {
 
 async function editBusCompany(companyId) {
   try {
+    // Ensure bus company modal is closed first
+    hideModal("busModal");
+
     const response = await ApiClient.get(`/buses/companies/${companyId}`);
     const company = response?.company;
 
@@ -1441,7 +1697,7 @@ async function viewBusCompanyProfile(companyId) {
     const company = response?.company;
 
     if (!company) {
-      showBusCompaniesMessage("Company not found", "error");
+      showBusCompanyProfileMessage("Company not found", "error");
       return;
     }
 
@@ -1455,13 +1711,19 @@ async function viewBusCompanyProfile(companyId) {
     document.getElementById("profileCompanyEmail").textContent =
       company.contact_email || "—";
 
-    // Load and display buses
+    // Update header
+    document.getElementById(
+      "busCompanyProfileHeader"
+    ).textContent = `${company.name} - Profile`;
+
+    // Load and display buses (this will also update stats)
     await loadCompanyBuses(companyId);
 
-    showModal("busCompanyProfileModal");
+    // Show the profile section instead of modal
+    showSection("bus-company-profile");
   } catch (error) {
     console.error("Failed to load company profile:", error);
-    showBusCompaniesMessage("Failed to load company profile", "error");
+    showBusCompanyProfileMessage("Failed to load company profile", "error");
   }
 }
 
@@ -1469,31 +1731,63 @@ async function loadCompanyBuses(companyId) {
   try {
     const response = await ApiClient.get(`/buses/company/${companyId}`);
     const buses = response?.buses || [];
-    const tbody = document.getElementById("companyBusesTableBody");
+    const busesGrid = document.getElementById("busesGridContainer");
 
-    if (!tbody) return;
+    if (!busesGrid) return;
 
+    // Calculate stats
+    const totalBuses = buses.length;
+    const activeBuses = buses.filter((b) => b.status === "active").length;
+    const maintenanceBuses = buses.filter(
+      (b) => b.status === "maintenance"
+    ).length;
+    const inactiveBuses = buses.filter((b) => b.status === "inactive").length;
+
+    // Update stats
+    document.getElementById("statTotalBuses").textContent = totalBuses;
+    document.getElementById("statActiveBuses").textContent = activeBuses;
+    document.getElementById("statMaintenanceBuses").textContent =
+      maintenanceBuses;
+    document.getElementById("statInactiveBuses").textContent = inactiveBuses;
+
+    // Render bus cards
     if (buses.length === 0) {
-      tbody.innerHTML =
-        '<tr><td colspan="5">No buses found. Click "Add Bus" to add one.</td></tr>';
+      busesGrid.innerHTML =
+        '<p style="text-align: center; color: #a0aec0; padding: 2rem;">No buses found. Click "Add Bus" to add one.</p>';
       return;
     }
 
-    tbody.innerHTML = buses
-      .map(
-        (bus) => `
-        <tr>
-          <td>${bus.plate_number}</td>
-          <td>${bus.bus_type}</td>
-          <td>${bus.total_seats}</td>
-          <td><span class="status ${
-            bus.status === "active"
-              ? "confirmed"
-              : bus.status === "maintenance"
-              ? "pending"
-              : "cancelled"
-          }">${bus.status.toUpperCase()}</span></td>
-          <td>
+    // Render bus cards in grid
+    busesGrid.innerHTML = buses
+      .map((bus) => {
+        const statusClass = bus.status === "active" ? "up" : "down";
+        const statusText =
+          bus.status === "active"
+            ? "Active"
+            : bus.status === "maintenance"
+            ? "In Maintenance"
+            : "Inactive";
+        return `
+        <div class="bus-card" data-bus-id="${bus.id}">
+          <div class="bus-card-header">
+            <div class="bus-logo">${bus.plate_number.substring(0, 2)}</div>
+            <div class="bus-card-title">
+              <h3>${bus.plate_number}</h3>
+              <p>${bus.bus_type}</p>
+            </div>
+            <span class="bus-status ${statusClass}">${statusText}</span>
+          </div>
+          <div class="bus-metrics">
+            <div class="bus-metric">
+              <span class="bus-metric-label">Total Seats</span>
+              <span class="bus-metric-value">${bus.total_seats}</span>
+            </div>
+            <div class="bus-metric">
+              <span class="bus-metric-label">Status</span>
+              <span class="bus-metric-value">${bus.status.toUpperCase()}</span>
+            </div>
+          </div>
+          <div class="bus-card-actions">
             <button class="icon-btn icon-btn-edit" data-bus-id="${
               bus.id
             }" data-action="edit-bus" title="Edit bus">
@@ -1504,18 +1798,22 @@ async function loadCompanyBuses(companyId) {
             }" data-action="delete-bus" title="Delete bus">
               <i class="fas fa-trash-alt"></i>
             </button>
-          </td>
-        </tr>
-      `
-      )
+          </div>
+        </div>
+      `;
+      })
       .join("");
 
-    // Attach event listeners
-    tbody.querySelectorAll('button[data-action="edit-bus"]').forEach((btn) => {
-      btn.addEventListener("click", () => editBus(parseInt(btn.dataset.busId)));
-    });
+    // Attach event listeners for card buttons
+    busesGrid
+      .querySelectorAll('button[data-action="edit-bus"]')
+      .forEach((btn) => {
+        btn.addEventListener("click", () =>
+          editBus(parseInt(btn.dataset.busId))
+        );
+      });
 
-    tbody
+    busesGrid
       .querySelectorAll('button[data-action="delete-bus"]')
       .forEach((btn) => {
         btn.addEventListener("click", () =>
@@ -1524,43 +1822,65 @@ async function loadCompanyBuses(companyId) {
       });
   } catch (error) {
     console.error("Failed to load company buses:", error);
-    showBusCompaniesMessage("Failed to load buses", "error");
+    showBusCompanyProfileMessage("Failed to load buses", "error");
   }
 }
 
-async function initBusForm() {
-  // Prevent duplicate initialization
-  if (busFormInitialized) {
-    return;
-  }
+// Store handler references for cleanup
+let busFormHandlers = {
+  addBus: null,
+  cancel: null,
+  close: null,
+  submit: null,
+};
 
+async function initBusForm() {
   const addBusBtn = document.getElementById("addBusToCompanyBtn");
   const cancelBtn = document.getElementById("cancelBusModal");
   const closeBtn = document.getElementById("closeBusModal");
   const busForm = document.getElementById("busModalForm");
 
+  // Remove old listeners if they exist
+  if (addBusBtn && busFormHandlers.addBus) {
+    addBusBtn.removeEventListener("click", busFormHandlers.addBus);
+  }
+  if (cancelBtn && busFormHandlers.cancel) {
+    cancelBtn.removeEventListener("click", busFormHandlers.cancel);
+  }
+  if (closeBtn && busFormHandlers.close) {
+    closeBtn.removeEventListener("click", busFormHandlers.close);
+  }
+  if (busForm && busFormHandlers.submit) {
+    busForm.removeEventListener("submit", busFormHandlers.submit);
+  }
+
   // Define handler functions
-  const handleAddBusClick = () => {
+  const handleAddBusClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!currentCompanyId) {
-      showBusCompaniesMessage("No company selected", "error");
+      showBusCompanyProfileMessage("No company selected", "error");
       return;
     }
     editingBusId = null;
-    document.getElementById("busModalTitle").textContent =
-      "Add Bus to Company";
+    document.getElementById("busModalTitle").textContent = "Add Bus to Company";
     document.getElementById("modalBusCompanyId").value = currentCompanyId;
     if (busForm) busForm.reset();
     document.getElementById("modalBusStatus").value = "active";
     showModal("busModal");
   };
 
-  const handleCancelClick = () => {
+  const handleCancelClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     hideModal("busModal");
     editingBusId = null;
     if (busForm) busForm.reset();
   };
 
-  const handleCloseClick = () => {
+  const handleCloseClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     hideModal("busModal");
     editingBusId = null;
     if (busForm) busForm.reset();
@@ -1568,6 +1888,7 @@ async function initBusForm() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     const formData = new FormData(busForm);
     const data = {
       bus_company_id: parseInt(formData.get("bus_company_id")),
@@ -1592,12 +1913,23 @@ async function initBusForm() {
       busForm.reset();
       await loadCompanyBuses(currentCompanyId);
       await loadBusCompanies(); // Refresh companies list
+      showBusCompanyProfileMessage("Bus saved successfully!", "success");
     } catch (error) {
       console.error("Bus save failed:", error);
-      showBusCompaniesMessage(error.message || "Failed to save bus", "error");
+      showBusCompanyProfileMessage(
+        error.message || "Failed to save bus",
+        "error"
+      );
     }
   };
 
+  // Store handlers for cleanup
+  busFormHandlers.addBus = handleAddBusClick;
+  busFormHandlers.cancel = handleCancelClick;
+  busFormHandlers.close = handleCloseClick;
+  busFormHandlers.submit = handleFormSubmit;
+
+  // Add new listeners
   if (addBusBtn) {
     addBusBtn.addEventListener("click", handleAddBusClick);
   }
@@ -1613,17 +1945,18 @@ async function initBusForm() {
   if (busForm) {
     busForm.addEventListener("submit", handleFormSubmit);
   }
-
-  busFormInitialized = true;
 }
 
 async function editBus(busId) {
   try {
+    // Ensure bus company modal is closed first
+    hideModal("busCompanyModal");
+
     const response = await ApiClient.get(`/buses/${busId}`);
     const bus = response?.bus;
 
     if (!bus) {
-      showBusCompaniesMessage("Bus not found", "error");
+      showBusCompanyProfileMessage("Bus not found", "error");
       return;
     }
 
@@ -1639,7 +1972,7 @@ async function editBus(busId) {
     showModal("busModal");
   } catch (error) {
     console.error("Failed to load bus:", error);
-    showBusCompaniesMessage("Failed to load bus details", "error");
+    showBusCompanyProfileMessage("Failed to load bus details", "error");
   }
 }
 
@@ -1659,13 +1992,16 @@ async function deleteBus(busId) {
   newConfirmBtn.addEventListener("click", async () => {
     try {
       await ApiClient.delete(`/buses/${busId}`, true);
-      showBusCompaniesMessage("Bus deleted successfully", "success");
+      showBusCompanyProfileMessage("Bus deleted successfully", "success");
       hideModal("deleteModal");
       await loadCompanyBuses(currentCompanyId);
       await loadBusCompanies();
     } catch (error) {
       console.error("Failed to delete bus:", error);
-      showBusCompaniesMessage(error.message || "Failed to delete bus", "error");
+      showBusCompanyProfileMessage(
+        error.message || "Failed to delete bus",
+        "error"
+      );
       hideModal("deleteModal");
     }
   });
@@ -1725,21 +2061,13 @@ function showBusCompaniesMessage(message, variant = "info") {
   }
 }
 
-// Initialize bus company profile modal close buttons
-function initBusCompanyProfileModal() {
-  const closeBtn = document.getElementById("closeBusCompanyProfileBtn");
-  const closeXBtn = document.getElementById("closeBusCompanyProfileModal");
+// Initialize bus company profile page
+function initBusCompanyProfilePage() {
+  const backBtn = document.getElementById("backToBusCompaniesBtn");
 
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      hideModal("busCompanyProfileModal");
-      currentCompanyId = null;
-    });
-  }
-
-  if (closeXBtn) {
-    closeXBtn.addEventListener("click", () => {
-      hideModal("busCompanyProfileModal");
+  if (backBtn) {
+    backBtn.addEventListener("click", () => {
+      showSection("bus-companies");
       currentCompanyId = null;
     });
   }
@@ -1747,7 +2075,7 @@ function initBusCompanyProfileModal() {
 
 function initLogoutModal() {
   const logoutButtons = document.querySelectorAll(
-    "#logoutBtn, #logoutBtnBookings, #logoutBtnRoutes, #logoutBtnSchedules, #logoutBtnStats, #logoutBtnOffers, #logoutBtnBusCompanies"
+    "#logoutBtn, #logoutBtnBookings, #logoutBtnRoutes, #logoutBtnSchedules, #logoutBtnStats, #logoutBtnOffers, #logoutBtnBusCompanies, #logoutBtnBusCompanyProfile"
   );
   const confirmBtn = document.getElementById("confirmLogoutModal");
   const cancelBtn = document.getElementById("cancelLogoutModal");
@@ -1893,6 +2221,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     "logoutBtnBusCompanies",
     () => showModal("logoutModal")
   );
+  initProfileDropdown(
+    "profileMenuBtnBusCompanyProfile",
+    "profileDropdownBusCompanyProfile",
+    "logoutBtnBusCompanyProfile",
+    () => showModal("logoutModal")
+  );
 
   // Section-specific initialization
   const overviewNavLink = document.querySelector('[data-section="overview"]');
@@ -1996,7 +2330,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       await loadBusCompanies();
       initBusCompaniesForm();
       initBusForm();
-      initBusCompanyProfileModal();
+    } else if (activeSection.id === "bus-company-profile-section") {
+      initBusCompanyProfilePage();
+      initBusForm();
     } else if (activeSection.id === "statistics-section") {
       await loadStatistics();
     } else if (activeSection.id === "offers-section") {

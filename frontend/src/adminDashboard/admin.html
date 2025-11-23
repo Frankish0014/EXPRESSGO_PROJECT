@@ -431,6 +431,125 @@
           </div>
         </section>
 
+        <!-- Bus Company Profile Section -->
+        <section id="bus-company-profile-section" class="content-section">
+          <header class="header">
+            <div style="display: flex; align-items: center; gap: 1rem">
+              <button
+                class="btn-secondary"
+                id="backToBusCompaniesBtn"
+                style="padding: 0.5rem 1rem"
+              >
+                <i class="fas fa-arrow-left"></i> Back
+              </button>
+              <h2 id="busCompanyProfileHeader" style="margin: 0">
+                Company Profile
+              </h2>
+            </div>
+            <div class="header-right">
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtnBusCompanyProfile">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
+                </div>
+                <div
+                  id="profileDropdownBusCompanyProfile"
+                  class="profile-dropdown hidden"
+                >
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a
+                    href="#"
+                    class="dropdown-item"
+                    id="logoutBtnBusCompanyProfile"
+                    >Logout</a
+                  >
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="bus-company-profile-container">
+            <div class="info-banner" id="busCompanyProfileMessage"></div>
+
+            <!-- Company Header -->
+            <div class="company-header-section">
+              <h1 id="profileCompanyName" class="company-name">—</h1>
+              <div class="company-contact-info">
+                <span class="contact-item" id="profileCompanyPhone">
+                  <i class="fas fa-phone"></i> —</span
+                >
+                <span class="contact-item" id="profileCompanyEmail">
+                  <i class="fas fa-envelope"></i> —</span
+                >
+              </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards-grid">
+              <div class="summary-card">
+                <div class="summary-icon total">
+                  <i class="fas fa-bus"></i>
+                </div>
+                <div class="summary-content">
+                  <p class="summary-label">Total Buses</p>
+                  <p class="summary-value" id="statTotalBuses">0</p>
+                </div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-icon active">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="summary-content">
+                  <p class="summary-label">Active</p>
+                  <p class="summary-value" id="statActiveBuses">0</p>
+                </div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-icon maintenance">
+                  <i class="fas fa-tools"></i>
+                </div>
+                <div class="summary-content">
+                  <p class="summary-label">Maintenance</p>
+                  <p class="summary-value" id="statMaintenanceBuses">0</p>
+                </div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-icon inactive">
+                  <i class="fas fa-pause-circle"></i>
+                </div>
+                <div class="summary-content">
+                  <p class="summary-label">Inactive</p>
+                  <p class="summary-value" id="statInactiveBuses">0</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fleet Management Section -->
+            <div class="monitoring-section">
+              <div class="section-header">
+                <h2>Fleet Management</h2>
+                <button
+                  type="button"
+                  class="btn-primary"
+                  id="addBusToCompanyBtn"
+                >
+                  <i class="fas fa-plus"></i> Add Bus
+                </button>
+              </div>
+
+              <div class="buses-grid" id="busesGridContainer">
+                <!-- Buses will be loaded here as cards -->
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Help Section -->
         <section id="help-section" class="content-section">
           <header class="header">
@@ -851,16 +970,23 @@
                 name="departure_time"
                 required
               />
+              <small
+                style="
+                  color: #718096;
+                  font-size: 0.875rem;
+                  display: block;
+                  margin-top: 0.25rem;
+                "
+              >
+                Arrival time will be calculated automatically based on route
+                duration
+              </small>
             </div>
-            <div class="form-group">
-              <label for="modalScheduleArrivalTime">Arrival Time</label>
-              <input
-                type="time"
-                id="modalScheduleArrivalTime"
-                name="arrival_time"
-                required
-              />
-            </div>
+            <input
+              type="hidden"
+              id="modalScheduleArrivalTime"
+              name="arrival_time"
+            />
             <div class="form-group">
               <label for="modalSchedulePrice">Price (RWF)</label>
               <input
@@ -874,15 +1000,72 @@
               />
             </div>
             <div class="form-group">
-              <label for="modalScheduleAvailableDays"
-                >Available Days (comma-separated)</label
-              >
-              <input
-                type="text"
-                id="modalScheduleAvailableDays"
-                name="available_days"
-                placeholder="Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
-              />
+              <label>Available Days</label>
+              <div class="days-checkbox-group">
+                <label class="day-checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="available_days"
+                    value="Monday"
+                    checked
+                  />
+                  Monday
+                </label>
+                <label class="day-checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="available_days"
+                    value="Tuesday"
+                    checked
+                  />
+                  Tuesday
+                </label>
+                <label class="day-checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="available_days"
+                    value="Wednesday"
+                    checked
+                  />
+                  Wednesday
+                </label>
+                <label class="day-checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="available_days"
+                    value="Thursday"
+                    checked
+                  />
+                  Thursday
+                </label>
+                <label class="day-checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="available_days"
+                    value="Friday"
+                    checked
+                  />
+                  Friday
+                </label>
+                <label class="day-checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="available_days"
+                    value="Saturday"
+                    checked
+                  />
+                  Saturday
+                </label>
+                <label class="day-checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="available_days"
+                    value="Sunday"
+                    checked
+                  />
+                  Sunday
+                </label>
+              </div>
             </div>
             <div class="form-group">
               <label>
@@ -959,67 +1142,6 @@
         </div>
       </div>
 
-      <!-- Bus Company Profile Modal (View Company & Manage Buses) -->
-      <div id="busCompanyProfileModal" class="modal hidden">
-        <div class="modal-header">
-          <h3 id="busCompanyProfileTitle">Company Profile</h3>
-          <button class="modal-close" id="closeBusCompanyProfileModal">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div id="busCompanyProfileInfo">
-            <div class="form-group">
-              <label>Company Name</label>
-              <p id="profileCompanyName">—</p>
-            </div>
-            <div class="form-group">
-              <label>Contact Phone</label>
-              <p id="profileCompanyPhone">—</p>
-            </div>
-            <div class="form-group">
-              <label>Contact Email</label>
-              <p id="profileCompanyEmail">—</p>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-              <label style="margin: 0;">Buses</label>
-              <button type="button" class="btn-primary" id="addBusToCompanyBtn" style="padding: 0.5rem 1rem;">
-                <i class="fas fa-plus"></i> Add Bus
-              </button>
-            </div>
-            <div style="max-height: 400px; overflow-y: auto;">
-              <table style="width: 100%;">
-                <thead>
-                  <tr>
-                    <th>Plate Number</th>
-                    <th>Bus Type</th>
-                    <th>Seats</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="companyBusesTableBody">
-                  <tr>
-                    <td colspan="5">No buses found</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="modal-actions">
-            <button
-              type="button"
-              class="btn-secondary"
-              id="closeBusCompanyProfileBtn"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-
       <!-- Add/Edit Bus Modal -->
       <div id="busModal" class="modal hidden">
         <div class="modal-header">
@@ -1069,11 +1191,7 @@
               </select>
             </div>
             <div class="modal-actions">
-              <button
-                type="button"
-                class="btn-secondary"
-                id="cancelBusModal"
-              >
+              <button type="button" class="btn-secondary" id="cancelBusModal">
                 Cancel
               </button>
               <button type="submit" class="btn-primary">Save Bus</button>
