@@ -47,6 +47,11 @@
               >
             </li>
             <li>
+              <a href="#" data-section="bus-companies" class="nav-link"
+                ><i class="fas fa-bus"></i> Bus Companies</a
+              >
+            </li>
+            <li>
               <a href="#" data-section="statistics" class="nav-link"
                 ><i class="fas fa-chart-bar"></i> Statistics</a
               >
@@ -360,6 +365,65 @@
                 <tbody id="schedulesTableBody">
                   <tr>
                     <td colspan="8">Loading schedules...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </section>
+
+        <!-- Bus Companies Management Section -->
+        <section id="bus-companies-section" class="content-section">
+          <header class="header">
+            <h2>Bus Companies Management</h2>
+            <div class="header-right">
+              <button class="btn-primary" id="createBusCompanyBtn">
+                <i class="fas fa-plus"></i> Create Company
+              </button>
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtnBusCompanies">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
+                </div>
+                <div
+                  id="profileDropdownBusCompanies"
+                  class="profile-dropdown hidden"
+                >
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a href="#" class="dropdown-item" id="logoutBtnBusCompanies"
+                    >Logout</a
+                  >
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="bus-companies-container">
+            <div class="info-banner" id="busCompaniesMessage"></div>
+
+            <!-- Bus Companies Table -->
+            <section class="card">
+              <h3>All Bus Companies</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Company Name</th>
+                    <th>Contact Phone</th>
+                    <th>Contact Email</th>
+                    <th>Buses Count</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="busCompaniesTableBody">
+                  <tr>
+                    <td colspan="6">Loading bus companies...</td>
                   </tr>
                 </tbody>
               </table>
@@ -840,6 +904,179 @@
                 Cancel
               </button>
               <button type="submit" class="btn-primary">Save Schedule</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Bus Company Create/Edit Modal -->
+      <div id="busCompanyModal" class="modal hidden">
+        <div class="modal-header">
+          <h3 id="busCompanyModalTitle">Create New Bus Company</h3>
+          <button class="modal-close" id="closeBusCompanyModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="busCompanyModalForm">
+            <div class="form-group">
+              <label for="modalBusCompanyName">Company Name</label>
+              <input
+                type="text"
+                id="modalBusCompanyName"
+                name="name"
+                required
+                placeholder="Enter company name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="modalBusCompanyPhone">Contact Phone</label>
+              <input
+                type="tel"
+                id="modalBusCompanyPhone"
+                name="contact_phone"
+                placeholder="+250788000000"
+              />
+            </div>
+            <div class="form-group">
+              <label for="modalBusCompanyEmail">Contact Email</label>
+              <input
+                type="email"
+                id="modalBusCompanyEmail"
+                name="contact_email"
+                placeholder="company@example.com"
+              />
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                id="cancelBusCompanyModal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn-primary">Save Company</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Bus Company Profile Modal (View Company & Manage Buses) -->
+      <div id="busCompanyProfileModal" class="modal hidden">
+        <div class="modal-header">
+          <h3 id="busCompanyProfileTitle">Company Profile</h3>
+          <button class="modal-close" id="closeBusCompanyProfileModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="busCompanyProfileInfo">
+            <div class="form-group">
+              <label>Company Name</label>
+              <p id="profileCompanyName">—</p>
+            </div>
+            <div class="form-group">
+              <label>Contact Phone</label>
+              <p id="profileCompanyPhone">—</p>
+            </div>
+            <div class="form-group">
+              <label>Contact Email</label>
+              <p id="profileCompanyEmail">—</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <label style="margin: 0;">Buses</label>
+              <button type="button" class="btn-primary" id="addBusToCompanyBtn" style="padding: 0.5rem 1rem;">
+                <i class="fas fa-plus"></i> Add Bus
+              </button>
+            </div>
+            <div style="max-height: 400px; overflow-y: auto;">
+              <table style="width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Plate Number</th>
+                    <th>Bus Type</th>
+                    <th>Seats</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="companyBusesTableBody">
+                  <tr>
+                    <td colspan="5">No buses found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              id="closeBusCompanyProfileBtn"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add/Edit Bus Modal -->
+      <div id="busModal" class="modal hidden">
+        <div class="modal-header">
+          <h3 id="busModalTitle">Add Bus to Company</h3>
+          <button class="modal-close" id="closeBusModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="busModalForm">
+            <input type="hidden" id="modalBusCompanyId" name="bus_company_id" />
+            <div class="form-group">
+              <label for="modalBusPlateNumber">Plate Number</label>
+              <input
+                type="text"
+                id="modalBusPlateNumber"
+                name="plate_number"
+                required
+                placeholder="RAA 123A"
+              />
+            </div>
+            <div class="form-group">
+              <label for="modalBusType">Bus Type</label>
+              <select id="modalBusType" name="bus_type" required>
+                <option value="">Select bus type</option>
+                <option value="Standard">Standard</option>
+                <option value="Luxury">Luxury</option>
+                <option value="Executive">Executive</option>
+                <option value="Mini">Mini</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="modalBusTotalSeats">Total Seats</label>
+              <input
+                type="number"
+                id="modalBusTotalSeats"
+                name="total_seats"
+                min="1"
+                required
+                placeholder="30"
+              />
+            </div>
+            <div class="form-group">
+              <label for="modalBusStatus">Status</label>
+              <select id="modalBusStatus" name="status" required>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="maintenance">Maintenance</option>
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                id="cancelBusModal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn-primary">Save Bus</button>
             </div>
           </form>
         </div>

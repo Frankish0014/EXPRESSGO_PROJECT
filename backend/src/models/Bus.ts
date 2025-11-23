@@ -1,5 +1,5 @@
-import { Model, DataTypes, Optional } from 'sequelize';
-import sequelize from '../config/database';
+import { Model, DataTypes, Optional } from "sequelize";
+import sequelize from "../config/database";
 
 interface BusAttributes {
   id: number;
@@ -7,20 +7,27 @@ interface BusAttributes {
   plate_number: string;
   bus_type: string;
   total_seats: number;
-  status: 'active' | 'inactive' | 'maintenance';
+  status: "active" | "inactive" | "maintenance";
   created_at?: Date;
   updated_at?: Date;
 }
 
-interface BusCreationAttributes extends Optional<BusAttributes, 'id' | 'status' | 'created_at' | 'updated_at'> {}
+interface BusCreationAttributes
+  extends Optional<
+    BusAttributes,
+    "id" | "status" | "created_at" | "updated_at"
+  > {}
 
-class Bus extends Model<BusAttributes, BusCreationAttributes> implements BusAttributes {
+class Bus
+  extends Model<BusAttributes, BusCreationAttributes>
+  implements BusAttributes
+{
   public id!: number;
   public bus_company_id!: number;
   public plate_number!: string;
   public bus_type!: string;
   public total_seats!: number;
-  public status!: 'active' | 'inactive' | 'maintenance';
+  public status!: "active" | "inactive" | "maintenance";
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
 }
@@ -36,8 +43,8 @@ Bus.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'bus_companies',
-        key: 'id',
+        model: "bus_companies",
+        key: "id",
       },
     },
     plate_number: {
@@ -54,22 +61,22 @@ Bus.init(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM('active', 'inactive', 'maintenance'),
+      type: DataTypes.ENUM("active", "inactive", "maintenance"),
       allowNull: false,
-      defaultValue: 'active',
+      defaultValue: "active",
     },
     created_at: {
       type: DataTypes.DATE,
-      field: 'created_at',
+      field: "created_at",
     },
     updated_at: {
       type: DataTypes.DATE,
-      field: 'updated_at',
+      field: "updated_at",
     },
   },
   {
     sequelize,
-    tableName: 'buses',
+    tableName: "buses",
     underscored: true,
     timestamps: true,
   }
