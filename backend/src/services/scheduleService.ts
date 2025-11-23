@@ -1,6 +1,6 @@
-import { Op, WhereOptions } from 'sequelize';
-import { BusSchedule, Bus, Route, BusCompany, Booking } from '../models';
-import { BookingService } from './bookingService';
+import { Op, WhereOptions } from "sequelize";
+import { BusSchedule, Bus, Route, BusCompany, Booking } from "../models";
+import { BookingService } from "./bookingService";
 
 export class ScheduleService {
   static async getAllSchedules() {
@@ -9,30 +9,30 @@ export class ScheduleService {
       include: [
         {
           model: Bus,
-          as: 'bus',
-          attributes: ['plate_number', 'bus_type', 'total_seats'],
+          as: "bus",
+          attributes: ["plate_number", "bus_type", "total_seats"],
           include: [
             {
               model: BusCompany,
-              as: 'company',
-              attributes: ['name'],
+              as: "company",
+              attributes: ["name"],
             },
           ],
         },
         {
           model: Route,
-          as: 'route',
+          as: "route",
           attributes: [
-            'departure_city',
-            'arrival_city',
-            'distance_km',
-            'estimated_duration_minutes',
+            "departure_city",
+            "arrival_city",
+            "distance_km",
+            "estimated_duration_minutes",
           ],
         },
       ],
       order: [
-        [{ model: Route, as: 'route' }, 'departure_city', 'ASC'],
-        ['departure_time', 'ASC'],
+        [{ model: Route, as: "route" }, "departure_city", "ASC"],
+        ["departure_time", "ASC"],
       ],
     });
   }
@@ -42,31 +42,31 @@ export class ScheduleService {
       include: [
         {
           model: Bus,
-          as: 'bus',
-          attributes: ['plate_number', 'bus_type', 'total_seats'],
+          as: "bus",
+          attributes: ["plate_number", "bus_type", "total_seats"],
           include: [
             {
               model: BusCompany,
-              as: 'company',
-              attributes: ['name'],
+              as: "company",
+              attributes: ["name"],
             },
           ],
         },
         {
           model: Route,
-          as: 'route',
+          as: "route",
           attributes: [
-            'departure_city',
-            'arrival_city',
-            'distance_km',
-            'estimated_duration_minutes',
+            "departure_city",
+            "arrival_city",
+            "distance_km",
+            "estimated_duration_minutes",
           ],
         },
       ],
     });
 
     if (!schedule) {
-      throw new Error('Schedule not found');
+      throw new Error("Schedule not found");
     }
 
     return schedule;
@@ -78,28 +78,28 @@ export class ScheduleService {
       include: [
         {
           model: Bus,
-          as: 'bus',
-          attributes: ['plate_number', 'bus_type', 'total_seats'],
+          as: "bus",
+          attributes: ["plate_number", "bus_type", "total_seats"],
           include: [
             {
               model: BusCompany,
-              as: 'company',
-              attributes: ['name'],
+              as: "company",
+              attributes: ["name"],
             },
           ],
         },
         {
           model: Route,
-          as: 'route',
+          as: "route",
           attributes: [
-            'departure_city',
-            'arrival_city',
-            'distance_km',
-            'estimated_duration_minutes',
+            "departure_city",
+            "arrival_city",
+            "distance_km",
+            "estimated_duration_minutes",
           ],
         },
       ],
-      order: [['departure_time', 'ASC']],
+      order: [["departure_time", "ASC"]],
     });
   }
 
@@ -108,23 +108,23 @@ export class ScheduleService {
       include: [
         {
           model: Bus,
-          as: 'bus',
-          attributes: ['total_seats'],
+          as: "bus",
+          attributes: ["total_seats"],
         },
       ],
     });
 
     if (!schedule) {
-      throw new Error('Schedule not found');
+      throw new Error("Schedule not found");
     }
 
     const bookedSeats = await Booking.findAll({
       where: {
         schedule_id: scheduleId,
         travel_date: travelDate,
-        status: 'confirmed',
+        status: "confirmed",
       },
-      attributes: ['seat_number'],
+      attributes: ["seat_number"],
     });
 
     const booked = bookedSeats.map((b) => b.seat_number);
@@ -132,11 +132,22 @@ export class ScheduleService {
     const allSeats = Array.from({ length: totalSeats }, (_, i) => i + 1);
     const availableSeats = allSeats.filter((seat) => !booked.includes(seat));
 
+    // Return all seats with their status
+    const seatsWithStatus = allSeats.map((seatNumber) => ({
+      seat_number: seatNumber,
+      is_available: !booked.includes(seatNumber),
+      is_booked: booked.includes(seatNumber),
+    }));
+
     return {
       schedule_id: scheduleId,
       travel_date: travelDate,
+      total_seats: totalSeats,
       available_seats: availableSeats,
+      booked_seats: booked,
       total_available: availableSeats.length,
+      total_booked: booked.length,
+      seats: seatsWithStatus, // All seats with status
     };
   }
 
@@ -164,7 +175,7 @@ export class ScheduleService {
   ) {
     const schedule = await BusSchedule.findByPk(id);
     if (!schedule) {
-      throw new Error('Schedule not found');
+      throw new Error("Schedule not found");
     }
 
     await schedule.update(updateData);
@@ -174,11 +185,11 @@ export class ScheduleService {
   static async deleteSchedule(id: number) {
     const schedule = await BusSchedule.findByPk(id);
     if (!schedule) {
-      throw new Error('Schedule not found');
+      throw new Error("Schedule not found");
     }
 
     await schedule.destroy();
-    return { message: 'Schedule deleted successfully' };
+    return { message: "Schedule deleted successfully" };
   }
 
   static async searchSchedules(filters: {
@@ -198,12 +209,12 @@ export class ScheduleService {
 
     const routeInclude: any = {
       model: Route,
-      as: 'route',
+      as: "route",
       attributes: [
-        'departure_city',
-        'arrival_city',
-        'distance_km',
-        'estimated_duration_minutes',
+        "departure_city",
+        "arrival_city",
+        "distance_km",
+        "estimated_duration_minutes",
       ],
     };
 
@@ -216,19 +227,19 @@ export class ScheduleService {
       include: [
         {
           model: Bus,
-          as: 'bus',
-          attributes: ['plate_number', 'bus_type', 'total_seats'],
+          as: "bus",
+          attributes: ["plate_number", "bus_type", "total_seats"],
           include: [
             {
               model: BusCompany,
-              as: 'company',
-              attributes: ['name'],
+              as: "company",
+              attributes: ["name"],
             },
           ],
         },
         routeInclude,
       ],
-      order: [['departure_time', 'ASC']],
+      order: [["departure_time", "ASC"]],
     });
 
     if (!filters.travelDate) {

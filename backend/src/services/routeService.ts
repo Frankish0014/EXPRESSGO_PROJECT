@@ -127,14 +127,23 @@ export class RouteService {
     departure_city?: string;
     arrival_city?: string;
   }) {
+    // Normalize city names the same way they're stored
+    const normalizeCityName = (city: string): string => {
+      return city.trim().split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    };
+
     const where: WhereOptions = {};
 
     if (filters.departure_city) {
-      where.departure_city = { [Op.iLike]: filters.departure_city };
+      const normalizedDeparture = normalizeCityName(filters.departure_city);
+      where.departure_city = { [Op.iLike]: normalizedDeparture };
     }
 
     if (filters.arrival_city) {
-      where.arrival_city = { [Op.iLike]: filters.arrival_city };
+      const normalizedArrival = normalizeCityName(filters.arrival_city);
+      where.arrival_city = { [Op.iLike]: normalizedArrival };
     }
 
     return await Route.findAll({

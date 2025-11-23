@@ -134,7 +134,9 @@ const populateFormFromSelection = () => {
     routeInfoFields.duration.textContent = `${route.estimated_duration_minutes} mins`;
   }
   routeInfoFields.price.textContent = formatCurrency(scheduleData.price);
-  routeInfo.classList.add('show');
+  if (routeInfo) {
+    routeInfo.classList.add('show');
+  }
 
   return true;
 };
@@ -155,45 +157,94 @@ const updateSummary = () => {
   confirmBtn.disabled = selectedSeats.length !== passengersTarget;
 };
 
+let seatsData = []; // Store seats with status from backend
+
 const renderSeats = () => {
   seatSelection.innerHTML = '';
-  if (!totalSeats) return;
+  if (!totalSeats && !seatsData.length) return;
 
-  const availableSet = new Set(availableSeats);
+  // Use seatsData if available (from backend), otherwise fallback to old method
+  if (seatsData.length > 0) {
+    seatsData.forEach((seatInfo) => {
+      const seat = document.createElement('div');
+      seat.className = 'seat';
+      seat.textContent = seatInfo.seat_number;
+      
+      if (seatInfo.is_booked || !seatInfo.is_available) {
+        seat.classList.add('occupied');
+        seat.title = `Seat ${seatInfo.seat_number} - Booked`;
+      } else {
+        seat.classList.add('available');
+        seat.title = `Seat ${seatInfo.seat_number} - Available`;
+      }
 
-  for (let seatNumber = 1; seatNumber <= totalSeats; seatNumber++) {
-    const seat = document.createElement('div');
-    seat.className = 'seat';
-    seat.textContent = seatNumber;
-    const isAvailable = availableSet.has(seatNumber);
+      if (selectedSeats.includes(seatInfo.seat_number)) {
+        seat.classList.add('selected');
+        seat.classList.remove('available');
+      }
 
-    if (!isAvailable) {
-      seat.classList.add('occupied');
-    }
+      seat.addEventListener('click', () => {
+        if (seatInfo.is_booked || !seatInfo.is_available) return;
+        const passengerTarget = parseInt(formFields.passengers.value, 10) || 1;
 
-    if (selectedSeats.includes(seatNumber)) {
-      seat.classList.add('selected');
-    }
+        if (selectedSeats.includes(seatInfo.seat_number)) {
+          selectedSeats = selectedSeats.filter((seat) => seat !== seatInfo.seat_number);
+        } else {
+          if (selectedSeats.length >= passengerTarget) {
+            showAlert(`You can select up to ${passengerTarget} seat(s) for this booking.`);
+            return;
+          }
+          selectedSeats.push(seatInfo.seat_number);
+        }
+        clearAlert();
+        renderSeats();
+        updateSummary();
+      });
 
-    seat.addEventListener('click', () => {
-      if (!isAvailable) return;
-      const passengerTarget = parseInt(formFields.passengers.value, 10) || 1;
+      seatSelection.appendChild(seat);
+    });
+  } else {
+    // Fallback to old method if seatsData is not available
+    const availableSet = new Set(availableSeats);
+    for (let seatNumber = 1; seatNumber <= totalSeats; seatNumber++) {
+      const seat = document.createElement('div');
+      seat.className = 'seat';
+      seat.textContent = seatNumber;
+      const isAvailable = availableSet.has(seatNumber);
+
+      if (!isAvailable) {
+        seat.classList.add('occupied');
+        seat.title = `Seat ${seatNumber} - Booked`;
+      } else {
+        seat.classList.add('available');
+        seat.title = `Seat ${seatNumber} - Available`;
+      }
 
       if (selectedSeats.includes(seatNumber)) {
-        selectedSeats = selectedSeats.filter((seat) => seat !== seatNumber);
-        } else {
-        if (selectedSeats.length >= passengerTarget) {
-          showAlert(`You can select up to ${passengerTarget} seat(s) for this booking.`);
-          return;
-        }
-        selectedSeats.push(seatNumber);
+        seat.classList.add('selected');
+        seat.classList.remove('available');
       }
-      clearAlert();
-      renderSeats();
-      updateSummary();
-    });
 
-    seatSelection.appendChild(seat);
+      seat.addEventListener('click', () => {
+        if (!isAvailable) return;
+        const passengerTarget = parseInt(formFields.passengers.value, 10) || 1;
+
+        if (selectedSeats.includes(seatNumber)) {
+          selectedSeats = selectedSeats.filter((seat) => seat !== seatNumber);
+        } else {
+          if (selectedSeats.length >= passengerTarget) {
+            showAlert(`You can select up to ${passengerTarget} seat(s) for this booking.`);
+            return;
+          }
+          selectedSeats.push(seatNumber);
+        }
+        clearAlert();
+        renderSeats();
+        updateSummary();
+      });
+
+      seatSelection.appendChild(seat);
+    }
   }
 };
 
@@ -203,11 +254,16 @@ const fetchAvailableSeats = async () => {
     travel_date: selectedSchedule.travelDate,
   });
   const response = await ApiClient.get(`/schedules/${selectedSchedule.scheduleId}/available-seats?${params.toString()}`);
-  totalSeats = selectedSchedule.schedule?.bus?.total_seats || response?.available_seats?.length || 0;
+  
+  // Use total_seats from response, fallback to schedule data
+  totalSeats = response?.total_seats || selectedSchedule.schedule?.bus?.total_seats || 0;
   availableSeats = response?.available_seats || [];
-  if (!availableSeats.length) {
+  seatsData = response?.seats || []; // Store seats with status
+  
+  if (!availableSeats.length && totalSeats > 0) {
     showAlert('This departure is fully booked. Please go back and select a different schedule.');
   }
+  
   renderSeats();
   updateSummary();
 };
