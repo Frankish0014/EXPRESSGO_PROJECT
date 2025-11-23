@@ -81,10 +81,19 @@ const ensureOptionExists = (select, value, label) => {
 
 const populateFormFromSelection = () => {
   if (!selectedSchedule || !selectedSchedule.schedule) {
-    showAlert('Please search for a trip on the homepage and select a schedule to continue.');
-    disableForm(true);
+    // Show search section, hide booking form
+    const searchSection = document.getElementById('searchSection');
+    const bookingContainer = document.getElementById('bookingContainer');
+    if (searchSection) searchSection.style.display = 'block';
+    if (bookingContainer) bookingContainer.style.display = 'none';
     return false;
   }
+  
+  // Show booking form, hide search section
+  const searchSection = document.getElementById('searchSection');
+  const bookingContainer = document.getElementById('bookingContainer');
+  if (searchSection) searchSection.style.display = 'none';
+  if (bookingContainer) bookingContainer.style.display = 'flex';
 
   const scheduleData = selectedSchedule.schedule;
   const route = scheduleData.route || {};
@@ -283,24 +292,187 @@ const handleBooking = async () => {
   }
 };
 
-const initialize = async () => {
-  if (!populateFormFromSelection()) {
-    disableForm(true);
+// Search form handling
+const bookingSearchForm = document.getElementById('bookingSearchForm');
+const searchFormError = document.getElementById('searchFormError');
+const searchTripsBtn = document.getElementById('searchTripsBtn');
+
+const validateSearchForm = () => {
+  const from = document.getElementById('searchFrom').value.trim();
+  const to = document.getElementById('searchTo').value.trim();
+  const departDate = document.getElementById('searchDepartDate').value;
+  const tripType = document.querySelector('input[name="tripType"]:checked').value;
+  const returnDate = document.getElementById('searchReturnDate').value;
+  const passengers = parseInt(document.getElementById('searchPassengers').value, 10) || 1;
+
+  if (searchFormError) {
+    searchFormError.textContent = '';
+    searchFormError.classList.remove('show');
+  }
+
+  if (!from) {
+    showSearchError('Please enter departure city');
+    return false;
+  }
+
+  if (!to) {
+    showSearchError('Please enter destination city');
+    return false;
+  }
+
+  if (from.toLowerCase() === to.toLowerCase()) {
+    showSearchError('Departure and destination must be different');
+    return false;
+  }
+
+  if (!departDate) {
+    showSearchError('Please select departure date');
+    return false;
+  }
+
+  const selectedDate = new Date(departDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (selectedDate < today) {
+    showSearchError('Departure date cannot be in the past');
+    return false;
+  }
+
+  if (tripType === 'round' && !returnDate) {
+    showSearchError('Please select return date for round trip');
+    return false;
+  }
+
+  if (tripType === 'round' && returnDate && departDate && returnDate < departDate) {
+    showSearchError('Return date must be after departure date');
+    return false;
+  }
+
+  if (passengers < 1 || passengers > 10) {
+    showSearchError('Please enter a valid number of passengers (1-10)');
+    return false;
+  }
+
+  return true;
+};
+
+const showSearchError = (message) => {
+  if (searchFormError) {
+    searchFormError.textContent = message;
+    searchFormError.classList.add('show');
+  }
+};
+
+const setSearchLoading = (isLoading) => {
+  if (searchTripsBtn) {
+    searchTripsBtn.disabled = isLoading;
+    const btnText = searchTripsBtn.querySelector('.btn-text');
+    const btnLoader = searchTripsBtn.querySelector('.btn-loader');
+    if (btnText) btnText.classList.toggle('hidden', isLoading);
+    if (btnLoader) btnLoader.classList.toggle('hidden', !isLoading);
+  }
+};
+
+const handleSearchSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!validateSearchForm()) {
     return;
   }
 
-  if (selectedSchedule?.schedule?.bus?.total_seats) {
-    totalSeats = selectedSchedule.schedule.bus.total_seats;
+  const tripType = document.querySelector('input[name="tripType"]:checked').value;
+  const formData = new FormData(bookingSearchForm);
+
+  const payload = {
+    type: tripType,
+    from: formData.get('from').trim(),
+    to: formData.get('to').trim(),
+    passengers: parseInt(formData.get('passengers'), 10) || 1,
+    departDate: formData.get('departDate'),
+    returnDate: formData.get('returnDate') || null,
+  };
+
+  if (tripType === 'multi') {
+    showSearchError('Multi-city booking is not yet available. Please select One Way or Round Trip.');
+    return;
   }
 
-  try {
-    await fetchAvailableSeats();
-  } catch (error) {
-    console.error(error);
-    showAlert('Unable to load seat availability. Please refresh the page.');
-  }
-  updateSummary();
+  setSearchLoading(true);
+  AppState.saveSearchQuery(payload);
+  AppState.clearSelectedSchedule();
+
+  setTimeout(() => {
+    window.location.href = 'search-results.html';
+    setSearchLoading(false);
+  }, 300);
 };
-    
+
+// Handle trip type change for return date visibility
+const tripTypeRadios = document.querySelectorAll('input[name="tripType"]');
+tripTypeRadios.forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    const returnDateField = document.querySelector('.return-date-search');
+    if (returnDateField) {
+      returnDateField.classList.toggle('hidden', e.target.value !== 'round');
+    }
+  });
+});
+
+// Set minimum date for date inputs
+const setMinDate = () => {
+  const today = new Date().toISOString().split('T')[0];
+  const departDateInput = document.getElementById('searchDepartDate');
+  const returnDateInput = document.getElementById('searchReturnDate');
+  
+  if (departDateInput) {
+    departDateInput.setAttribute('min', today);
+  }
+  if (returnDateInput) {
+    returnDateInput.setAttribute('min', today);
+  }
+};
+
+// Update return date min when departure date changes
+const searchDepartDateInput = document.getElementById('searchDepartDate');
+if (searchDepartDateInput) {
+  searchDepartDateInput.addEventListener('change', (e) => {
+    const returnDateInput = document.getElementById('searchReturnDate');
+    if (returnDateInput && !returnDateInput.disabled) {
+      returnDateInput.setAttribute('min', e.target.value);
+    }
+  });
+}
+
+const initialize = async () => {
+  // Set minimum dates
+  setMinDate();
+  
+  // If we have a selected schedule, populate the form
+  if (selectedSchedule && selectedSchedule.schedule) {
+    if (!populateFormFromSelection()) {
+      return;
+    }
+
+    if (selectedSchedule?.schedule?.bus?.total_seats) {
+      totalSeats = selectedSchedule.schedule.bus.total_seats;
+    }
+
+    try {
+      await fetchAvailableSeats();
+    } catch (error) {
+      console.error(error);
+      showAlert('Unable to load seat availability. Please refresh the page.');
+    }
+    updateSummary();
+  } else {
+    // No selected schedule - show search form
+    populateFormFromSelection();
+  }
+};
+
+if (bookingSearchForm) {
+  bookingSearchForm.addEventListener('submit', handleSearchSubmit);
+}
+
 confirmBtn.addEventListener('click', handleBooking);
 document.addEventListener('DOMContentLoaded', initialize);

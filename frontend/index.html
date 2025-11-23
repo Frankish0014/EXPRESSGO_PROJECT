@@ -1,472 +1,643 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Book safe and reliable bus trips across Rwanda. ExpressGo offers affordable travel from Kigali to all major provinces." />
-  <meta name="keywords" content="bus travel, Rwanda, Kigali, bus booking, intercity travel, ExpressGo" />
-  <title>ExpressGo - Safe & Reliable Bus Travel Across Rwanda</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="css/styles.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script defer src="./js/api-client.js"></script>
-  <script defer src="./js/main.js"></script>
-  <script defer src="./js/3d-interactive.js"></script>
-</head>
-<body>
-  <a href="#home" class="skip-link">Skip to main content</a>
-  <!-- Header -->
-  <header class="navbar">
-    <div class="container nav-content">
-      <div class="logo"><a href="#home" style="color: inherit; text-decoration: none;">ExpressGo</a></div>
-      <nav>
-        <ul>
-          <li><a href="#home" class="active">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#destinations">Destinations</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="./src/user-log-in.html" class="nav-link register-link">Book Now</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Hero Section -->
-  <section id="home" class="hero">
-    <div class="container hero-content">
-      <div class="hero-3d-container">
-        <canvas id="bus3d-canvas"></canvas>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Book safe and reliable bus trips across Rwanda. ExpressGo offers affordable travel from Kigali to all major provinces."
+    />
+    <meta
+      name="keywords"
+      content="bus travel, Rwanda, Kigali, bus booking, intercity travel, ExpressGo"
+    />
+    <title>ExpressGo - Safe & Reliable Bus Travel Across Rwanda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script defer src="./js/api-client.js"></script>
+    <script defer src="./js/navigation.js"></script>
+    <script defer src="./js/main.js"></script>
+    <script defer src="./js/3d-interactive.js"></script>
+  </head>
+  <body>
+    <a href="#home" class="skip-link">Skip to main content</a>
+    <!-- Header -->
+    <header class="navbar">
+      <div class="container nav-content">
+        <div class="logo">
+          <a href="#home" style="color: inherit; text-decoration: none"
+            >ExpressGo</a
+          >
+        </div>
+        <nav>
+          <!-- Navigation will be rendered by navigation.js -->
+        </nav>
       </div>
-      <h1>Safe & Reliable Bus Trips Across Rwanda</h1>
-      <p>Book your ticket online from Kigali to all major provinces</p>
+    </header>
 
-      <form class="booking-form" id="bookingForm" novalidate>
-        <div class="trip-type" role="group" aria-label="Trip type selection">
-          <label><input type="radio" name="tripType" value="oneway" checked aria-label="One way trip"> One Way</label>
-          <label><input type="radio" name="tripType" value="round" aria-label="Round trip"> Round Trip</label>
-          <label><input type="radio" name="tripType" value="multi" aria-label="Multi-city trip"> Multi-Cities</label>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+      <div class="container hero-content">
+        <div class="hero-3d-container">
+          <canvas id="bus3d-canvas"></canvas>
         </div>
+        <h1>Safe & Reliable Bus Trips Across Rwanda</h1>
+        <p>Book your ticket online from Kigali to all major provinces</p>
 
-        <div class="form-group">
-          <label for="from">From</label>
-          <input type="text" id="from" placeholder="Kigali" name="from" autocomplete="off" list="cities" required aria-required="true" />
-          <datalist id="cities">
-            <option value="Kigali">
-            <option value="Musanze">
-            <option value="Rubavu">
-            <option value="Rusizi">
-            <option value="Huye">
-            <option value="Nyagatare">
-            <option value="Karongi">
-            <option value="Rwamagana">
-            <option value="Muhanga">
-          </datalist>
-          <span class="error-message" id="fromError"></span>
-        </div>
-
-        <div class="form-group">
-          <label for="to">To</label>
-          <input type="text" id="to" placeholder="Musanze" name="to" autocomplete="off" list="cities" required aria-required="true" />
-          <span class="error-message" id="toError"></span>
-        </div>
-
-        <div class="form-group">
-          <label for="departDate">Departure Date</label>
-          <input type="date" id="departDate" name="departDate" required aria-required="true" />
-          <span class="error-message" id="departDateError"></span>
-        </div>
-
-        <div class="form-group return-date hidden">
-          <label for="returnDate">Return Date</label>
-          <input type="date" id="returnDate" name="returnDate" />
-          <span class="error-message" id="returnDateError"></span>
-        </div>
-
-        <div id="multiCityContainer" class="multi-city hidden" aria-live="polite"></div>
-
-        <div class="form-group">
-          <label for="passengers">Passengers</label>
-          <input type="number" id="passengers" min="1" max="10" value="1" name="passengers" required aria-required="true" />
-          <span class="error-message" id="passengersError"></span>
-        </div>
-
-        <button type="button" id="addCityBtn" class="btn-secondary hidden" aria-label="Add another city">+ Add City</button>
-        <button type="submit" class="btn-primary" id="searchBtn">
-          <span class="btn-text">Search</span>
-          <span class="btn-loader hidden"></span>
-        </button>
-        <div id="formError" class="form-error hidden" role="alert"></div>
-      </form>
-
-    </div>
-  </section>
-
-  <!-- About -->
-  <section id="about" class="about">
-    <div class="container grid-2">
-      <div>
-        <h2>About Us</h2>
-        <p> ExpressGo is a modern transport company offering reliable and affordable bus travel between Kigali and all Rwandan provinces.
-            Our mission is to make intercity travel safer, simpler, and more comfortable for everyone.</p>
-        <button class="btn-primary" onclick="document.getElementById('destinations').scrollIntoView({behavior: 'smooth'})">Learn More</button>
-      </div>
-      <div class="about-image">
-        <img src="images/nyabugogo.jpg" alt="ExpressGo bus terminal in Nyabugogo, Kigali" />
-      </div>
-    </div>
-  </section>
-
-  <!-- Advantages -->
-  <section class="advantages">
-    <div class="container grid-3">
-      <div class="adv-card">
-        <h3>Comfortable Travel</h3>
-        <p>Modern buses with Wi-Fi, AC, and reclining seats.</p>
-      </div>
-      <div class="adv-card">
-        <h3>Affordable Prices</h3>
-        <p>Competitive rates for both passengers and parcels.</p>
-      </div>
-      <div class="adv-card">
-        <h3>Reliable Service</h3>
-        <p>Thousands of satisfied travelers every month.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Popular Destinations -->
-  <section id="destinations" class="destinations">
-    <div class="container">
-      <div class="destinations-header">
-        <h2>Popular Destinations</h2>
-        <p class="destinations-subtitle">Explore Rwanda's beautiful cities with our convenient bus routes</p>
-      </div>
-      <div class="grid-4">
-        <div class="destination-card card-3d">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="card-image-wrapper">
-                <img src="images/rusizi.jpg" alt="Rusizi" />
-                <div class="card-overlay"></div>
-              </div>
-              <div class="info">
-                <h4>Kigali → Rusizi</h4>
-                <p class="price">7,500 Rwf</p>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="card-back-content">
-                <h4>Kigali → Rusizi</h4>
-                <p class="price">7,500 Rwf</p>
-                <p class="route-info">Distance: ~250 km<br>Duration: ~4 hours<br>Daily Departures: 6:00 AM - 6:00 PM</p>
-                <form action="./src/booking-page.html">
-                  <button class="btn-card">Book Now</button>
-                </form>
-              </div>
-            </div>
+        <form class="booking-form" id="bookingForm" novalidate>
+          <div class="trip-type" role="group" aria-label="Trip type selection">
+            <label
+              ><input
+                type="radio"
+                name="tripType"
+                value="oneway"
+                checked
+                aria-label="One way trip"
+              />
+              One Way</label
+            >
+            <label
+              ><input
+                type="radio"
+                name="tripType"
+                value="round"
+                aria-label="Round trip"
+              />
+              Round Trip</label
+            >
+            <label
+              ><input
+                type="radio"
+                name="tripType"
+                value="multi"
+                aria-label="Multi-city trip"
+              />
+              Multi-Cities</label
+            >
           </div>
-        </div>
-        <div class="destination-card card-3d">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="card-image-wrapper">
-                <img src="images/rubavu.jpg" alt="Rubavu" />
-                <div class="card-overlay"></div>
-              </div>
-              <div class="info">
-                <h4>Kigali → Rubavu</h4>
-                <p class="price">4,200 Rwf</p>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="card-back-content">
-                <h4>Kigali → Rubavu</h4>
-                <p class="price">4,200 Rwf</p>
-                <p class="route-info">Distance: ~150 km<br>Duration: ~3 hours<br>Daily Departures: 5:30 AM - 7:00 PM</p>
-                <form action="./src/booking-page.html">
-                  <button class="btn-card">Book Now</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="destination-card card-3d">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="card-image-wrapper">
-                <img src="images/musanze.jpg" alt="Musanze" />
-                <div class="card-overlay"></div>
-              </div>
-              <div class="info">
-                <h4>Kigali → Musanze</h4>
-                <p class="price">2,200 Rwf</p>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="card-back-content">
-                <h4>Kigali → Musanze</h4>
-                <p class="price">2,200 Rwf</p>
-                <p class="route-info">Distance: ~100 km<br>Duration: ~2.5 hours<br>Daily Departures: 6:00 AM - 8:00 PM</p>
-                <form action="./src/booking-page.html">
-                  <button class="btn-card">Book Now</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="destination-card card-3d">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="card-image-wrapper">
-                <img src="images/nyagatare.jpg" alt="Nyagatare" />
-                <div class="card-overlay"></div>
-              </div>
-              <div class="info">
-                <h4>Kigali → Nyagatare</h4>
-                <p class="price">5,000 Rwf</p>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="card-back-content">
-                <h4>Kigali → Nyagatare</h4>
-                <p class="price">5,000 Rwf</p>
-                <p class="route-info">Distance: ~180 km<br>Duration: ~3.5 hours<br>Daily Departures: 5:00 AM - 6:30 PM</p>
-                <form action="./src/booking-page.html">
-                  <button class="btn-card">Book Now</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="destination-card card-3d">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="card-image-wrapper">
-                <img src="images/huye.jpg" alt="Huye" />
-                <div class="card-overlay"></div>
-              </div>
-              <div class="info">
-                <h4>Kigali → Huye</h4>
-                <p class="price">3,000 Rwf</p>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="card-back-content">
-                <h4>Kigali → Huye</h4>
-                <p class="price">3,000 Rwf</p>
-                <p class="route-info">Distance: ~130 km<br>Duration: ~2.5 hours<br>Daily Departures: 6:00 AM - 7:00 PM</p>
-                <form action="./src/booking-page.html">
-                  <button class="btn-card">Book Now</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="destination-card card-3d">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="card-image-wrapper">
-                <img src="images/karongi.jpg" alt="Karongi" />
-                <div class="card-overlay"></div>
-              </div>
-              <div class="info">
-                <h4>Kigali → Karongi</h4>
-                <p class="price">5,000 Rwf</p>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="card-back-content">
-                <h4>Kigali → Karongi</h4>
-                <p class="price">5,000 Rwf</p>
-                <p class="route-info">Distance: ~170 km<br>Duration: ~3 hours<br>Daily Departures: 5:30 AM - 6:00 PM</p>
-                <form action="./src/booking-page.html">
-                  <button class="btn-card">Book Now</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="destination-card card-3d">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="card-image-wrapper">
-                <img src="images/rwamagana.jpg" alt="Rwamagana" />
-                <div class="card-overlay"></div>
-              </div>
-              <div class="info">
-                <h4>Kigali → Rwamagana</h4>
-                <p class="price">2,000 Rwf</p>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="card-back-content">
-                <h4>Kigali → Rwamagana</h4>
-                <p class="price">2,000 Rwf</p>
-                <p class="route-info">Distance: ~60 km<br>Duration: ~1.5 hours<br>Daily Departures: 6:00 AM - 8:00 PM</p>
-                <form action="./src/booking-page.html">
-                  <button class="btn-card">Book Now</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="destination-card card-3d">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="card-image-wrapper">
-                <img src="images/muhanga.jpg" alt="Muhanga" />
-                <div class="card-overlay"></div>
-              </div>
-              <div class="info">
-                <h4>Kigali → Muhanga</h4>
-                <p class="price">5,000 Rwf</p>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="card-back-content">
-                <h4>Kigali → Muhanga</h4>
-                <p class="price">5,000 Rwf</p>
-                <p class="route-info">Distance: ~80 km<br>Duration: ~2 hours<br>Daily Departures: 6:00 AM - 7:30 PM</p>
-                <form action="./src/booking-page.html">
-                  <button class="btn-card">Book Now</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Contact Section -->
-  <section id="contact" class="contact">
-    <div class="container">
-      <h2>Contact Us</h2>
-      <p class="contact-subtitle">Get in touch with us for any inquiries, support, or feedback</p>
-      
-      <div class="contact-wrapper">
-        <div class="contact-info">
-          <div class="contact-item">
-            <div class="contact-icon">
-              <i class="fas fa-map-marker-alt"></i>
-            </div>
-            <div>
-              <h3>Address</h3>
-              <p>Nyabugogo Bus Terminal<br>Kigali, Rwanda</p>
-            </div>
-          </div>
-          
-          <div class="contact-item">
-            <div class="contact-icon">
-              <i class="fas fa-phone"></i>
-            </div>
-            <div>
-              <h3>Phone</h3>
-              <p><a href="tel:+2507813489">+250 7813 489</a></p>
-              <p><a href="tel:+250788123456">+250 788 123 456</a></p>
-            </div>
-          </div>
-          
-          <div class="contact-item">
-            <div class="contact-icon">
-              <i class="fas fa-envelope"></i>
-            </div>
-            <div>
-              <h3>Email</h3>
-              <p><a href="mailto:info@expressgo.com">info@expressgo.com</a></p>
-              <p><a href="mailto:support@expressgo.com">support@expressgo.com</a></p>
-            </div>
-          </div>
-          
-          <div class="contact-item">
-            <div class="contact-icon">
-              <i class="fas fa-clock"></i>
-            </div>
-            <div>
-              <h3>Business Hours</h3>
-              <p>Monday - Friday: 6:00 AM - 8:00 PM<br>Saturday - Sunday: 7:00 AM - 7:00 PM</p>
-            </div>
-          </div>
-        </div>
-        
-        <form class="contact-form" id="contactForm" novalidate>
           <div class="form-group">
-            <label for="contactName">Full Name</label>
-            <input type="text" id="contactName" name="name" required aria-required="true" placeholder="Your Name" />
-            <span class="error-message" id="contactNameError"></span>
+            <label for="from">From</label>
+            <input
+              type="text"
+              id="from"
+              placeholder="Kigali"
+              name="from"
+              autocomplete="off"
+              list="cities"
+              required
+              aria-required="true"
+            />
+            <datalist id="cities">
+              <option value="Kigali"></option>
+              <option value="Musanze"></option>
+              <option value="Rubavu"></option>
+              <option value="Rusizi"></option>
+              <option value="Huye"></option>
+              <option value="Nyagatare"></option>
+              <option value="Karongi"></option>
+              <option value="Rwamagana"></option>
+              <option value="Muhanga"></option>
+            </datalist>
+
+            <span class="error-message" id="fromError"></span>
           </div>
-          
+
           <div class="form-group">
-            <label for="contactEmail">Email Address</label>
-            <input type="email" id="contactEmail" name="email" required aria-required="true" placeholder="you@example.com" />
-            <span class="error-message" id="contactEmailError"></span>
+            <label for="to">To</label>
+            <input
+              type="text"
+              id="to"
+              placeholder="Musanze"
+              name="to"
+              autocomplete="off"
+              list="cities"
+              required
+              aria-required="true"
+            />
+            <span class="error-message" id="toError"></span>
           </div>
-          
+
           <div class="form-group">
-            <label for="contactPhone">Phone Number</label>
-            <input type="tel" id="contactPhone" name="phone" placeholder="+250 78X XXX XXX" />
-            <span class="error-message" id="contactPhoneError"></span>
+            <label for="departDate">Departure Date</label>
+            <input
+              type="date"
+              id="departDate"
+              name="departDate"
+              required
+              aria-required="true"
+            />
+            <span class="error-message" id="departDateError"></span>
           </div>
-          
+
+          <div class="form-group return-date hidden">
+            <label for="returnDate">Return Date</label>
+            <input type="date" id="returnDate" name="returnDate" />
+            <span class="error-message" id="returnDateError"></span>
+          </div>
+
+          <div
+            id="multiCityContainer"
+            class="multi-city hidden"
+            aria-live="polite"
+          ></div>
+
           <div class="form-group">
-            <label for="contactSubject">Subject</label>
-            <select id="contactSubject" name="subject" required aria-required="true">
-              <option value="">Select a subject</option>
-              <option value="booking">Booking Inquiry</option>
-              <option value="support">Customer Support</option>
-              <option value="feedback">Feedback</option>
-              <option value="complaint">Complaint</option>
-              <option value="other">Other</option>
-            </select>
-            <span class="error-message" id="contactSubjectError"></span>
+            <label for="passengers">Passengers</label>
+            <input
+              type="number"
+              id="passengers"
+              min="1"
+              max="10"
+              value="1"
+              name="passengers"
+              required
+              aria-required="true"
+            />
+            <span class="error-message" id="passengersError"></span>
           </div>
-          
-          <div class="form-group">
-            <label for="contactMessage">Message</label>
-            <textarea id="contactMessage" name="message" rows="5" required aria-required="true" placeholder="Your message here..."></textarea>
-            <span class="error-message" id="contactMessageError"></span>
-          </div>
-          
-          <button type="submit" class="btn-primary" id="contactSubmitBtn">
-            <span class="btn-text">Send Message</span>
+
+          <button
+            type="button"
+            id="addCityBtn"
+            class="btn-secondary hidden"
+            aria-label="Add another city"
+          >
+            + Add City
+          </button>
+          <button type="submit" class="btn-primary" id="searchBtn">
+            <span class="btn-text">Search</span>
             <span class="btn-loader hidden"></span>
           </button>
-          <div id="contactFormError" class="form-error hidden" role="alert"></div>
-          <div id="contactFormSuccess" class="form-success hidden" role="alert"></div>
+          <div id="formError" class="form-error hidden" role="alert"></div>
         </form>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-content">
-      <div>
-        <h3>ExpressGo</h3>
-        <p>Reliable transport across Rwanda.</p>
-      </div>
-      <div>
-        <h4>Contact</h4>
-        <p>Email: info@expressgo.com</p>
-        <p>Phone: +250 7813 489</p>
-      </div>
-      <div>
-        <h4>Follow Us</h4>
-        <div class="social-links">
-          <a href="#" aria-label="Facebook">Facebook</a>
-          <span>|</span>
-          <a href="#" aria-label="Twitter">Twitter</a>
-          <span>|</span>
-          <a href="#" aria-label="Instagram">Instagram</a>
+    <!-- About -->
+    <section id="about" class="about">
+      <div class="container grid-2">
+        <div>
+          <h2>About Us</h2>
+          <p>
+            ExpressGo is a modern transport company offering reliable and
+            affordable bus travel between Kigali and all Rwandan provinces. Our
+            mission is to make intercity travel safer, simpler, and more
+            comfortable for everyone.
+          </p>
+          <button
+            class="btn-primary"
+            onclick="document.getElementById('destinations').scrollIntoView({behavior: 'smooth'})"
+          >
+            Learn More
+          </button>
+        </div>
+        <div class="about-image">
+          <img
+            src="images/nyabugogo.jpg"
+            alt="ExpressGo bus terminal in Nyabugogo, Kigali"
+          />
         </div>
       </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 ExpressGo. All rights reserved.</p>
-    </div>
-  </footer>
-</body>
+    </section>
+
+    <!-- Advantages -->
+    <section class="advantages">
+      <div class="container grid-3">
+        <div class="adv-card">
+          <h3>Comfortable Travel</h3>
+          <p>Modern buses with Wi-Fi, AC, and reclining seats.</p>
+        </div>
+        <div class="adv-card">
+          <h3>Affordable Prices</h3>
+          <p>Competitive rates for both passengers and parcels.</p>
+        </div>
+        <div class="adv-card">
+          <h3>Reliable Service</h3>
+          <p>Thousands of satisfied travelers every month.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Destinations -->
+    <section id="destinations" class="destinations">
+      <div class="container">
+        <div class="destinations-header">
+          <h2>Popular Destinations</h2>
+          <p class="destinations-subtitle">
+            Explore Rwanda's beautiful cities with our convenient bus routes
+          </p>
+        </div>
+        <div class="grid-4">
+          <div class="destination-card card-3d">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-image-wrapper">
+                  <img src="images/rusizi.jpg" alt="Rusizi" />
+                  <div class="card-overlay"></div>
+                </div>
+                <div class="info">
+                  <h4>Kigali → Rusizi</h4>
+                  <p class="price">7,500 Rwf</p>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="card-back-content">
+                  <h4>Kigali → Rusizi</h4>
+                  <p class="price">7,500 Rwf</p>
+                  <p class="route-info">
+                    Distance: ~250 km<br />Duration: ~4 hours<br />Daily
+                    Departures: 6:00 AM - 6:00 PM
+                  </p>
+                  <form action="./src/booking-page.html">
+                    <button class="btn-card">Book Now</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="destination-card card-3d">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-image-wrapper">
+                  <img src="images/rubavu.jpg" alt="Rubavu" />
+                  <div class="card-overlay"></div>
+                </div>
+                <div class="info">
+                  <h4>Kigali → Rubavu</h4>
+                  <p class="price">4,200 Rwf</p>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="card-back-content">
+                  <h4>Kigali → Rubavu</h4>
+                  <p class="price">4,200 Rwf</p>
+                  <p class="route-info">
+                    Distance: ~150 km<br />Duration: ~3 hours<br />Daily
+                    Departures: 5:30 AM - 7:00 PM
+                  </p>
+                  <form action="./src/booking-page.html">
+                    <button class="btn-card">Book Now</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="destination-card card-3d">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-image-wrapper">
+                  <img src="images/musanze.jpg" alt="Musanze" />
+                  <div class="card-overlay"></div>
+                </div>
+                <div class="info">
+                  <h4>Kigali → Musanze</h4>
+                  <p class="price">2,200 Rwf</p>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="card-back-content">
+                  <h4>Kigali → Musanze</h4>
+                  <p class="price">2,200 Rwf</p>
+                  <p class="route-info">
+                    Distance: ~100 km<br />Duration: ~2.5 hours<br />Daily
+                    Departures: 6:00 AM - 8:00 PM
+                  </p>
+                  <form action="./src/booking-page.html">
+                    <button class="btn-card">Book Now</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="destination-card card-3d">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-image-wrapper">
+                  <img src="images/nyagatare.jpg" alt="Nyagatare" />
+                  <div class="card-overlay"></div>
+                </div>
+                <div class="info">
+                  <h4>Kigali → Nyagatare</h4>
+                  <p class="price">5,000 Rwf</p>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="card-back-content">
+                  <h4>Kigali → Nyagatare</h4>
+                  <p class="price">5,000 Rwf</p>
+                  <p class="route-info">
+                    Distance: ~180 km<br />Duration: ~3.5 hours<br />Daily
+                    Departures: 5:00 AM - 6:30 PM
+                  </p>
+                  <form action="./src/booking-page.html">
+                    <button class="btn-card">Book Now</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="destination-card card-3d">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-image-wrapper">
+                  <img src="images/huye.jpg" alt="Huye" />
+                  <div class="card-overlay"></div>
+                </div>
+                <div class="info">
+                  <h4>Kigali → Huye</h4>
+                  <p class="price">3,000 Rwf</p>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="card-back-content">
+                  <h4>Kigali → Huye</h4>
+                  <p class="price">3,000 Rwf</p>
+                  <p class="route-info">
+                    Distance: ~130 km<br />Duration: ~2.5 hours<br />Daily
+                    Departures: 6:00 AM - 7:00 PM
+                  </p>
+                  <form action="./src/booking-page.html">
+                    <button class="btn-card">Book Now</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="destination-card card-3d">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-image-wrapper">
+                  <img src="images/karongi.jpg" alt="Karongi" />
+                  <div class="card-overlay"></div>
+                </div>
+                <div class="info">
+                  <h4>Kigali → Karongi</h4>
+                  <p class="price">5,000 Rwf</p>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="card-back-content">
+                  <h4>Kigali → Karongi</h4>
+                  <p class="price">5,000 Rwf</p>
+                  <p class="route-info">
+                    Distance: ~170 km<br />Duration: ~3 hours<br />Daily
+                    Departures: 5:30 AM - 6:00 PM
+                  </p>
+                  <form action="./src/booking-page.html">
+                    <button class="btn-card">Book Now</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="destination-card card-3d">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-image-wrapper">
+                  <img src="images/rwamagana.jpg" alt="Rwamagana" />
+                  <div class="card-overlay"></div>
+                </div>
+                <div class="info">
+                  <h4>Kigali → Rwamagana</h4>
+                  <p class="price">2,000 Rwf</p>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="card-back-content">
+                  <h4>Kigali → Rwamagana</h4>
+                  <p class="price">2,000 Rwf</p>
+                  <p class="route-info">
+                    Distance: ~60 km<br />Duration: ~1.5 hours<br />Daily
+                    Departures: 6:00 AM - 8:00 PM
+                  </p>
+                  <form action="./src/booking-page.html">
+                    <button class="btn-card">Book Now</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="destination-card card-3d">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-image-wrapper">
+                  <img src="images/muhanga.jpg" alt="Muhanga" />
+                  <div class="card-overlay"></div>
+                </div>
+                <div class="info">
+                  <h4>Kigali → Muhanga</h4>
+                  <p class="price">5,000 Rwf</p>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="card-back-content">
+                  <h4>Kigali → Muhanga</h4>
+                  <p class="price">5,000 Rwf</p>
+                  <p class="route-info">
+                    Distance: ~80 km<br />Duration: ~2 hours<br />Daily
+                    Departures: 6:00 AM - 7:30 PM
+                  </p>
+                  <form action="./src/booking-page.html">
+                    <button class="btn-card">Book Now</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+      <div class="container">
+        <h2>Contact Us</h2>
+        <p class="contact-subtitle">
+          Get in touch with us for any inquiries, support, or feedback
+        </p>
+
+        <div class="contact-wrapper">
+          <div class="contact-info">
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div>
+                <h3>Address</h3>
+                <p>Nyabugogo Bus Terminal<br />Kigali, Rwanda</p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div>
+                <h3>Phone</h3>
+                <p><a href="tel:+2507813489">+250 7813 489</a></p>
+                <p><a href="tel:+250788123456">+250 788 123 456</a></p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div>
+                <h3>Email</h3>
+                <p>
+                  <a href="mailto:info@expressgo.com">info@expressgo.com</a>
+                </p>
+                <p>
+                  <a href="mailto:support@expressgo.com"
+                    >support@expressgo.com</a
+                  >
+                </p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div>
+                <h3>Business Hours</h3>
+                <p>
+                  Monday - Friday: 6:00 AM - 8:00 PM<br />Saturday - Sunday:
+                  7:00 AM - 7:00 PM
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <form class="contact-form" id="contactForm" novalidate>
+            <div class="form-group">
+              <label for="contactName">Full Name</label>
+              <input
+                type="text"
+                id="contactName"
+                name="name"
+                required
+                aria-required="true"
+                placeholder="Your Name"
+              />
+              <span class="error-message" id="contactNameError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="contactEmail">Email Address</label>
+              <input
+                type="email"
+                id="contactEmail"
+                name="email"
+                required
+                aria-required="true"
+                placeholder="you@example.com"
+              />
+              <span class="error-message" id="contactEmailError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="contactPhone">Phone Number</label>
+              <input
+                type="tel"
+                id="contactPhone"
+                name="phone"
+                placeholder="+250 78X XXX XXX"
+              />
+              <span class="error-message" id="contactPhoneError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="contactSubject">Subject</label>
+              <select
+                id="contactSubject"
+                name="subject"
+                required
+                aria-required="true"
+              >
+                <option value="">Select a subject</option>
+                <option value="booking">Booking Inquiry</option>
+                <option value="support">Customer Support</option>
+                <option value="feedback">Feedback</option>
+                <option value="complaint">Complaint</option>
+                <option value="other">Other</option>
+              </select>
+              <span class="error-message" id="contactSubjectError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="contactMessage">Message</label>
+              <textarea
+                id="contactMessage"
+                name="message"
+                rows="5"
+                required
+                aria-required="true"
+                placeholder="Your message here..."
+              ></textarea>
+              <span class="error-message" id="contactMessageError"></span>
+            </div>
+
+            <button type="submit" class="btn-primary" id="contactSubmitBtn">
+              <span class="btn-text">Send Message</span>
+              <span class="btn-loader hidden"></span>
+            </button>
+            <div
+              id="contactFormError"
+              class="form-error hidden"
+              role="alert"
+            ></div>
+            <div
+              id="contactFormSuccess"
+              class="form-success hidden"
+              role="alert"
+            ></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-content">
+        <div>
+          <h3>ExpressGo</h3>
+          <p>Reliable transport across Rwanda.</p>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <p>Email: info@expressgo.com</p>
+          <p>Phone: +250 7813 489</p>
+        </div>
+        <div>
+          <h4>Follow Us</h4>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook">Facebook</a>
+            <span>|</span>
+            <a href="#" aria-label="Twitter">Twitter</a>
+            <span>|</span>
+            <a href="#" aria-label="Instagram">Instagram</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 ExpressGo. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
 </html>

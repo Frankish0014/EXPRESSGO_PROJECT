@@ -236,14 +236,8 @@ const attachEventListeners = () => {
     handleBookingAction(action, code);
   });
 
-  if (logoutLink) {
-    logoutLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      ApiClient.clearSession();
-      AppState.clearBookingCheckout();
-      window.location.href = '../index.html';
-    });
-  }
+  // Logout is now handled by navigation.js
+  // The logoutLink will be created dynamically by navigation.js
 };
 
 const init = async () => {
