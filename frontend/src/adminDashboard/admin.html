@@ -47,6 +47,11 @@
               >
             </li>
             <li>
+              <a href="#" data-section="trips" class="nav-link"
+                ><i class="fas fa-route"></i> Trips</a
+              >
+            </li>
+            <li>
               <a href="#" data-section="bus-companies" class="nav-link"
                 ><i class="fas fa-bus"></i> Bus Companies</a
               >
@@ -369,6 +374,277 @@
                 </tbody>
               </table>
             </section>
+          </div>
+        </section>
+
+        <!-- Trips Management Section -->
+        <section id="trips-section" class="content-section">
+          <header class="header">
+            <h2>Trips Management</h2>
+            <div class="header-right">
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtnTrips">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
+                </div>
+                <div
+                  id="profileDropdownTrips"
+                  class="profile-dropdown hidden"
+                >
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a href="#" class="dropdown-item" id="logoutBtnTrips"
+                    >Logout</a
+                  >
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="trips-container">
+            <div class="info-banner" id="tripsMessage"></div>
+
+            <!-- Filters -->
+            <div class="filters-card card">
+              <h3>Filter Trips</h3>
+              <div class="filters-grid">
+                <div class="form-group">
+                  <label for="tripFilterDate">Date</label>
+                  <input
+                    type="date"
+                    id="tripFilterDate"
+                    class="form-input"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="tripFilterStatus">Status</label>
+                  <select id="tripFilterStatus" class="form-input">
+                    <option value="">All Status</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <button type="button" class="btn-primary" id="applyTripFilters">
+                    <i class="fas fa-filter"></i> Apply Filters
+                  </button>
+                  <button type="button" class="btn-secondary" id="clearTripFilters">
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trips Table -->
+            <section class="card">
+              <h3>All Trips</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Route</th>
+                    <th>Bus</th>
+                    <th>Company</th>
+                    <th>Time</th>
+                    <th>Seats</th>
+                    <th>Bookings</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tripsTableBody">
+                  <tr>
+                    <td colspan="10">Loading trips...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </section>
+
+        <!-- Trip Details Section -->
+        <section id="trip-details-section" class="content-section">
+          <header class="header">
+            <div class="header-left">
+              <button class="btn-back" id="backToTripsBtn">
+                <i class="fas fa-arrow-left"></i> Back to Trips
+              </button>
+              <h2>Trip Details</h2>
+            </div>
+            <div class="header-right">
+              <div class="trip-status-badge" id="currentTripStatusBadge">
+                <span class="status-dot"></span>
+                <span class="status-text">Loading...</span>
+              </div>
+              <div class="profile-container">
+                <div class="profile" id="profileMenuBtnTripDetails">
+                  <img
+                    src="images/profile.png"
+                    alt="Admin Avatar"
+                    class="profile-avatar"
+                  />
+                </div>
+                <div
+                  id="profileDropdownTripDetails"
+                  class="profile-dropdown hidden"
+                >
+                  <div class="profile-info">
+                    <p><strong>ExpressGo</strong></p>
+                    <p class="email">admin@expressgo.com</p>
+                  </div>
+                  <a href="#" class="dropdown-item" id="logoutBtnTripDetails"
+                    >Logout</a
+                  >
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="trip-details-container">
+            <!-- Loading State -->
+            <div id="tripDetailsLoading" class="loading-container hidden">
+              <div class="spinner"></div>
+              <p>Loading trip details...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="tripDetailsError" class="error-container hidden">
+              <i class="fas fa-exclamation-circle"></i>
+              <h3>Failed to Load Trip</h3>
+              <p id="tripDetailsErrorMessage">Something went wrong</p>
+            </div>
+
+            <!-- Main Content -->
+            <div id="tripDetailsContent" class="hidden">
+              <!-- Trip Info Cards -->
+              <div class="trip-info-grid">
+                <div class="info-card">
+                  <div class="info-icon route-icon">
+                    <i class="fas fa-route"></i>
+                  </div>
+                  <div class="info-content">
+                    <span class="info-label">Route</span>
+                    <span class="info-value" id="detailTripRoute">—</span>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-icon bus-icon">
+                    <i class="fas fa-bus"></i>
+                  </div>
+                  <div class="info-content">
+                    <span class="info-label">Bus</span>
+                    <span class="info-value" id="detailTripBus">—</span>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-icon calendar-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                  </div>
+                  <div class="info-content">
+                    <span class="info-label">Date</span>
+                    <span class="info-value" id="detailTripDate">—</span>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-icon time-icon">
+                    <i class="fas fa-clock"></i>
+                  </div>
+                  <div class="info-content">
+                    <span class="info-label">Time</span>
+                    <span class="info-value" id="detailTripTime">—</span>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-icon company-icon">
+                    <i class="fas fa-building"></i>
+                  </div>
+                  <div class="info-content">
+                    <span class="info-label">Company</span>
+                    <span class="info-value" id="detailTripCompany">—</span>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-icon seats-icon">
+                    <i class="fas fa-chair"></i>
+                  </div>
+                  <div class="info-content">
+                    <span class="info-label">Occupancy</span>
+                    <span class="info-value" id="detailTripOccupancy">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Trip Actions -->
+              <div class="trip-actions">
+                <button class="btn btn-primary" id="detailStartTripBtn">
+                  <i class="fas fa-play"></i> Start Trip
+                </button>
+                <button class="btn btn-success" id="detailCompleteTripBtn">
+                  <i class="fas fa-check"></i> Complete Trip
+                </button>
+                <button class="btn btn-danger" id="detailCancelTripBtn">
+                  <i class="fas fa-times"></i> Cancel Trip
+                </button>
+              </div>
+
+              <!-- Seat Map and Passengers Grid -->
+              <div class="trip-content-grid">
+                <!-- Seat Map -->
+                <div class="card seat-map-card">
+                  <div class="card-header">
+                    <h3>Seat Map</h3>
+                    <div class="seat-legend">
+                      <div class="legend-item">
+                        <div class="seat-icon-legend available"></div>
+                        <span>Available</span>
+                      </div>
+                      <div class="legend-item">
+                        <div class="seat-icon-legend booked"></div>
+                        <span>Booked</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bus-visualization">
+                    <div class="driver-section">
+                      <i class="fas fa-steering-wheel"></i>
+                      <span>Driver</span>
+                    </div>
+                    <div class="seats-grid" id="detailSeatsGrid">
+                      <!-- Seats will be generated dynamically -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Passengers List -->
+                <div class="card passengers-card">
+                  <div class="card-header">
+                    <h3>Passengers</h3>
+                    <span class="passenger-count-badge" id="detailPassengerCount">0 passengers</span>
+                  </div>
+
+                  <div class="passengers-list" id="detailPassengersList">
+                    <div class="empty-passengers">
+                      <i class="fas fa-users"></i>
+                      <p>No passengers yet</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

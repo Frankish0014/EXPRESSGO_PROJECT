@@ -8,6 +8,7 @@ interface BookingAttributes {
   booking_code: string;
   user_id: number;
   schedule_id: number;
+  trip_id?: number;
   travel_date: Date;
   seat_number: number;
   status: 'confirmed' | 'cancelled' | 'completed';
@@ -31,6 +32,7 @@ class Booking extends Model<BookingAttributes, BookingCreationAttributes>
   public booking_code!: string;
   public user_id!: number;
   public schedule_id!: number;
+  public trip_id?: number;
   public travel_date!: Date;
   public seat_number!: number;
   public status!: 'confirmed' | 'cancelled' | 'completed';
@@ -73,6 +75,14 @@ Booking.init(
       allowNull: false,
       references: {
         model: 'bus_schedules',
+        key: 'id',
+      },
+    },
+    trip_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'trips',
         key: 'id',
       },
     },

@@ -3,6 +3,7 @@ import BusCompany from './BusCompany';
 import Bus from './Bus';
 import Route from './Route';
 import BusSchedule from './BusSchedule';
+import Trip from './Trip';
 import Booking from './Booking';
 import TokenBlacklist from './TokenBlacklist';
 
@@ -48,7 +49,27 @@ Booking.belongsTo(User, {
   as: 'user',
 });
 
-// BusSchedule -> Booking (One-to-Many)
+// BusSchedule -> Trip (One-to-Many)
+BusSchedule.hasMany(Trip, {
+  foreignKey: 'schedule_id',
+  as: 'trips',
+});
+Trip.belongsTo(BusSchedule, {
+  foreignKey: 'schedule_id',
+  as: 'schedule',
+});
+
+// Trip -> Booking (One-to-Many)
+Trip.hasMany(Booking, {
+  foreignKey: 'trip_id',
+  as: 'bookings',
+});
+Booking.belongsTo(Trip, {
+  foreignKey: 'trip_id',
+  as: 'trip',
+});
+
+// BusSchedule -> Booking (One-to-Many) - Keep for backward compatibility
 BusSchedule.hasMany(Booking, {
   foreignKey: 'schedule_id',
   as: 'bookings',
@@ -56,6 +77,16 @@ BusSchedule.hasMany(Booking, {
 Booking.belongsTo(BusSchedule, {
   foreignKey: 'schedule_id',
   as: 'schedule',
+});
+
+// Booking -> Booking (Self-referential for round-trip and multi-city)
+Booking.hasMany(Booking, {
+  foreignKey: 'parent_booking_id',
+  as: 'childBookings',
+});
+Booking.belongsTo(Booking, {
+  foreignKey: 'parent_booking_id',
+  as: 'parentBooking',
 });
 
 // User -> TokenBlacklist (One-to-Many)
@@ -74,6 +105,7 @@ export {
   Bus,
   Route,
   BusSchedule,
+  Trip,
   Booking,
   TokenBlacklist,
 };
@@ -84,6 +116,7 @@ export default {
   Bus,
   Route,
   BusSchedule,
+  Trip,
   Booking,
   TokenBlacklist,
 };

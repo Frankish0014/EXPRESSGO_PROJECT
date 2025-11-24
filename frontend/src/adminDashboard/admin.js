@@ -10,6 +10,7 @@ function showModal(modalId) {
     "logoutModal",
     "busCompanyModal",
     "busModal",
+    "tripDetailsModal",
   ];
 
   allModals.forEach((id) => {
@@ -64,6 +65,7 @@ function hideAllModals() {
     "logoutModal",
     "busCompanyModal",
     "busModal",
+    "tripDetailsModal",
   ];
 
   allModals.forEach((modalId) => {
@@ -95,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
+  
   // Close modals with Escape key
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
@@ -124,6 +126,8 @@ const adminBookingsTableBody = document.getElementById(
 );
 const bookingsTableFooter = document.getElementById("bookingsTableFooter");
 const adminMessageEl = document.getElementById("adminMessage");
+const tripsTableBody = document.getElementById("tripsTableBody");
+const tripsMessage = document.getElementById("tripsMessage");
 
 let performanceChart;
 let latestChartData = null;
@@ -175,9 +179,13 @@ function showSection(sectionName) {
       link.getAttribute("data-section") === sectionName
     );
   });
-
+  
   // Load data when section is shown
-  if (sectionName === "routes") {
+  if (sectionName === "bookings") {
+    setTimeout(() => {
+      loadBookingsTable();
+    }, 100);
+  } else if (sectionName === "routes") {
     setTimeout(() => {
       loadRoutes();
       initRoutesForm();
@@ -356,49 +364,49 @@ function renderChart(chartData) {
 
   performanceChart = new Chart(ctx, {
     type: "line",
-    data: {
+      data: {
       labels: chartData.labels,
-      datasets: [
-        {
+        datasets: [
+          {
           label: "Bookings",
           data: chartData.bookings,
           borderColor: "#0055ff",
           backgroundColor: "rgba(0, 85, 255, 0.1)",
-          fill: true,
-          tension: 0.4,
+            fill: true,
+            tension: 0.4,
           yAxisID: "y",
-        },
-        {
+          },
+          {
           label: "Revenue (RWF)",
           data: chartData.revenue,
           borderColor: "#ff8c00",
           backgroundColor: "rgba(255, 140, 0, 0.1)",
-          fill: true,
-          tension: 0.4,
+            fill: true,
+            tension: 0.4,
           yAxisID: "y1",
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
           type: "linear",
-          display: true,
+            display: true,
           position: "left",
           title: { display: true, text: "Bookings" },
-        },
-        y1: {
+          },
+          y1: {
           type: "linear",
-          display: true,
+            display: true,
           position: "right",
           title: { display: true, text: "Revenue (RWF)" },
           grid: { drawOnChartArea: false },
         },
+        },
       },
-    },
-  });
+    });
 }
 
 function renderBookingsTable(bookings = []) {
@@ -518,7 +526,7 @@ async function loadStatistics() {
     const overview = await ApiClient.get("/admin/overview", {}, true);
     const stats = overview.data?.stats || {};
     const revenue = overview.data?.revenue || {};
-
+    
     // Update revenue statistics
     document.getElementById("statTotalRevenue")?.replaceWith(
       Object.assign(document.createElement("p"), {
@@ -542,7 +550,7 @@ async function loadStatistics() {
         textContent: formatCurrency(avgRevenue),
       })
     );
-
+    
     // Update booking statistics
     document.getElementById("statTotalBookingsStats")?.replaceWith(
       Object.assign(document.createElement("p"), {
@@ -568,7 +576,7 @@ async function loadStatistics() {
         textContent: completionRate,
       })
     );
-
+    
     // Update route performance
     const popularRoutes = overview.data?.popularRoutes || [];
     const routeListEl = document.getElementById("routePerformanceList");
@@ -602,7 +610,7 @@ async function loadOffers() {
       offersListEl.innerHTML =
         '<p>No active offers. Click "Create Offer" to add one.</p>';
     }
-
+    
     // Load routes for offer form
     const routesResponse = await ApiClient.get("/routes");
     const routes = routesResponse?.routes || [];
@@ -613,7 +621,7 @@ async function loadOffers() {
         routes
           .map(
             (route) =>
-              `<option value="${route.id}">${route.departure_city} → ${route.arrival_city}</option>`
+          `<option value="${route.id}">${route.departure_city} → ${route.arrival_city}</option>`
           )
           .join("");
     }
@@ -628,7 +636,7 @@ function initOffersForm() {
   const formCard = document.getElementById("offerFormCard");
   const offerForm = document.getElementById("offerForm");
   const offersMessage = document.getElementById("offersMessage");
-
+  
   if (createBtn) {
     createBtn.addEventListener("click", () => {
       if (formCard) {
@@ -639,18 +647,18 @@ function initOffersForm() {
       }
     });
   }
-
+  
   if (cancelBtn) {
     cancelBtn.addEventListener("click", () => {
       if (formCard) formCard.classList.add("hidden");
     });
   }
-
+  
   if (offerForm) {
     offerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = new FormData(offerForm);
-
+      
       // For now, just show a message - would need backend endpoint
       if (offersMessage) {
         offersMessage.textContent =
@@ -660,7 +668,7 @@ function initOffersForm() {
           offersMessage.classList.remove("show");
         }, 3000);
       }
-
+      
       // In a real implementation, you would call:
       // await ApiClient.post('/admin/offers', {...}, true);
     });
@@ -670,18 +678,18 @@ function initOffersForm() {
 function initSettings() {
   const user = ApiClient.getUser();
   if (!user) return;
-
+  
   // Populate profile form
   const fullNameInput = document.getElementById("fullName");
   const emailInput = document.getElementById("settingsEmail");
-
+  
   if (fullNameInput) {
     fullNameInput.value = user.full_name || "";
   }
   if (emailInput) {
     emailInput.value = user.email || "";
   }
-
+  
   // Profile update form
   const profileForm = document.querySelector("#settings-section form");
   if (profileForm) {
@@ -695,7 +703,7 @@ function initSettings() {
           },
           true
         );
-
+        
         if (response.data) {
           ApiClient.setSession({ user: response.data.user });
           showAdminMessage("Profile updated successfully", "success");
@@ -706,7 +714,7 @@ function initSettings() {
       }
     });
   }
-
+  
   // Password change form
   const passwordForm = document.querySelector(
     "#settings-section .card:nth-of-type(3) form"
@@ -716,12 +724,12 @@ function initSettings() {
       e.preventDefault();
       const currentPassword = document.getElementById("currentPassword")?.value;
       const newPassword = document.getElementById("newPassword")?.value;
-
+      
       if (!currentPassword || !newPassword) {
         showAdminMessage("Please fill in all password fields", "error");
         return;
       }
-
+      
       try {
         // Note: This would need a password change endpoint
         showAdminMessage("Password change feature coming soon", "info");
@@ -746,7 +754,7 @@ function initHelpForm() {
         message: formData.get("message"),
         subject: "Admin Support Request",
       };
-
+      
       try {
         // For now, just log - would need backend endpoint
         console.log("Help form submission:", data);
@@ -768,15 +776,15 @@ async function loadRoutes() {
     const response = await ApiClient.get("/routes");
     const routes = response?.routes || [];
     const tbody = document.getElementById("routesTableBody");
-
+    
     if (!tbody) return;
-
+    
     if (routes.length === 0) {
       tbody.innerHTML =
         '<tr><td colspan="6">No routes found. Create your first route!</td></tr>';
       return;
     }
-
+    
     tbody.innerHTML = routes
       .map(
         (route) => `
@@ -802,7 +810,7 @@ async function loadRoutes() {
     `
       )
       .join("");
-
+    
     // Attach event listeners
     tbody.querySelectorAll('button[data-action="edit"]').forEach((btn) => {
       btn.addEventListener("click", () =>
@@ -861,7 +869,7 @@ function initRoutesForm() {
 
   // Populate district dropdowns
   populateDistrictDropdowns();
-
+  
   if (createBtn) {
     createBtn.addEventListener("click", () => {
       editingRouteId = null;
@@ -871,7 +879,7 @@ function initRoutesForm() {
       showModal("routeModal");
     });
   }
-
+  
   if (cancelBtn) {
     cancelBtn.addEventListener("click", () => {
       hideModal("routeModal");
@@ -879,7 +887,7 @@ function initRoutesForm() {
       if (routeForm) routeForm.reset();
     });
   }
-
+  
   if (closeBtn) {
     closeBtn.addEventListener("click", () => {
       hideModal("routeModal");
@@ -887,7 +895,7 @@ function initRoutesForm() {
       if (routeForm) routeForm.reset();
     });
   }
-
+  
   if (routeForm) {
     routeForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -919,7 +927,7 @@ function initRoutesForm() {
         );
         return;
       }
-
+      
       try {
         const isEditing = editingRouteId !== null;
         if (isEditing) {
@@ -929,7 +937,7 @@ function initRoutesForm() {
           await ApiClient.post("/routes", data, true);
           showRoutesMessage("Route created successfully!", "success");
         }
-
+        
         hideModal("routeModal");
         editingRouteId = null;
         routeForm.reset();
@@ -946,12 +954,12 @@ async function editRoute(routeId) {
   try {
     const response = await ApiClient.get(`/routes/${routeId}`);
     const route = response?.route;
-
+    
     if (!route) {
       showRoutesMessage("Route not found", "error");
       return;
     }
-
+    
     editingRouteId = routeId;
     document.getElementById("modalRouteDepartureCity").value =
       route.departure_city || "";
@@ -978,11 +986,11 @@ async function deleteRoute(routeId) {
   const confirmBtn = document.getElementById("confirmDeleteModal");
   const cancelBtn = document.getElementById("cancelDeleteModal");
   const closeBtn = document.getElementById("closeDeleteModal");
-
+  
   // Remove existing listeners
   const newConfirmBtn = confirmBtn.cloneNode(true);
   confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
+  
   newConfirmBtn.addEventListener("click", async () => {
     try {
       await ApiClient.delete(`/routes/${routeId}`, true);
@@ -1023,26 +1031,26 @@ async function loadSchedules() {
     const response = await ApiClient.get("/schedules");
     const schedules = response?.schedules || [];
     const tbody = document.getElementById("schedulesTableBody");
-
+    
     if (!tbody) return;
-
+    
     if (schedules.length === 0) {
       tbody.innerHTML =
         '<tr><td colspan="8">No schedules found. Create your first schedule!</td></tr>';
       return;
     }
-
+    
     tbody.innerHTML = schedules
       .map((schedule) => {
-        const route = schedule.route || {};
-        const bus = schedule.bus || {};
+      const route = schedule.route || {};
+      const bus = schedule.bus || {};
         const routeName =
           route.departure_city && route.arrival_city
-            ? `${route.departure_city} → ${route.arrival_city}`
+        ? `${route.departure_city} → ${route.arrival_city}`
             : "—";
         const busName = bus.plate_number || "—";
-
-        return `
+      
+      return `
         <tr>
           <td>${schedule.id}</td>
           <td>${routeName}</td>
@@ -1069,7 +1077,7 @@ async function loadSchedules() {
       `;
       })
       .join("");
-
+    
     // Attach event listeners
     tbody.querySelectorAll('button[data-action="edit"]').forEach((btn) => {
       btn.addEventListener("click", () =>
@@ -1095,24 +1103,24 @@ async function loadRoutesAndBusesForSchedule() {
       ApiClient.get("/routes"),
       ApiClient.get("/buses"),
     ]);
-
+    
     const routes = routesResponse?.routes || [];
     const buses = busesResponse?.buses || [];
-
+    
     const routeSelect = document.getElementById("modalScheduleRoute");
     const busSelect = document.getElementById("modalScheduleBus");
-
+    
     if (routeSelect) {
       routeSelect.innerHTML =
         '<option value="">Select a route</option>' +
         routes
           .map(
             (route) =>
-              `<option value="${route.id}">${route.departure_city} → ${route.arrival_city}</option>`
+          `<option value="${route.id}">${route.departure_city} → ${route.arrival_city}</option>`
           )
           .join("");
     }
-
+    
     if (busSelect) {
       busSelect.innerHTML =
         '<option value="">Select a bus</option>' +
@@ -1196,8 +1204,8 @@ async function initSchedulesForm() {
     e.preventDefault();
     e.stopPropagation();
     hideModal("scheduleModal");
-    editingScheduleId = null;
-    if (scheduleForm) scheduleForm.reset();
+        editingScheduleId = null;
+        if (scheduleForm) scheduleForm.reset();
   };
 
   const handleCloseClick = (e) => {
@@ -1270,7 +1278,7 @@ async function initSchedulesForm() {
   };
 
   const handleFormSubmit = async (e) => {
-    e.preventDefault();
+      e.preventDefault();
     e.stopPropagation();
 
     // Prevent duplicate submissions
@@ -1280,7 +1288,7 @@ async function initSchedulesForm() {
 
     isSubmittingSchedule = true;
 
-    const formData = new FormData(scheduleForm);
+      const formData = new FormData(scheduleForm);
 
     const routeId = parseInt(formData.get("route_id"));
     const departureTime = formData.get("departure_time");
@@ -1313,7 +1321,7 @@ async function initSchedulesForm() {
         ? selectedDays.join(",")
         : "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday";
 
-    const data = {
+      const data = {
       route_id: routeId,
       bus_id: parseInt(formData.get("bus_id")),
       departure_time: departureTime,
@@ -1321,28 +1329,28 @@ async function initSchedulesForm() {
       price: parseFloat(formData.get("price")),
       available_days: availableDays,
       is_active: document.getElementById("modalScheduleIsActive").checked,
-    };
-
-    try {
-      const isEditing = editingScheduleId !== null;
-      if (isEditing) {
-        await ApiClient.put(`/schedules/${editingScheduleId}`, data, true);
+      };
+      
+      try {
+        const isEditing = editingScheduleId !== null;
+        if (isEditing) {
+          await ApiClient.put(`/schedules/${editingScheduleId}`, data, true);
         showSchedulesMessage("Schedule updated successfully!", "success");
-      } else {
+        } else {
         await ApiClient.post("/schedules", data, true);
         showSchedulesMessage("Schedule created successfully!", "success");
-      }
-
+        }
+        
       hideModal("scheduleModal");
-      editingScheduleId = null;
-      scheduleForm.reset();
+        editingScheduleId = null;
+        scheduleForm.reset();
       // Reset checkboxes to default (all checked)
       const dayCheckboxes = scheduleForm.querySelectorAll(
         'input[name="available_days"]'
       );
       dayCheckboxes.forEach((checkbox) => (checkbox.checked = true));
-      await loadSchedules();
-    } catch (error) {
+        await loadSchedules();
+      } catch (error) {
       console.error("Schedule save failed:", error);
       showSchedulesMessage(error.message || "Failed to save schedule", "error");
     } finally {
@@ -1396,20 +1404,20 @@ async function editSchedule(scheduleId) {
 
     const response = await ApiClient.get(`/schedules/${scheduleId}`);
     const schedule = response?.schedule;
-
+    
     if (!schedule) {
       showSchedulesMessage("Schedule not found", "error");
       return;
     }
-
+    
     // Load routes and buses
     await loadRoutesAndBusesForSchedule();
-
+    
     editingScheduleId = scheduleId;
     document.getElementById("modalScheduleRoute").value =
       schedule.route_id || "";
     document.getElementById("modalScheduleBus").value = schedule.bus_id || "";
-
+    
     // Format time for input (HH:MM)
     const departureTime = schedule.departure_time
       ? schedule.departure_time.substring(0, 5)
@@ -1460,11 +1468,11 @@ async function deleteSchedule(scheduleId) {
   const confirmBtn = document.getElementById("confirmDeleteModal");
   const cancelBtn = document.getElementById("cancelDeleteModal");
   const closeBtn = document.getElementById("closeDeleteModal");
-
+  
   // Remove existing listeners
   const newConfirmBtn = confirmBtn.cloneNode(true);
   confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
+  
   newConfirmBtn.addEventListener("click", async () => {
     try {
       await ApiClient.delete(`/schedules/${scheduleId}`, true);
@@ -2061,6 +2069,537 @@ function showBusCompaniesMessage(message, variant = "info") {
   }
 }
 
+// ==================== TRIPS MANAGEMENT ====================
+
+async function loadTrips(filters = {}) {
+  if (!tripsTableBody) return;
+
+  try {
+    tripsTableBody.innerHTML = "<tr><td colspan='10'>Loading trips...</td></tr>";
+
+    const params = new URLSearchParams();
+    if (filters.date) params.append("trip_date", filters.date);
+    if (filters.status) params.append("status", filters.status);
+    if (filters.start_date) params.append("start_date", filters.start_date);
+    if (filters.end_date) params.append("end_date", filters.end_date);
+
+    const response = await ApiClient.get(`/trips?${params.toString()}`);
+    const trips = response.trips || [];
+
+    if (trips.length === 0) {
+      tripsTableBody.innerHTML =
+        "<tr><td colspan='10'>No trips found</td></tr>";
+      return;
+    }
+
+    tripsTableBody.innerHTML = trips
+      .map((trip) => {
+        const schedule = trip.schedule || {};
+        const route = schedule.route || {};
+        const bus = schedule.bus || {};
+        const company = bus.company || {};
+        const bookings = trip.bookings || [];
+        const availableSeats = trip.total_seats - trip.booked_seats;
+        const occupancyRate = trip.total_seats > 0 
+          ? ((trip.booked_seats / trip.total_seats) * 100).toFixed(1) 
+          : 0;
+
+        const statusBadge = {
+          scheduled: '<span class="badge badge-info">Scheduled</span>',
+          "in-progress": '<span class="badge badge-warning">In Progress</span>',
+          completed: '<span class="badge badge-success">Completed</span>',
+          cancelled: '<span class="badge badge-danger">Cancelled</span>',
+        }[trip.status] || '<span class="badge">Unknown</span>';
+
+        return `
+          <tr>
+            <td>${trip.id}</td>
+            <td>${new Date(trip.trip_date).toLocaleDateString()}</td>
+            <td>${route.departure_city || "—"} → ${route.arrival_city || "—"}</td>
+            <td>${bus.plate_number || "—"}</td>
+            <td>${company.name || "—"}</td>
+            <td>${trip.departure_time}</td>
+            <td>
+              <span class="text-muted">${trip.booked_seats}/${trip.total_seats}</span>
+              <small class="text-muted">(${occupancyRate}%)</small>
+            </td>
+            <td>${bookings.length}</td>
+            <td>${statusBadge}</td>
+            <td>
+              <button class="btn-icon" onclick="viewTripDetails(${trip.id})" title="View Details">
+                <i class="fas fa-eye"></i>
+              </button>
+              ${trip.status === "scheduled" ? `
+                <button class="btn-icon" onclick="updateTripStatus(${trip.id}, 'in-progress')" title="Start Trip">
+                  <i class="fas fa-play"></i>
+                </button>
+              ` : ""}
+              ${trip.status === "in-progress" ? `
+                <button class="btn-icon" onclick="updateTripStatus(${trip.id}, 'completed')" title="Complete Trip">
+                  <i class="fas fa-check"></i>
+                </button>
+              ` : ""}
+            </td>
+          </tr>
+        `;
+      })
+      .join("");
+  } catch (error) {
+    console.error("Error loading trips:", error);
+    tripsTableBody.innerHTML =
+      "<tr><td colspan='10'>Error loading trips. Please try again.</td></tr>";
+    showTripsMessage("Failed to load trips", "error");
+  }
+}
+
+function initTripsFilters() {
+  const applyFiltersBtn = document.getElementById("applyTripFilters");
+  const clearFiltersBtn = document.getElementById("clearTripFilters");
+  const dateFilter = document.getElementById("tripFilterDate");
+  const statusFilter = document.getElementById("tripFilterStatus");
+
+  if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener("click", () => {
+      const filters = {
+        date: dateFilter?.value || "",
+        status: statusFilter?.value || "",
+      };
+      loadTrips(filters);
+    });
+  }
+
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener("click", () => {
+      if (dateFilter) dateFilter.value = "";
+      if (statusFilter) statusFilter.value = "";
+      loadTrips();
+    });
+  }
+}
+
+async function viewTripDetails(tripId) {
+  // Show trip details section
+  showSection('trip-details');
+  loadTripDetailsView(tripId);
+}
+
+// Legacy code for reference (replaced with dedicated page)
+async function viewTripDetailsOld(tripId) {
+  try {
+    const response = await ApiClient.get(`/trips/${tripId}`);
+    const trip = response.trip;
+
+    if (!trip) {
+      showTripsMessage("Trip not found", "error");
+      return;
+    }
+
+    const schedule = trip.schedule || {};
+    const route = schedule.route || {};
+    const bus = schedule.bus || {};
+    const company = bus.company || {};
+    const bookings = trip.bookings || [];
+    const totalRevenue = bookings.length * (schedule.price || 0);
+    const availableSeats = trip.total_seats - trip.booked_seats;
+
+    const tripDetailsContent = document.getElementById("tripDetailsContent");
+    if (tripDetailsContent) {
+      tripDetailsContent.innerHTML = `
+        <div class="trip-details-container">
+          <div class="trip-details-header">
+            <h4>Trip Information</h4>
+          </div>
+          <div class="trip-details-grid">
+            <div class="detail-item">
+              <label>Route:</label>
+              <span>${route.departure_city || "—"} → ${route.arrival_city || "—"}</span>
+            </div>
+            <div class="detail-item">
+              <label>Date:</label>
+              <span>${new Date(trip.trip_date).toLocaleDateString()}</span>
+            </div>
+            <div class="detail-item">
+              <label>Time:</label>
+              <span>${trip.departure_time} - ${trip.arrival_time}</span>
+            </div>
+            <div class="detail-item">
+              <label>Bus:</label>
+              <span>${bus.plate_number || "—"} (${bus.bus_type || "—"})</span>
+            </div>
+            <div class="detail-item">
+              <label>Company:</label>
+              <span>${company.name || "—"}</span>
+            </div>
+            <div class="detail-item">
+              <label>Status:</label>
+              <span class="badge badge-${trip.status === 'completed' ? 'success' : trip.status === 'cancelled' ? 'danger' : trip.status === 'in-progress' ? 'warning' : 'info'}">${trip.status}</span>
+            </div>
+            <div class="detail-item">
+              <label>Seats:</label>
+              <span>${trip.booked_seats}/${trip.total_seats} booked (${availableSeats} available)</span>
+            </div>
+            <div class="detail-item">
+              <label>Total Revenue:</label>
+              <span>${formatCurrency(totalRevenue)}</span>
+            </div>
+          </div>
+
+          <div class="trip-bookings-section">
+            <h4>Bookings (${bookings.length})</h4>
+            ${bookings.length > 0 ? `
+              <table class="bookings-table">
+                <thead>
+                  <tr>
+                    <th>Seat</th>
+                    <th>Passenger</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Booking Code</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${bookings.map(booking => `
+                    <tr>
+                      <td>${booking.seat_number}</td>
+                      <td>${booking.user?.full_name || "—"}</td>
+                      <td>${booking.user?.email || "—"}</td>
+                      <td>${booking.user?.phone_number || "—"}</td>
+                      <td>${booking.booking_code || "—"}</td>
+                      <td><span class="badge badge-${booking.status === 'confirmed' ? 'success' : booking.status === 'cancelled' ? 'danger' : 'info'}">${booking.status}</span></td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            ` : "<p>No bookings for this trip</p>"}
+          </div>
+        </div>
+      `;
+    }
+
+    showModal("tripDetailsModal");
+  } catch (error) {
+    console.error("Error loading trip details:", error);
+    showTripsMessage("Failed to load trip details", "error");
+  }
+}
+
+async function updateTripStatus(tripId, status) {
+  if (!confirm(`Are you sure you want to update this trip status to "${status}"?`)) {
+    return;
+  }
+
+  try {
+    await ApiClient.put(`/trips/${tripId}/status`, { status }, true);
+    showTripsMessage("Trip status updated successfully", "success");
+    loadTrips();
+  } catch (error) {
+    console.error("Error updating trip status:", error);
+    showTripsMessage(error.message || "Failed to update trip status", "error");
+  }
+}
+
+function showTripsMessage(message, type = "info") {
+  if (!tripsMessage) return;
+  tripsMessage.textContent = message;
+  tripsMessage.className = `info-banner ${type}`;
+  tripsMessage.style.display = "block";
+  setTimeout(() => {
+    tripsMessage.style.display = "none";
+  }, 5000);
+}
+
+// Make functions globally available
+// ==================== TRIP DETAILS VIEW ====================
+
+let currentTripData = null;
+
+async function loadTripDetailsView(tripId) {
+  const loadingEl = document.getElementById('tripDetailsLoading');
+  const errorEl = document.getElementById('tripDetailsError');
+  const contentEl = document.getElementById('tripDetailsContent');
+
+  // Ensure we start fresh - hide everything first
+  loadingEl.classList.add('hidden');
+  errorEl.classList.add('hidden');
+  contentEl.classList.add('hidden');
+
+  try {
+    // Show loading only
+    loadingEl.classList.remove('hidden');
+
+    // Fetch trip data (no auth required for public endpoint)
+    const response = await ApiClient.get(`/trips/${tripId}`);
+    currentTripData = response.trip;
+
+    // Render trip details
+    renderTripDetailsView(currentTripData);
+
+    // Hide loading, show content
+    loadingEl.classList.add('hidden');
+    contentEl.classList.remove('hidden');
+  } catch (error) {
+    console.error('Error loading trip details:', error);
+    document.getElementById('tripDetailsErrorMessage').textContent =
+      error.message || 'Failed to load trip details';
+
+    // Hide loading, show error
+    loadingEl.classList.add('hidden');
+    errorEl.classList.remove('hidden');
+  }
+}
+
+function renderTripDetailsView(trip) {
+  // Update status badge
+  updateTripStatusBadge(trip.status);
+
+  // Update trip info
+  const schedule = trip.schedule || {};
+  const route = schedule.route || {};
+  const bus = schedule.bus || {};
+  const company = bus.company || {};
+
+  document.getElementById('detailTripRoute').textContent =
+    `${route.departure_city || '—'} → ${route.arrival_city || '—'}`;
+
+  document.getElementById('detailTripBus').textContent =
+    `${bus.plate_number || '—'} (${bus.bus_type || '—'})`;
+
+  document.getElementById('detailTripDate').textContent = formatTripDate(trip.trip_date);
+
+  document.getElementById('detailTripTime').textContent =
+    `${formatTripTime(trip.departure_time)} - ${formatTripTime(trip.arrival_time)}`;
+
+  document.getElementById('detailTripCompany').textContent = company.name || '—';
+
+  const occupancyPercent = ((trip.booked_seats / trip.total_seats) * 100).toFixed(1);
+  document.getElementById('detailTripOccupancy').textContent =
+    `${trip.booked_seats}/${trip.total_seats} (${occupancyPercent}%)`;
+
+  // Update action buttons
+  updateTripActionButtons(trip.status);
+
+  // Render seat map
+  renderTripSeatMap(trip);
+
+  // Render passengers list
+  renderTripPassengers(trip.bookings || []);
+}
+
+function updateTripStatusBadge(status) {
+  const badge = document.getElementById('currentTripStatusBadge');
+  const statusText = badge.querySelector('.status-text');
+
+  badge.className = 'trip-status-badge ' + status;
+  statusText.textContent = formatTripStatus(status);
+}
+
+function formatTripStatus(status) {
+  const statusMap = {
+    'scheduled': 'Scheduled',
+    'in-progress': 'In Progress',
+    'completed': 'Completed',
+    'cancelled': 'Cancelled'
+  };
+  return statusMap[status] || status;
+}
+
+function updateTripActionButtons(status) {
+  const startBtn = document.getElementById('detailStartTripBtn');
+  const completeBtn = document.getElementById('detailCompleteTripBtn');
+  const cancelBtn = document.getElementById('detailCancelTripBtn');
+
+  // Reset
+  startBtn.disabled = false;
+  completeBtn.disabled = false;
+  cancelBtn.disabled = false;
+
+  // Disable based on status
+  if (status === 'scheduled') {
+    completeBtn.disabled = true;
+  } else if (status === 'in-progress') {
+    startBtn.disabled = true;
+  } else if (status === 'completed' || status === 'cancelled') {
+    startBtn.disabled = true;
+    completeBtn.disabled = true;
+    cancelBtn.disabled = true;
+  }
+}
+
+function renderTripSeatMap(trip) {
+  const seatsGrid = document.getElementById('detailSeatsGrid');
+  seatsGrid.innerHTML = '';
+
+  const totalSeats = trip.total_seats;
+  const bookedSeats = new Map();
+
+  // Map booked seats
+  if (trip.bookings && trip.bookings.length > 0) {
+    trip.bookings.forEach(booking => {
+      if (booking.status === 'confirmed') {
+        bookedSeats.set(booking.seat_number, {
+          name: booking.user.full_name,
+          email: booking.user.email,
+          phone: booking.user.phone_number
+        });
+      }
+    });
+  }
+
+  // Generate seats
+  for (let i = 1; i <= totalSeats; i++) {
+    const seat = document.createElement('div');
+    const isBooked = bookedSeats.has(i);
+
+    seat.className = `seat ${isBooked ? 'booked' : 'available'}`;
+
+    const seatNumber = document.createElement('div');
+    seatNumber.className = 'seat-number';
+    seatNumber.textContent = i;
+    seat.appendChild(seatNumber);
+
+    if (isBooked) {
+      const passenger = bookedSeats.get(i);
+      const passengerName = document.createElement('div');
+      passengerName.className = 'seat-passenger';
+      passengerName.textContent = passenger.name.split(' ')[0];
+      seat.appendChild(passengerName);
+
+      seat.title = `${passenger.name}\n${passenger.phone}`;
+    }
+
+    seatsGrid.appendChild(seat);
+  }
+}
+
+function renderTripPassengers(bookings) {
+  const passengersList = document.getElementById('detailPassengersList');
+  const passengerCount = document.getElementById('detailPassengerCount');
+
+  const confirmedBookings = bookings.filter(b => b.status === 'confirmed');
+
+  passengerCount.textContent =
+    `${confirmedBookings.length} passenger${confirmedBookings.length !== 1 ? 's' : ''}`;
+
+  if (confirmedBookings.length === 0) {
+    passengersList.innerHTML = `
+      <div class="empty-passengers">
+        <i class="fas fa-users"></i>
+        <p>No passengers yet</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Sort by seat number
+  confirmedBookings.sort((a, b) => a.seat_number - b.seat_number);
+
+  passengersList.innerHTML = confirmedBookings.map(booking => `
+    <div class="passenger-card">
+      <div class="passenger-header">
+        <div class="passenger-name">
+          <i class="fas fa-user"></i>
+          ${booking.user.full_name}
+        </div>
+        <div class="seat-badge">Seat ${booking.seat_number}</div>
+      </div>
+      <div class="passenger-details">
+        <div class="passenger-detail">
+          <i class="fas fa-envelope"></i>
+          <span>${booking.user.email}</span>
+        </div>
+        <div class="passenger-detail">
+          <i class="fas fa-phone"></i>
+          <span>${booking.user.phone_number}</span>
+        </div>
+        <div class="booking-code">
+          <i class="fas fa-ticket-alt"></i>
+          <span>${booking.booking_code}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function updateCurrentTripStatus(newStatus) {
+  if (!currentTripData) return;
+
+  try {
+    await ApiClient.put(
+      `/trips/${currentTripData.id}/status`,
+      { status: newStatus },
+      true
+    );
+
+    currentTripData.status = newStatus;
+    updateTripStatusBadge(newStatus);
+    updateTripActionButtons(newStatus);
+
+    showTripsMessage(`Trip status updated to ${formatTripStatus(newStatus)}`, 'success');
+  } catch (error) {
+    console.error('Error updating trip status:', error);
+    alert(error.message || 'Failed to update trip status');
+  }
+}
+
+function formatTripDate(dateString) {
+  const date = new Date(dateString);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString('en-US', options);
+}
+
+function formatTripTime(timeString) {
+  if (!timeString) return '—';
+
+  const parts = timeString.split(':');
+  if (parts.length >= 2) {
+    let hours = parseInt(parts[0]);
+    const minutes = parts[1];
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return `${hours}:${minutes} ${ampm}`;
+  }
+
+  return timeString;
+}
+
+// Initialize trip details section
+function initTripDetails() {
+  const backBtn = document.getElementById('backToTripsBtn');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      showSection('trips');
+      loadTrips();
+    });
+  }
+
+  const startBtn = document.getElementById('detailStartTripBtn');
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      updateCurrentTripStatus('in-progress');
+    });
+  }
+
+  const completeBtn = document.getElementById('detailCompleteTripBtn');
+  if (completeBtn) {
+    completeBtn.addEventListener('click', () => {
+      updateCurrentTripStatus('completed');
+    });
+  }
+
+  const cancelBtn = document.getElementById('detailCancelTripBtn');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to cancel this trip?')) {
+        updateCurrentTripStatus('cancelled');
+      }
+    });
+  }
+}
+
+window.viewTripDetails = viewTripDetails;
+window.updateTripStatus = updateTripStatus;
+
 // Initialize bus company profile page
 function initBusCompanyProfilePage() {
   const backBtn = document.getElementById("backToBusCompaniesBtn");
@@ -2089,7 +2628,7 @@ function initLogoutModal() {
       });
     }
   });
-
+  
   if (confirmBtn) {
     confirmBtn.addEventListener("click", async () => {
       try {
@@ -2103,13 +2642,13 @@ function initLogoutModal() {
       }
     });
   }
-
+  
   if (cancelBtn) {
     cancelBtn.addEventListener("click", () => {
       hideModal("logoutModal");
     });
   }
-
+  
   if (closeBtn) {
     closeBtn.addEventListener("click", () => {
       hideModal("logoutModal");
@@ -2132,7 +2671,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const directToken = localStorage.getItem("expressgo_auth_token");
   const directUser = localStorage.getItem("expressgo_auth_user");
   const allKeys = Object.keys(localStorage);
-
+  
   console.log("Admin dashboard loaded - Auth check:", {
     hasToken: !!token,
     hasUser: !!user,
@@ -2227,6 +2766,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     "logoutBtnBusCompanyProfile",
     () => showModal("logoutModal")
   );
+  initProfileDropdown(
+    "profileMenuBtnTrips",
+    "profileDropdownTrips",
+    "logoutBtnTrips",
+    () => showModal("logoutModal")
+  );
 
   // Section-specific initialization
   const overviewNavLink = document.querySelector('[data-section="overview"]');
@@ -2275,6 +2820,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         initBusCompaniesForm();
         initBusForm();
         initBusCompanyProfileModal();
+      }, 100);
+    });
+  }
+
+  const tripsNavLink = document.querySelector('[data-section="trips"]');
+  if (tripsNavLink) {
+    tripsNavLink.addEventListener("click", () => {
+      setTimeout(() => {
+        loadTrips();
+        initTripsFilters();
+        initTripDetails();
       }, 100);
     });
   }

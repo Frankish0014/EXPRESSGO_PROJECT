@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trip Details | ExpressGo Admin</title>
+    <link rel="stylesheet" href="trip-details.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <button class="btn-back" id="backBtn">
+            <i class="fas fa-arrow-left"></i> Back to Trips
+          </button>
+          <h1 class="page-title">Trip Details</h1>
+        </div>
+        <div class="header-right">
+          <div class="trip-status-badge" id="tripStatusBadge">
+            <span class="status-dot"></span>
+            <span class="status-text">Loading...</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading trip details...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="errorState" class="error-state hidden">
+        <i class="fas fa-exclamation-circle"></i>
+        <h2>Failed to Load Trip</h2>
+        <p id="errorMessage">Something went wrong</p>
+        <button class="btn-primary" onclick="location.reload()">
+          <i class="fas fa-redo"></i> Retry
+        </button>
+      </div>
+
+      <!-- Main Content -->
+      <div id="mainContent" class="main-content hidden">
+        <!-- Trip Info Section -->
+        <section class="trip-info-section">
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-icon route">
+                <i class="fas fa-route"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Route</span>
+                <span class="info-value" id="tripRoute">—</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon bus">
+                <i class="fas fa-bus"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Bus</span>
+                <span class="info-value" id="tripBus">—</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon calendar">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Date</span>
+                <span class="info-value" id="tripDate">—</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon time">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Time</span>
+                <span class="info-value" id="tripTime">—</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon company">
+                <i class="fas fa-building"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Company</span>
+                <span class="info-value" id="tripCompany">—</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon seats">
+                <i class="fas fa-chair"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Occupancy</span>
+                <span class="info-value" id="tripOccupancy">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trip Actions -->
+          <div class="trip-actions">
+            <button class="btn btn-primary" id="startTripBtn">
+              <i class="fas fa-play"></i> Start Trip
+            </button>
+            <button class="btn btn-success" id="completeTripBtn">
+              <i class="fas fa-check"></i> Complete Trip
+            </button>
+            <button class="btn btn-danger" id="cancelTripBtn">
+              <i class="fas fa-times"></i> Cancel Trip
+            </button>
+          </div>
+        </section>
+
+        <!-- Seat Map and Passengers Grid -->
+        <div class="content-grid">
+          <!-- Seat Map Section -->
+          <section class="seat-map-section">
+            <div class="section-header">
+              <h2>Seat Map</h2>
+              <div class="seat-legend">
+                <div class="legend-item">
+                  <div class="seat-icon available"></div>
+                  <span>Available</span>
+                </div>
+                <div class="legend-item">
+                  <div class="seat-icon booked"></div>
+                  <span>Booked</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bus-container">
+              <div class="driver-section">
+                <i class="fas fa-steering-wheel"></i>
+                <span>Driver</span>
+              </div>
+              <div class="seats-grid" id="seatsGrid">
+                <!-- Seats will be generated dynamically -->
+              </div>
+            </div>
+          </section>
+
+          <!-- Passengers List Section -->
+          <section class="passengers-section">
+            <div class="section-header">
+              <h2>Passengers</h2>
+              <span class="passenger-count" id="passengerCount">0 passengers</span>
+            </div>
+
+            <div class="passengers-list" id="passengersList">
+              <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <p>No passengers yet</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script src="../../js/api-client.js"></script>
+    <script src="trip-details.js"></script>
+  </body>
+</html>

@@ -2,6 +2,7 @@ import { Booking, BusSchedule, User, Bus, BusCompany, Route } from '../models';
 import { EmailService, BookingEmailData, BookingCancellationEmailData } from './emailService';
 import { logInfo, logError, logSuccess } from '../utils/loggerUtils';
 import sequelize from '../config/database';
+import { TripService } from './tripService';
 
 export class BookingService {
   /**
@@ -70,11 +71,15 @@ export class BookingService {
       throw new Error('User not found');
     }
 
+    // Create or get trip for this schedule and date
+    const trip = await TripService.createOrGetTrip(schedule_id, travel_date.toString());
+
     // Generate booking code
     const tempBookingCode = `T${Date.now()}`;
     const booking = await Booking.create({
       user_id: userId,
       schedule_id,
+      trip_id: trip.id,
       travel_date,
       seat_number,
       status: 'confirmed',
@@ -85,6 +90,9 @@ export class BookingService {
     // Generate final booking code
     const finalBookingCode = this.generateEnhancedBookingCode(booking.id);
     await booking.update({ booking_code: finalBookingCode });
+
+    // Update trip booked seats count
+    await TripService.updateTripBookedSeats(trip.id);
 
     logSuccess(`Booking created: ${finalBookingCode} for user ${userId}`);
 
@@ -181,12 +189,23 @@ export class BookingService {
         throw new Error('Return seat is not available');
       }
 
+      // Create or get trips for both legs
+      const outboundTrip = await TripService.createOrGetTrip(
+        bookingData.outbound.schedule_id,
+        bookingData.outbound.travel_date.toString()
+      );
+      const returnTrip = await TripService.createOrGetTrip(
+        bookingData.return.schedule_id,
+        bookingData.return.travel_date.toString()
+      );
+
       // Create outbound booking (parent)
       const tempCode = `T${Date.now()}`;
       const outboundBooking = await Booking.create(
         {
           user_id: userId,
           schedule_id: bookingData.outbound.schedule_id,
+          trip_id: outboundTrip.id,
           travel_date: bookingData.outbound.travel_date,
           seat_number: bookingData.outbound.seat_number,
           status: 'confirmed',
@@ -206,6 +225,7 @@ export class BookingService {
         {
           user_id: userId,
           schedule_id: bookingData.return.schedule_id,
+          trip_id: returnTrip.id,
           travel_date: bookingData.return.travel_date,
           seat_number: bookingData.return.seat_number,
           status: 'confirmed',
@@ -215,6 +235,10 @@ export class BookingService {
         },
         { transaction }
       );
+
+      // Update trip booked seats for both trips
+      await TripService.updateTripBookedSeats(outboundTrip.id);
+      await TripService.updateTripBookedSeats(returnTrip.id);
 
       await transaction.commit();
 
@@ -314,6 +338,13 @@ export class BookingService {
         }
       }
 
+      // Create or get trips for all legs
+      const trips = await Promise.all(
+        sortedLegs.map(leg =>
+          TripService.createOrGetTrip(leg.schedule_id, leg.travel_date.toString())
+        )
+      );
+
       // Create parent booking (first leg)
       const firstLeg = sortedLegs[0];
       const tempCode = `T${Date.now()}`;
@@ -321,6 +352,7 @@ export class BookingService {
         {
           user_id: userId,
           schedule_id: firstLeg.schedule_id,
+          trip_id: trips[0].id,
           travel_date: firstLeg.travel_date,
           seat_number: firstLeg.seat_number,
           status: 'confirmed',
@@ -343,6 +375,7 @@ export class BookingService {
           {
             user_id: userId,
             schedule_id: leg.schedule_id,
+            trip_id: trips[i].id,
             travel_date: leg.travel_date,
             seat_number: leg.seat_number,
             status: 'confirmed',
@@ -355,6 +388,9 @@ export class BookingService {
         );
         childBookings.push(childBooking);
       }
+
+      // Update trip booked seats for all trips
+      await Promise.all(trips.map(trip => TripService.updateTripBookedSeats(trip.id)));
 
       await transaction.commit();
 
@@ -448,6 +484,11 @@ export class BookingService {
     await booking.update({ status: 'cancelled' });
     logSuccess(`Booking cancelled: ${code}`);
 
+    // Update trip booked seats count if booking is linked to a trip
+    if (booking.trip_id) {
+      await TripService.updateTripBookedSeats(booking.trip_id);
+    }
+
     const bookingData: any = booking;
 
     // ==================== SEND EMAIL NOTIFICATION ====================
@@ -513,6 +554,14 @@ export class BookingService {
 
       await transaction.commit();
 
+      // Update trip booked seats for all affected trips
+      const tripIds = [
+        parentBooking.trip_id,
+        ...childBookings.map((child: any) => child.trip_id)
+      ].filter(Boolean);
+
+      await Promise.all(tripIds.map((tripId: number) => TripService.updateTripBookedSeats(tripId)));
+
       logSuccess(`Complex booking cancelled: ${code}`);
 
       // Send email notification
@@ -576,6 +625,12 @@ export class BookingService {
     const oldStatus = booking.status;
     await booking.update({ status });
     logSuccess(`Booking ${id} status updated from ${oldStatus} to ${status}`);
+
+    // Update trip booked seats count if booking is linked to a trip
+    // Only update if status changed between confirmed and other statuses
+    if (booking.trip_id && (oldStatus === 'confirmed' || status === 'confirmed')) {
+      await TripService.updateTripBookedSeats(booking.trip_id);
+    }
 
     return booking;
   }
