@@ -1,18 +1,6 @@
 # ExpressGo Bus Booking API Documentation
 
-Complete API documentation for the ExpressGo Bus Booking System.
-
-## Table of Contents
-
-- [Base URL](#base-url)
-- [Authentication](#authentication)
-- [Endpoints](#endpoints)
-  - [Health Check](#health-check)
-  - [Authentication Endpoints](#authentication-endpoints)
-  - [Routes Endpoints](#routes-endpoints)
-  - [Schedules Endpoints](#schedules-endpoints)
-- [Error Handling](#error-handling)
-- [Response Format](#response-format)
+API documentation for the ExpressGo Bus Booking System.
 
 ## Base URL
 
@@ -58,12 +46,12 @@ Check if the API is running.
 ### POST /api/auth/register
 
 Register a new user account.
-
+<!-- For example -->
 **Request Body:**
 ```json
 {
-  "full_name": "John Doe",
-  "email": "john@example.com",
+  "full_name": "Danny Welbeck",
+  "email": "dan@gmail.com",
   "phone_number": "+250788123456",
   "password": "Password123"
 }
@@ -86,8 +74,8 @@ Register a new user account.
   "data": {
     "user": {
       "id": 1,
-      "full_name": "John Doe",
-      "email": "john@example.com",
+      "full_name": "Danny Welbeck",
+      "email": "dan@gmail.com",
       "phone_number": "+250788123456",
       "role": "user",
       "created_at": "2024-01-01T12:00:00.000Z",
@@ -110,7 +98,7 @@ Authenticate user and receive JWT token.
 **Request Body:**
 ```json
 {
-  "email": "john@example.com",
+  "email": "dan@gmail.com",
   "password": "Password123"
 }
 ```
@@ -127,8 +115,8 @@ Authenticate user and receive JWT token.
   "data": {
     "user": {
       "id": 1,
-      "full_name": "John Doe",
-      "email": "john@example.com",
+      "full_name": "Danny Welbeck",
+      "email": "dan@gmail.com",
       "phone_number": "+250788123456",
       "role": "user",
       "created_at": "2024-01-01T12:00:00.000Z",
@@ -179,8 +167,8 @@ Get authenticated user's profile.
   "data": {
     "user": {
       "id": 1,
-      "full_name": "John Doe",
-      "email": "john@example.com",
+      "full_name": "Danny Welbeck",
+      "email": "dan@gmail.com",
       "phone_number": "+250788123456",
       "role": "user",
       "created_at": "2024-01-01T12:00:00.000Z",
@@ -206,8 +194,8 @@ Update authenticated user's profile.
 **Request Body:**
 ```json
 {
-  "full_name": "John Smith",
-  "email": "johnsmith@example.com",
+  "full_name": "jonathan Smith",
+  "email": "jonsmith@gmail.com",
   "phone_number": "+250788654321"
 }
 ```
@@ -226,8 +214,8 @@ Update authenticated user's profile.
   "data": {
     "user": {
       "id": 1,
-      "full_name": "John Smith",
-      "email": "johnsmith@example.com",
+      "full_name": "jonathan Smith",
+      "email": "jonsmith@gmail.com",
       "phone_number": "+250788654321",
       "role": "user",
       "created_at": "2024-01-01T12:00:00.000Z",
@@ -754,8 +742,8 @@ Visit this URL in your browser to explore and test the API endpoints interactive
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
-    "full_name": "John Doe",
-    "email": "john@example.com",
+    "full_name": "Danny Wellbeck",
+    "email": "dan@gmail.com",
     "phone_number": "+250788123456",
     "password": "Password123"
   }'
@@ -766,7 +754,7 @@ curl -X POST http://localhost:3000/api/auth/register \
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "john@example.com",
+    "email": "dan@gmail.com",
     "password": "Password123"
   }'
 ```
@@ -799,7 +787,3 @@ curl -X POST http://localhost:3000/api/routes \
 ```bash
 curl http://localhost:3000/api/schedules/route/1
 ```
-
----
-
-**Last Updated:** 2024
